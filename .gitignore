@@ -1,0 +1,5 @@
+/install
+/build
+/log
+*.tar.gz
+*.tar
