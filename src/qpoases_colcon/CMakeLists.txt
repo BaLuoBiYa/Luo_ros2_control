@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.8)
-project(qpOASES_colcon)
+project(qpoases_colcon)
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
@@ -27,7 +27,7 @@ install(
 )
 install(
   TARGETS qpOASES
-  EXPORT export_qpOASES_colcon
+  EXPORT export_qpoases_colcon
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin
@@ -38,6 +38,6 @@ ament_export_include_directories(
   include
 )
 ament_export_libraries(qpOASES)
-ament_export_targets(export_qpOASES_colcon HAS_LIBRARY_TARGET)
+ament_export_targets(export_qpoases_colcon HAS_LIBRARY_TARGET)
 
 ament_package()

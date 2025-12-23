@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.8)
-project(legged_controllers)
+project(legged_estimator)
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
@@ -13,16 +13,11 @@ find_package(controller_interface REQUIRED)
 find_package(pluginlib REQUIRED)
 find_package(hardware_interface REQUIRED)
 
-find_package(ocs2_legged_robot REQUIRED)
-find_package(ocs2_ros_interfaces REQUIRED)
-find_package(ocs2_pinocchio_interface REQUIRED)
-find_package(ocs2_centroidal_model REQUIRED)
-
-find_package(legged_estimation REQUIRED)
+find_package(fusion_estimator REQUIRED)
 
 # 控制器插件
 add_library(${PROJECT_NAME} SHARED
-  src/legged_wbc.cpp  # 请确保该源文件存在并实现 legged_wbc
+  src/legged_estimator.cpp
 )
 
 ament_target_dependencies(${PROJECT_NAME}
@@ -30,9 +25,7 @@ ament_target_dependencies(${PROJECT_NAME}
   controller_interface
   pluginlib
   hardware_interface
-  ocs2_legged_robot
-  ocs2_ros_interfaces
-  legged_estimation
+  fusion_estimator
 )
 
 if(BUILD_TESTING)

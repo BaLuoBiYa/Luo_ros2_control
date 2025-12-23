@@ -1,17 +1,40 @@
 {
     "configurations": [
         {
-            "name": "Linux",
+            "browse": {
+                "databaseFilename": "${workspaceFolder}/.vscode/browse.vc.db",
+                "limitSymbolsToIncludedHeaders": false
+            },
             "includePath": [
-                "${workspaceFolder}/**",
+                "/home/luo/Project/Horse/Luo_ros2_control/install/ocs2_legged_robot_ros/include/**",
+                "/home/luo/Project/Horse/Luo_ros2_control/install/legged_controllers/include/**",
+                "/home/luo/Project/Horse/Luo_ros2_control/install/ocs2_legged_robot/include/**",
+                "/home/luo/Project/Horse/Luo_ros2_control/install/qpOASES_colcon/include/**",
+                "/home/luo/Project/Horse/Luo_ros2_control/install/ocs2_sqp/include/**",
+                "/home/luo/Project/Horse/Luo_ros2_control/install/ocs2_ros_interfaces/include/**",
+                "/home/luo/Project/Horse/Luo_ros2_control/install/ocs2_centroidal_model/include/**",
+                "/home/luo/Project/Horse/Luo_ros2_control/install/ocs2_pinocchio_interface/include/**",
+                "/home/luo/Project/Horse/Luo_ros2_control/install/ocs2_robotic_tools/include/**",
+                "/home/luo/Project/Horse/Luo_ros2_control/install/ocs2_ipm/include/**",
+                "/home/luo/Project/Horse/Luo_ros2_control/install/ocs2_ddp/include/**",
+                "/home/luo/Project/Horse/Luo_ros2_control/install/hpipm_colcon/include/**",
+                "/home/luo/Project/Horse/Luo_ros2_control/install/ocs2_qp_solver/include/**",
+                "/home/luo/Project/Horse/Luo_ros2_control/install/ocs2_mpc/include/**",
+                "/home/luo/Project/Horse/Luo_ros2_control/install/ocs2_oc/include/**",
+                "/home/luo/Project/Horse/Luo_ros2_control/install/ocs2_core/include/**",
+                "/home/luo/Project/Horse/Luo_ros2_control/install/ocs2_thirdparty/include/**",
+                "/home/luo/Project/Horse/Luo_ros2_control/install/ocs2_robotic_assets/include/**",
+                "/home/luo/Project/Horse/Luo_ros2_control/install/ocs2_msgs/include/**",
+                "/home/luo/Project/Horse/Luo_ros2_control/install/blasfeo_colcon/include/**",
+                "/home/luo/Project/Horse/Luo_ros2_control/install/fusion_estimator/include/**",
                 "/opt/ros/jazzy/include/**",
                 "/usr/include/**"
             ],
-            "defines": [],
+            "name": "ros2",
+            "intelliSenseMode": "gcc-x64",
             "compilerPath": "/usr/bin/gcc",
-            "cStandard": "c17",
-            "cppStandard": "c++17",
-            "intelliSenseMode": "linux-gcc-x86"
+            "cStandard": "gnu11",
+            "cppStandard": "c++17"
         }
     ],
     "version": 4
