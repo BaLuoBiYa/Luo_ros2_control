@@ -1,7 +1,5 @@
 #pragma once
 
-#include "controller_interface/controller_interface.hpp"
-
 #include <controller_interface/controller_interface.hpp>
 #include <pluginlib/class_list_macros.hpp>
 
@@ -17,7 +15,7 @@
 #include "ocs2_legged_robot/wbc/WeightedWbc.h"
 // #include "rclcpp/rclcpp.hpp"
 
-#include <legged_estimation/StateEstimateBase.h>
+// #include <legged_estimation/StateEstimateBase.h>
 
 namespace legged_controllers {
     class legged_wbc:public controller_interface::ControllerInterface
@@ -42,10 +40,10 @@ namespace legged_controllers {
         // State Estimation
         ocs2::SystemObservation currentObservation_;
         ocs2::vector_t measuredRbdState_;
-        std::shared_ptr<StateEstimateBase> stateEstimate_;
+        // std::shared_ptr<StateEstimateBase> stateEstimate_;
         // std::shared_ptr<CentroidalModelRbdConversions> rbdConversions_;
     public:
-        legged_wbc(/* args */);
+        legged_wbc() = default;
         ~legged_wbc();
 
         controller_interface::InterfaceConfiguration command_interface_configuration() const override;

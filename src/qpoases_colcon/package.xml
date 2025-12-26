@@ -3,7 +3,7 @@
 <package format="3">
   <name>qpoases_colcon</name>
   <version>0.0.0</version>
-  <description>TODO: Package description</description>
+  <description>a ros wrapper for qpOASES</description>
   <maintainer email="Louie.LiuHaoYu@outlook.com">luo</maintainer>
   <license>TODO: License declaration</license>
 
