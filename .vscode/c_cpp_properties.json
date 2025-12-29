@@ -28,7 +28,9 @@
                 "/home/luo/Project/Horse/Luo_ros2_control/install/blasfeo_colcon/include/**",
                 "/home/luo/Project/Horse/Luo_ros2_control/install/fusion_estimator/include/**",
                 "/opt/ros/jazzy/include/**",
-                "/usr/include/**"
+                "/usr/include/**",
+                "${workspaceFolder}/src/legged_estimator/include",
+                "${workspaceFolder}/src/legged_controllers/include"
             ],
             "name": "ros2",
             "intelliSenseMode": "gcc-x64",

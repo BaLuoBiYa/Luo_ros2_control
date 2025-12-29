@@ -1,0 +1,7 @@
+<library path="legged_estimator">
+    <class name="legged_robot/LeggedEstimator" type="legged_robot::legged_estimator" base_class_type="controller_interface::ChainableControllerInterface">
+        <description>
+            LeggedEstimator is a controller that can be used to estimate the state of a legged robot.
+        </description>
+    </class>
+</library>

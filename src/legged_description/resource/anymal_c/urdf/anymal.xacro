@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<!-- Basic differential drive mobile base -->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="anymal">
+
+    <xacro:include filename="anymal.urdf" />
+
+    <xacro:include filename="joint.xacro" />
+    <xacro:include filename="IMU.xacro" />
+
+    <xacro:leggedbot_base name="anymal" />
+    <xacro:leggedbot_IMU name="anymal" />
+
+</robot>
