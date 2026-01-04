@@ -1,5 +1,5 @@
-[submodule "qpoases"]
-    path = src/qpoases_colcon/third_party/qpOASES
+[submodule "qpoases_colcon"]
+    path = src/qpoases_colcon
     url = https://github.com/coin-or/qpOASES
 [submodule "Ros2Go2Estimator"]
     path = src/Ros2Go2Estimator
