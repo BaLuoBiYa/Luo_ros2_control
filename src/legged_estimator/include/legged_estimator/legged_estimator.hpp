@@ -25,8 +25,8 @@ namespace legged_robot{
     class legged_estimator:public controller_interface::ChainableControllerInterface{
         protected:
             union imu_msg_t{
-                double data[10];
-                struct {
+                double raw[10];
+                struct data_t{
                     struct orientation{
                         double x;
                         double y;
@@ -43,7 +43,7 @@ namespace legged_robot{
                         double y;
                         double z;
                     }angular_velocity;
-                };
+                }data;
             };
 
             std::vector<EstimatorPortN*> StateSpaceModel_Go2_Sensors;

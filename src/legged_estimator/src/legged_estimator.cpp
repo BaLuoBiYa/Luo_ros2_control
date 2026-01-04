@@ -318,7 +318,7 @@ controller_interface::return_type legged_estimator::update_and_write_commands(co
         //     RCLCPP_WARN(get_node()->get_logger(), "legged_estimator: IMU data timeout.");
         //     return controller_interface::return_type::ERROR;
         // }
-        imu_msg_.data[i] = state_interfaces_[i].get_optional().value();
+        imu_msg_.raw[i] = state_interfaces_[i].get_optional().value();
     }
     //获取IMU消息
 
@@ -358,8 +358,6 @@ controller_interface::return_type legged_estimator::update_and_write_commands(co
     if (publish_odom_enable){
         publish_estimation();
     }
-
-    fusion_msg.stamp;
     
     return controller_interface::return_type::OK;
 }
@@ -369,19 +367,19 @@ void legged_estimator::imu_update(const imu_msg_t msg)
     double LatestMessage[3][100]={0};
     double roll, pitch, yaw;
 
-    tf2::Quaternion q(msg.orientation.x, msg.orientation.y, msg.orientation.z, msg.orientation.w);
+    tf2::Quaternion q(msg.data.orientation.x, msg.data.orientation.y, msg.data.orientation.z, msg.data.orientation.w);
     tf2::Matrix3x3(q).getRPY(roll, pitch, yaw);
 
-    LatestMessage[0][3*0+2] = msg.linear_acceleration.x;
-    LatestMessage[0][3*1+2] = msg.linear_acceleration.y;
-    LatestMessage[0][3*2+2] = msg.linear_acceleration.z;
+    LatestMessage[0][3*0+2] = msg.data.linear_acceleration.x;
+    LatestMessage[0][3*1+2] = msg.data.linear_acceleration.y;
+    LatestMessage[0][3*2+2] = msg.data.linear_acceleration.z;
 
     LatestMessage[1][3*0] = roll + orientation_correct[0];
     LatestMessage[1][3*1] = pitch + orientation_correct[3];
     LatestMessage[1][3*2] = yaw  + orientation_correct[6];
-    LatestMessage[1][3*0+1] = msg.angular_velocity.x;
-    LatestMessage[1][3*1+1] = msg.angular_velocity.y;
-    LatestMessage[1][3*2+1] = msg.angular_velocity.z;
+    LatestMessage[1][3*0+1] = msg.data.angular_velocity.x;
+    LatestMessage[1][3*1+1] = msg.data.angular_velocity.y;
+    LatestMessage[1][3*2+1] = msg.data.angular_velocity.z;
     
     for(int i = 0; i < 9; i++)
     {

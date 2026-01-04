@@ -2,6 +2,7 @@
 /build
 /log
 /.vscode
+/.venv
 *.tar.gz
 *.tar
 *.vc.db
