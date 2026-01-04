@@ -293,23 +293,23 @@ namespace legged_robot{
     {
         controller_interface::InterfaceConfiguration config;
         config.type = controller_interface::interface_configuration_type::INDIVIDUAL;
-        config.names.reserve(12+12+12+1);
+        config.names.reserve(12+12+12);
 
-        config.names.push_back("legged_estimator/orientation_roll");
-        config.names.push_back("legged_estimator/orientation_pitch");
-        config.names.push_back("legged_estimator/orientation_yaw");
+        config.names.push_back("estimation/orientation_roll");
+        config.names.push_back("estimation/orientation_pitch");
+        config.names.push_back("estimation/orientation_yaw");
 
-        config.names.push_back("legged_estimator/position_x");
-        config.names.push_back("legged_estimator/position_y");
-        config.names.push_back("legged_estimator/position_z");
+        config.names.push_back("estimation/position_x");
+        config.names.push_back("estimation/position_y");
+        config.names.push_back("estimation/position_z");
 
-        config.names.push_back("legged_estimator/linear_x");
-        config.names.push_back("legged_estimator/linear_y");
-        config.names.push_back("legged_estimator/linear_z");
+        config.names.push_back("estimation/linear_x");
+        config.names.push_back("estimation/linear_y");
+        config.names.push_back("estimation/linear_z");
 
-        config.names.push_back("legged_estimator/angular_x");
-        config.names.push_back("legged_estimator/angular_y");
-        config.names.push_back("legged_estimator/angular_z");
+        config.names.push_back("estimation/angular_x");
+        config.names.push_back("estimation/angular_y");
+        config.names.push_back("estimation/angular_z");
 
         for (const auto &joint_name : joint_names_){
             config.names.push_back(joint_name + "/position");
@@ -319,9 +319,6 @@ namespace legged_robot{
             config.names.push_back(joint_name + "/velocity");
         }
         //申请关节速度接口
-
-        config.names.push_back("legged_estimator/contact_state");
-        //申请接触状态接口
 
         return config;
     }
@@ -340,7 +337,7 @@ namespace legged_robot{
         ExportoptimizedInput(&state_interfaces);
         ExportRbdState(&state_interfaces);
         state_interfaces.push_back(
-            hardware_interface::StateInterface("legged_mrt", "contact_state", &plannedMode_));
+            hardware_interface::StateInterface("desiredMode", "contact_state", &plannedMode_));
         return state_interfaces;
     }
 
@@ -419,7 +416,10 @@ namespace legged_robot{
         (void) period;
 
         currentObservation_.time = time.seconds();
-        ocs2::vector_t zyx,angularVel,pos,linearVel,jointPos,jointVel;
+        ocs2::legged_robot::vector3_t zyx,angularVel,pos,linearVel;
+        ocs2::vector_t jointPos,jointVel;
+        jointPos.resize(12);
+        jointVel.resize(12);
 
         for (uint8_t i = 0; i < 3; i++){
             zyx(i) = state_interfaces_[i].get_optional().value();
@@ -428,7 +428,7 @@ namespace legged_robot{
             angularVel(i) = state_interfaces_[i+9].get_optional().value();
         }
 
-        for(uint8_t i = 0; i < joint_names_.size(); i++){
+        for(uint8_t i = 0; i < 12; i++){
             jointPos(i) = state_interfaces_[12 + i].get_optional().value();
             jointVel(i) = state_interfaces_[24 + i].get_optional().value();
         }
@@ -489,7 +489,7 @@ namespace legged_robot{
         state_interfaces->reserve(names.size());
         for (size_t i = 0; i < names.size(); i++) {
             state_interfaces->emplace_back(
-                hardware_interface::StateInterface("legged_mrt", names[i], &optimizedState_(i)));
+                hardware_interface::StateInterface("optimizedState", names[i], &optimizedState_(i)));
         }
     }
 
@@ -511,9 +511,10 @@ namespace legged_robot{
         state_interfaces->reserve(names.size());
         for (size_t i = 0; i < names.size(); i++) {
             state_interfaces->emplace_back(
-                hardware_interface::StateInterface("legged_mrt", names[i], &optimizedInput_(i)));
+                hardware_interface::StateInterface("optimizedInput", names[i], &optimizedInput_(i)));
         }
     }
+
     void legged_mrt::ExportRbdState(std::vector<hardware_interface::StateInterface> * state_interfaces)
     {
         const std::vector<std::string> names = {
@@ -547,7 +548,7 @@ namespace legged_robot{
         state_interfaces->reserve(names.size());
         for (size_t i = 0; i < names.size(); i++) {
             state_interfaces->emplace_back(
-                hardware_interface::StateInterface("legged_mrt", names[i], &rbdState_(i)));
+                hardware_interface::StateInterface("rbdState", names[i], &rbdState_(i)));
         }
     }
 }

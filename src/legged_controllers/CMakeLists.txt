@@ -23,6 +23,7 @@ find_package(ocs2_centroidal_model REQUIRED)
 # 控制器插件
 add_library(${PROJECT_NAME} SHARED
   src/legged_mrt.cpp
+  src/legged_wbc.cpp
 )
 
 ament_target_dependencies(${PROJECT_NAME}
@@ -43,6 +44,7 @@ target_include_directories(${PROJECT_NAME}
 )
 
 pluginlib_export_plugin_description_file(controller_interface legged_mrt_plugin.xml)
+pluginlib_export_plugin_description_file(controller_interface legged_wbc_plugin.xml)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)

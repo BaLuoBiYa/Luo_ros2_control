@@ -153,25 +153,25 @@ controller_interface::CallbackReturn legged_estimator::on_activate(const rclcpp_
 std::vector<hardware_interface::StateInterface> legged_estimator::on_export_state_interfaces()
 {
     std::vector<hardware_interface::StateInterface> state_interfaces;
-    state_interfaces.reserve(12+1);
+    state_interfaces.reserve(12);
 
     state_interfaces.emplace_back(
         hardware_interface::StateInterface(
-        "legged_estimator", 
+        "estimation", 
         "position_x",
         &fusion_msg.estimated_xyz[0])
         );
 
     state_interfaces.emplace_back(
         hardware_interface::StateInterface(
-        "legged_estimator", 
+        "estimation", 
         "position_y",
         &fusion_msg.estimated_xyz[3])
         );
 
     state_interfaces.emplace_back(
         hardware_interface::StateInterface(
-        "legged_estimator", 
+        "estimation", 
         "position_z",
         &fusion_msg.estimated_xyz[6])
         );
@@ -179,21 +179,21 @@ std::vector<hardware_interface::StateInterface> legged_estimator::on_export_stat
 
     state_interfaces.emplace_back(
         hardware_interface::StateInterface(
-        "legged_estimator", 
+        "estimation", 
         "orientation_roll",
         &fusion_msg.estimated_rpy[0])
         );
 
     state_interfaces.emplace_back(
         hardware_interface::StateInterface(
-        "legged_estimator", 
+        "estimation", 
         "orientation_pitch",
         &fusion_msg.estimated_rpy[3])
         );
 
     state_interfaces.emplace_back(
         hardware_interface::StateInterface(
-        "legged_estimator", 
+        "estimation", 
         "orientation_yaw",
         &fusion_msg.estimated_rpy[6])
         );
@@ -201,21 +201,21 @@ std::vector<hardware_interface::StateInterface> legged_estimator::on_export_stat
 
     state_interfaces.emplace_back(
         hardware_interface::StateInterface(
-        "legged_estimator", 
+        "estimation", 
         "linear_x",
         &fusion_msg.estimated_xyz[1])
         );
 
     state_interfaces.emplace_back(
         hardware_interface::StateInterface(
-        "legged_estimator", 
+        "estimation", 
         "linear_y",
         &fusion_msg.estimated_xyz[4])
         );
 
     state_interfaces.emplace_back(
         hardware_interface::StateInterface(
-        "legged_estimator", 
+        "estimation", 
         "linear_z",
         &fusion_msg.estimated_xyz[7])
         );
@@ -223,33 +223,25 @@ std::vector<hardware_interface::StateInterface> legged_estimator::on_export_stat
 
     state_interfaces.emplace_back(
         hardware_interface::StateInterface(
-        "legged_estimator", 
+        "estimation", 
         "angular_x",
         &fusion_msg.estimated_rpy[1])
         );
 
     state_interfaces.emplace_back(
         hardware_interface::StateInterface(
-        "legged_estimator", 
+        "estimation", 
         "angular_y",
         &fusion_msg.estimated_rpy[4])
         );
 
     state_interfaces.emplace_back(
         hardware_interface::StateInterface(
-        "legged_estimator", 
+        "estimation", 
         "angular_z",
         &fusion_msg.estimated_rpy[7])
         );
     //基座角速度
-
-    state_interfaces.emplace_back(
-        hardware_interface::StateInterface(
-        "legged_estimator", 
-        "contact_state",
-        &contact_state_)
-        );
-
     return state_interfaces;
 }
 
