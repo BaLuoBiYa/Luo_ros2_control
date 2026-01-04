@@ -59,6 +59,7 @@ namespace legged_robot{
             fusion_estimator::msg::FusionEstimatorTest fusion_msg;
             imu_msg_t imu_msg_;
             std::vector<double> joint_msg_;
+            double contact_state_;
 
             rclcpp::Publisher<fusion_estimator::msg::FusionEstimatorTest>::SharedPtr FETest_publisher;
             rclcpp::Publisher<nav_msgs::msg::Odometry>::SharedPtr SMXFE_publisher, SMXFE_2D_publisher;

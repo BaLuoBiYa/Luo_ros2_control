@@ -1,7 +1,8 @@
 #include "legged_controllers/legged_wbc.hpp"
 using namespace legged_robot;
 
-controller_interface::CallbackReturn legged_wbc::on_init(){
+controller_interface::CallbackReturn legged_wbc::on_init()
+{
     // Initialize parameters
     robotName = auto_declare<std::string>("robotName", "legged_robot");
     taskFile = auto_declare<std::string>("taskFile", "");
@@ -20,21 +21,34 @@ controller_interface::CallbackReturn legged_wbc::on_init(){
     return controller_interface::CallbackReturn::SUCCESS;
 }
 
+controller_interface::InterfaceConfiguration legged_wbc::state_interface_configuration() const
+{
+
+}
+
 controller_interface::CallbackReturn legged_wbc::on_configure(const rclcpp_lifecycle::State &previous_state)
 {
-    leggedInterface_ = std::make_shared<ocs2::legged_robot::LeggedRobotInterface>(taskFile, urdfFile, referenceFile);
-    
-    if (visualization_enable_){
-    // Visualization
-    ocs2::CentroidalModelPinocchioMapping pinocchioMapping(
-        leggedInterface_->getCentroidalModelInfo());
-    ocs2::PinocchioEndEffectorKinematics endEffectorKinematics(
-        leggedInterface_->getPinocchioInterface(), 
-        pinocchioMapping,
-        leggedInterface_->modelSettings().contactNames3DoF);
-    leggedRobotVisualizer_ = std::make_shared<ocs2::legged_robot::LeggedRobotVisualizer>(
-        leggedInterface_->getPinocchioInterface(),
-        leggedInterface_->getCentroidalModelInfo(),
-        endEffectorKinematics, get_node());
-    }
+    leggedInterface_ = legged_robot::LeggedInterfaceProvider::get(taskFile, urdfFile, referenceFile);
+    ocs2::CentroidalModelPinocchioMapping pinocchioMapping(leggedInterface_->getCentroidalModelInfo());
+    eeKinematicsPtr_ = std::make_shared<ocs2::PinocchioEndEffectorKinematics>(leggedInterface_->getPinocchioInterface(), 
+                                                                        pinocchioMapping,
+                                                                        leggedInterface_->modelSettings().contactNames3DoF);
+
+    // WBC
+    wbc_ = std::make_shared<legged::WeightedWbc>(leggedInterface_->getPinocchioInterface(),
+                                        leggedInterface_->getCentroidalModelInfo(),
+                                       *eeKinematicsPtr_);
+    wbc_->loadTasksSetting(taskFile, true);
+
+    // Safety Checker
+    safetyChecker_ = std::make_shared<legged::SafetyChecker>(leggedInterface_->getCentroidalModelInfo());
+
+    return controller_interface::CallbackReturn::SUCCESS;
 }
+
+controller_interface::CallbackReturn legged_wbc::on_activate(const rclcpp_lifecycle::State &previous_state)
+{
+
+    return controller_interface::CallbackReturn::SUCCESS;
+}
+

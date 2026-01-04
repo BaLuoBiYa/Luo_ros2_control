@@ -4,19 +4,21 @@
 #include <pluginlib/class_list_macros.hpp>
 
 #include <ocs2_centroidal_model/CentroidalModelPinocchioMapping.h>
+#include <ocs2_centroidal_model/CentroidalModelRbdConversions.h>
 #include <ocs2_legged_robot/LeggedRobotInterface.h>
 #include <ocs2_pinocchio_interface/PinocchioEndEffectorKinematics.h>
+// #include <ocs2_core/misc/Benchmark.h>
 // #include <ocs2_ros_interfaces/mrt/MRT_ROS_Dummy_Loop.h>
-#include <ocs2_ros_interfaces/mrt/MRT_ROS_Interface.h>
-
-#include <ocs2_centroidal_model/CentroidalModelRbdConversions.h>
-#include <ocs2_core/misc/Benchmark.h>
-#include <ocs2_mpc/MPC_MRT_Interface.h>
+// #include <ocs2_ros_interfaces/mrt/MRT_ROS_Interface.h>
+// #include <ocs2_mpc/MPC_MRT_Interface.h>
 
 #include "ocs2_legged_robot_ros/visualization/LeggedRobotVisualizer.h"
 #include "ocs2_legged_robot/wbc/HierarchicalWbc.h"
 #include "ocs2_legged_robot/wbc/WbcBase.h"
 #include "ocs2_legged_robot/wbc/WeightedWbc.h"
+
+#include "legged_controllers/legged_mrt.hpp"
+#include "legged_controllers/legged_safty.hpp"
 
 namespace legged_robot {
     class legged_wbc:public controller_interface::ChainableControllerInterface
@@ -63,9 +65,10 @@ namespace legged_robot {
 
         // WBC
         std::shared_ptr<legged::WbcBase> wbc_;
+        std::shared_ptr<legged::SafetyChecker> safetyChecker_;
 
         // MRT
-        std::shared_ptr<ocs2::MRT_ROS_Interface> mrt_;
+        std::shared_ptr<legged::MRT_ROS_Interface> mrt_;
 
         // State Estimation
         ocs2::SystemObservation currentObservation_;
@@ -73,6 +76,7 @@ namespace legged_robot {
         // std::shared_ptr<StateEstimateBase> stateEstimate_;
         StateEstimate_t stateEstimation_;
         std::shared_ptr<ocs2::CentroidalModelRbdConversions> rbdConversions_;
+
     public:
         controller_interface::InterfaceConfiguration command_interface_configuration() const override;
         controller_interface::InterfaceConfiguration state_interface_configuration() const override;

@@ -7,5 +7,6 @@
         "/home/luo/Project/Horse/Luo_ros2_control/install/ocs2_msgs/lib/python3.12/site-packages",
         "/opt/ros/jazzy/lib/python3.12/site-packages"
     ],
-    "cmake.ignoreCMakeListsMissing": true
+    "cmake.ignoreCMakeListsMissing": true,
+    "ROS2.distro": "jazzy"
 }

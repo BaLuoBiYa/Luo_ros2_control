@@ -153,6 +153,7 @@ controller_interface::CallbackReturn legged_estimator::on_activate(const rclcpp_
 std::vector<hardware_interface::StateInterface> legged_estimator::on_export_state_interfaces()
 {
     std::vector<hardware_interface::StateInterface> state_interfaces;
+    state_interfaces.reserve(12+1);
 
     state_interfaces.emplace_back(
         hardware_interface::StateInterface(
@@ -242,6 +243,13 @@ std::vector<hardware_interface::StateInterface> legged_estimator::on_export_stat
         );
     //基座角速度
 
+    state_interfaces.emplace_back(
+        hardware_interface::StateInterface(
+        "legged_estimator", 
+        "contact_state",
+        &contact_state_)
+        );
+
     return state_interfaces;
 }
 
@@ -292,58 +300,57 @@ controller_interface::InterfaceConfiguration legged_estimator::command_interface
 
 controller_interface::return_type legged_estimator::update_reference_from_subscribers(const rclcpp::Time & time, const rclcpp::Duration & period)
 {
-    (void)period;
-    fusion_msg.stamp = time;
-    CurrentTimestamp = time.seconds();
-
-    uint8_t i = 0;
-    for (i = 0; i<10; i++){
-        const auto imu_opt = state_interfaces_[i].get_optional<double>(10);
-        if (!imu_opt){
-            RCLCPP_WARN(get_node()->get_logger(), "legged_estimator: IMU data timeout.");
-            return controller_interface::return_type::ERROR;
-        }
-        imu_msg_.data[i] = imu_opt.value();
-    }
-    //获取IMU消息
-
-    for (i = 0; i < 12; i++){
-        const auto jointpos_opt = state_interfaces_[i+10].get_optional<double>(10);
-        if (!jointpos_opt){
-            RCLCPP_WARN(get_node()->get_logger(), "legged_estimator: Joint %s postion data timeout.", joint_names_[i].c_str());
-            return controller_interface::return_type::ERROR;
-        }
-        joint_msg_[i] = jointpos_opt.value();
-    }
-    //获取关节位置消息
-
-    for (i = 0; i < 12; i++){
-        const auto jointvel_opt = state_interfaces_[i+22].get_optional<double>(10);
-        if (!jointvel_opt){
-            RCLCPP_WARN(get_node()->get_logger(), "legged_estimator: Joint %s velocity data timeout.", joint_names_[i].c_str());
-            return controller_interface::return_type::ERROR;
-        }
-        joint_msg_[12 + i] = jointvel_opt.value();
-    }
-    //获取关节速度消息
-
-    for (i = 0; i < 4; i++){
-        const auto tipforce_opt = state_interfaces_[i+34].get_optional<double>(10);
-        if (!tipforce_opt){
-            RCLCPP_WARN(get_node()->get_logger(), "legged_estimator: Tip force %s data timeout.", tipforce_names_[i].c_str());
-            return controller_interface::return_type::ERROR;
-        }
-        joint_msg_[24 + i] = tipforce_opt.value();
-    }
-    //获取足端力消息
-
+    (void) time;
+    (void) period;
     return controller_interface::return_type::OK;
 }
 
 controller_interface::return_type legged_estimator::update_and_write_commands(const rclcpp::Time & time, const rclcpp::Duration & period)
 {
-    (void)time;
-    (void)period;
+    (void) period;
+    fusion_msg.stamp = time;
+    CurrentTimestamp = time.seconds();
+
+    uint8_t i = 0;
+    for (i = 0; i<10; i++){
+        // const auto imu_opt = state_interfaces_[i].get_optional<double>(10);
+        // if (!imu_opt){
+        //     RCLCPP_WARN(get_node()->get_logger(), "legged_estimator: IMU data timeout.");
+        //     return controller_interface::return_type::ERROR;
+        // }
+        imu_msg_.data[i] = state_interfaces_[i].get_optional().value();
+    }
+    //获取IMU消息
+
+    for (i = 0; i < 12; i++){
+        // const auto jointpos_opt = state_interfaces_[i+10].get_optional<double>(10);
+        // if (!jointpos_opt){
+        //     RCLCPP_WARN(get_node()->get_logger(), "legged_estimator: Joint %s postion data timeout.", joint_names_[i].c_str());
+        //     return controller_interface::return_type::ERROR;
+        // }
+        joint_msg_[i] = state_interfaces_[i+10].get_optional().value();
+    }
+    //获取关节位置消息
+
+    for (i = 0; i < 12; i++){
+        // const auto jointvel_opt = state_interfaces_[i+22].get_optional<double>(10);
+        // if (!jointvel_opt){
+        //     RCLCPP_WARN(get_node()->get_logger(), "legged_estimator: Joint %s velocity data timeout.", joint_names_[i].c_str());
+        //     return controller_interface::return_type::ERROR;
+        // }
+        joint_msg_[12 + i] = state_interfaces_[i+22].get_optional().value();
+    }
+    //获取关节速度消息
+
+    for (i = 0; i < 4; i++){
+        // const auto tipforce_opt = state_interfaces_[i+34].get_optional<double>(10);
+        // if (!tipforce_opt){
+        //     RCLCPP_WARN(get_node()->get_logger(), "legged_estimator: Tip force %s data timeout.", tipforce_names_[i].c_str());
+        //     return controller_interface::return_type::ERROR;
+        // }
+        joint_msg_[24 + i] = state_interfaces_[i+34].get_optional().value();
+    }
+    //获取足端力消息
 
     imu_update(imu_msg_);
     joint_update(joint_msg_);
