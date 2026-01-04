@@ -1,6 +1,6 @@
 [submodule "qpoases_colcon"]
     path = src/qpoases_colcon
-    url = https://github.com/coin-or/qpOASES
+    url = https://github.com/BaLuoBiYa/qpoases_colcon
 [submodule "Ros2Go2Estimator"]
     path = src/Ros2Go2Estimator
     url = https://github.com/ShineMinxing/Ros2Go2Estimator
