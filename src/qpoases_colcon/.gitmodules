@@ -1,3 +1,0 @@
-[submodule "qpoases_colcon"]
-    path = third_party/qpOASES
-    url = https://github.com/coin-or/qpOASES
