@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>legged_controllers</name>
+  <name>legged_hardware</name>
   <version>0.0.0</version>
   <description>TODO: Package description</description>
   <maintainer email="Louie.LiuHaoYu@outlook.com">luo</maintainer>
@@ -10,14 +10,6 @@
   <buildtool_depend>ament_cmake</buildtool_depend>
 
   <depend>rclcpp</depend>
-  <depend>tf2</depend>
-  <depend>robot_state_publisher</depend>
-  <depend>ocs2_legged_robot</depend>
-  <depend>ocs2_ros_interfaces</depend>
-  <depend>controller_interface</depend>
-  <depend>hardware_interface</depend>
-  <depend>pluginlib</depend>
-  <depend>rclcpp_lifecycle</depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
