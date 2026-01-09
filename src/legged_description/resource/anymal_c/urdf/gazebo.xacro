@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<!-- Basic differential drive mobile base -->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="anymal">
+
+    <xacro:include filename="anymal.urdf" />
+
+    <xacro:include filename="joint_gz.xacro" />
+
+    <xacro:leggedbot_base name="anymal" />
+
+    <gazebo>
+        <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
+            <parameters>$(find legged_description)/launch/anymal.yaml</parameters>
+        </plugin>
+    </gazebo>
+
+</robot>
