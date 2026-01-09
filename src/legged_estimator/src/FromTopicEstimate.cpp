@@ -13,8 +13,10 @@ namespace legged_robot
 												   const rclcpp_lifecycle::LifecycleNode::SharedPtr &node)
 		: StateEstimateBase(std::move(pinocchioInterface), std::move(info), eeKinematics, node)
 	{
-		// ros::NodeHandle nh;
-		// sub_ = nh.subscribe<nav_msgs::Odometry>("/ground_truth/state", 10, &FromTopicStateEstimate::callback, this);
+		sub_ = std::make_shared<rclcpp::Subscription<nav_msgs::msg::Odometry>>(
+			node->create_subscription<nav_msgs::msg::Odometry>(
+				"/ground_truth/state", 10,
+				std::bind(&FromTopicStateEstimate::callback, this, std::placeholders::_1)));
 	}
 
 	void FromTopicStateEstimate::callback(const nav_msgs::msg::Odometry::ConstPtr &msg)

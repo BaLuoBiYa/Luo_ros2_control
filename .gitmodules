@@ -1,9 +1,7 @@
 [submodule "qpoases_colcon"]
     path = src/qpoases_colcon
 	url = https://github.com/BaLuoBiYa/qpoases_colcon
-[submodule "Ros2Go2Estimator"]
-    path = src/Ros2Go2Estimator
-    url = https://github.com/BaLuoBiYa/Ros2Go2Estimator
+    
 [submodule "ocs2_ros2"]
     path = src/ocs2_ros2
     url = https://github.com/BaLuoBiYa/ocs2_ros2
