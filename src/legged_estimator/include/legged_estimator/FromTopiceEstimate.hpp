@@ -7,7 +7,7 @@
 #include <realtime_tools/realtime_buffer.hpp>
 
 #pragma once
-namespace legged_robot
+namespace legged
 {
 
 	class FromTopicStateEstimate : public StateEstimateBase

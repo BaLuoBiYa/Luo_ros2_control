@@ -16,7 +16,7 @@
 #include <tf2_ros/transform_listener.h>
 #include <tf2_ros/buffer.h>
 
-namespace legged_robot
+namespace legged
 {
 
 	class KalmanFilterEstimate : public StateEstimateBase

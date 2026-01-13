@@ -1,5 +1,5 @@
 /******************************************************************************
-A rewrit version of ocs2::MRT_ROS_Interface to fit legged robot controller
+A rewrit version of ocs2::mrtInterface to fit legged robot controller
 ******************************************************************************/
 
 #pragma once
@@ -15,7 +15,7 @@ A rewrit version of ocs2::MRT_ROS_Interface to fit legged robot controller
 #include <ocs2_mpc/MRT_BASE.h>
 #include <ocs2_msgs/msg/mpc_flattened_controller.hpp>
 #include <ocs2_msgs/srv/reset.hpp>
-#include "ocs2_ros_interfaces/common/RosMsgConversions.h"
+#include <ocs2_ros_interfaces/common/RosMsgConversions.h>
 
 #include <realtime_tools/realtime_publisher.hpp>
 
@@ -24,7 +24,7 @@ namespace legged {
      * This class implements MRT (Model Reference Tracking) communication interface
      * using ROS.
      */
-    class MRT_ROS_Interface : public ocs2::MRT_BASE {
+    class mrtInterface : public ocs2::MRT_BASE {
     public:
         /**
          * Constructor
@@ -34,12 +34,12 @@ namespace legged {
          * "topicPrefix_mpc_policy", and MPC reset service "topicPrefix_mpc_reset".
          * @param [in] mrtTransportHints: ROS transmission protocol.
          */
-        explicit MRT_ROS_Interface(std::string topicPrefix ,const rclcpp_lifecycle::LifecycleNode::SharedPtr node);
+        explicit mrtInterface(std::string topicPrefix ,const rclcpp_lifecycle::LifecycleNode::SharedPtr& node);
 
         /**
          * Destructor
          */
-        ~MRT_ROS_Interface() override;
+        ~mrtInterface() override;
 
         void resetMpcNode(const ocs2::TargetTrajectories &initTargetTrajectories) override;
 
@@ -103,66 +103,3 @@ namespace legged {
     };
 
 } // namespace legged
-
-
-#include <controller_interface/chainable_controller_interface.hpp>
-
-#include <ocs2_centroidal_model/CentroidalModelPinocchioMapping.h>
-#include <ocs2_centroidal_model/CentroidalModelRbdConversions.h>
-#include <ocs2_legged_robot/LeggedRobotInterface.h>
-#include <ocs2_pinocchio_interface/PinocchioEndEffectorKinematics.h>
-
-#include "ocs2_legged_robot_ros/visualization/LeggedRobotVisualizer.h"
-#include "legged_controllers/legged_InterfaceProvider.hpp"
-
-#include <angles/angles.h>
-
-namespace legged_robot{
-    class legged_mrt:public controller_interface::ChainableControllerInterface{
-        protected:
-            // Parameters
-            std::string robotName;
-            std::string taskFile;
-            std::string urdfFile;
-            std::string referenceFile;
-            std::vector<std::string> joint_names_;
-            bool visualization_enable_;
-
-            // Interface
-            std::shared_ptr<ocs2::legged_robot::LeggedRobotInterface> leggedInterface_;
-            std::shared_ptr<ocs2::legged_robot::LeggedRobotVisualizer> leggedRobotVisualizer_;
-
-            // MRT
-            std::shared_ptr<legged::MRT_ROS_Interface> mrt_;
-
-            // State Estimation
-            ocs2::SystemObservation currentObservation_;
-            ocs2::CentroidalModelInfo info_;
-            ocs2::vector_t optimizedState_, optimizedInput_;
-            double plannedMode_;
-            ocs2::vector_t rbdState_;
-            std::shared_ptr<ocs2::CentroidalModelRbdConversions> rbdConversions_;
-
-            void ExportoptimizedState(std::vector<hardware_interface::StateInterface> * state_interfaces);
-            void ExportoptimizedInput(std::vector<hardware_interface::StateInterface> * state_interfaces);
-            void ExportRbdState(std::vector<hardware_interface::StateInterface> * state_interfaces);
-
-        public:
-            controller_interface::InterfaceConfiguration command_interface_configuration() const override;
-            controller_interface::InterfaceConfiguration state_interface_configuration() const override;
-
-            controller_interface::CallbackReturn on_init() override;
-            controller_interface::CallbackReturn on_configure(const rclcpp_lifecycle::State &previous_state) override;
-            controller_interface::CallbackReturn on_activate(const rclcpp_lifecycle::State &previous_state) override;
-
-            // controller_interface::CallbackReturn on_error(const rclcpp_lifecycle::State & previous_state) override;
-
-            std::vector<hardware_interface::StateInterface> on_export_state_interfaces() override;
-            // std::vector<hardware_interface::CommandInterface> on_export_reference_interfaces() override;
-            // bool on_set_chained_mode(bool chained_mode) override;
-
-            controller_interface::return_type update_reference_from_subscribers(const rclcpp::Time & time, const rclcpp::Duration & period) override;
-            controller_interface::return_type update_and_write_commands(const rclcpp::Time & time, const rclcpp::Duration & period) override;
-
-    }; // class legged_mrt
-}// namespace legged_robot

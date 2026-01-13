@@ -15,7 +15,7 @@
 #include <ocs2_legged_robot/gait/MotionPhaseDefinition.h>
 #include <ocs2_pinocchio_interface/PinocchioEndEffectorKinematics.h>
 
-namespace legged_robot
+namespace legged
 {
 
 	class StateEstimateBase
@@ -34,6 +34,10 @@ namespace legged_robot
 							   const ocs2::legged_robot::matrix3_t &orientationCovariance,
 							   const ocs2::legged_robot::matrix3_t &angularVelCovariance,
 							   const ocs2::legged_robot::matrix3_t &linearAccelCovariance);
+							   
+		virtual void updateImu(const Eigen::Quaternion<ocs2::scalar_t> &quat, 
+									  const ocs2::legged_robot::vector3_t &angularVelLocal,
+									  const ocs2::legged_robot::vector3_t &linearAccelLocal);
 
 		virtual ocs2::vector_t update(const rclcpp::Time &time, const rclcpp::Duration &period) = 0;
 

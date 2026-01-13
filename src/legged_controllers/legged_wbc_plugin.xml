@@ -1,7 +1,0 @@
-<library path="legged_wbc">
-    <class name="legged_robot/LeggedWBC" type="legged_robot::legged_wbc" base_class_type="controller_interface::ChainableControllerInterface">
-        <description>
-            LeggedWBC is a controller that can be used as the wbc interface of ocs2 in legged robot.
-        </description>
-    </class>
-</library>

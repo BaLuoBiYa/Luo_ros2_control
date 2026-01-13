@@ -18,6 +18,8 @@
   <depend>hardware_interface</depend>
   <depend>pluginlib</depend>
   <depend>rclcpp_lifecycle</depend>
+  <depend>legged_wbc</depend>
+  <depend>legged_estimator</depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>

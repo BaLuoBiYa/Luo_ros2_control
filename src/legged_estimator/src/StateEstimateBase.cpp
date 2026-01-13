@@ -4,7 +4,7 @@
 #include <ocs2_legged_robot/common/Types.h>
 #include <ocs2_robotic_tools/common/RotationDerivativesTransforms.h>
 
-namespace legged_robot
+namespace legged
 {
 
 	StateEstimateBase::StateEstimateBase(ocs2::PinocchioInterface pinocchioInterface,
@@ -41,6 +41,20 @@ namespace legged_robot
 		orientationCovariance_ = orientationCovariance;
 		angularVelCovariance_ = angularVelCovariance;
 		linearAccelCovariance_ = linearAccelCovariance;
+
+		ocs2::legged_robot::vector3_t zyx = quatToZyx(quat) - zyxOffset_;
+		ocs2::legged_robot::vector3_t angularVelGlobal = ocs2::getGlobalAngularVelocityFromEulerAnglesZyxDerivatives<ocs2::scalar_t>(
+			zyx, ocs2::getEulerAnglesZyxDerivativesFromLocalAngularVelocity<ocs2::scalar_t>(quatToZyx(quat), angularVelLocal));
+		updateAngular(zyx, angularVelGlobal);
+	}
+
+	void StateEstimateBase::updateImu(const Eigen::Quaternion<ocs2::scalar_t> &quat, 
+									  const ocs2::legged_robot::vector3_t &angularVelLocal,
+									  const ocs2::legged_robot::vector3_t &linearAccelLocal)
+	{
+		quat_ = quat;
+		angularVelLocal_ = angularVelLocal;
+		linearAccelLocal_ = linearAccelLocal;
 
 		ocs2::legged_robot::vector3_t zyx = quatToZyx(quat) - zyxOffset_;
 		ocs2::legged_robot::vector3_t angularVelGlobal = ocs2::getGlobalAngularVelocityFromEulerAnglesZyxDerivatives<ocs2::scalar_t>(

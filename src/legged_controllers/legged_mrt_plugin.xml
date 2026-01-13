@@ -1,7 +1,0 @@
-<library path="legged_mrt">
-    <class name="legged_robot/LeggedMRT" type="legged_robot::legged_mrt" base_class_type="controller_interface::ChainableControllerInterface">
-        <description>
-            LeggedMRT is a controller that can be used as the mrt interface of ocs2 in legged robot.
-        </description>
-    </class>
-</library>

@@ -1,6 +1,6 @@
 #include "legged_estimator/FromTopiceEstimate.hpp"
 
-namespace legged_robot
+namespace legged
 {
 
 	FromTopicStateEstimate::FromTopicStateEstimate(ocs2::PinocchioInterface pinocchioInterface,

@@ -20,10 +20,12 @@ find_package(ocs2_ros_interfaces REQUIRED)
 find_package(ocs2_pinocchio_interface REQUIRED)
 find_package(ocs2_centroidal_model REQUIRED)
 
+find_package(legged_wbc REQUIRED)
+find_package(legged_estimator REQUIRED)
+
 # 控制器插件
 add_library(${PROJECT_NAME} SHARED
-  src/legged_mrt.cpp
-  src/legged_wbc.cpp
+  src/legged_controller.cpp
 )
 
 ament_target_dependencies(${PROJECT_NAME}
@@ -35,6 +37,8 @@ ament_target_dependencies(${PROJECT_NAME}
   ocs2_legged_robot
   ocs2_legged_robot_ros
   ocs2_ros_interfaces
+  legged_wbc
+  legged_estimator
 )
 
 include_directories(include)
@@ -43,8 +47,7 @@ target_include_directories(${PROJECT_NAME}
   include
 )
 
-pluginlib_export_plugin_description_file(controller_interface legged_mrt_plugin.xml)
-pluginlib_export_plugin_description_file(controller_interface legged_wbc_plugin.xml)
+pluginlib_export_plugin_description_file(controller_interface legged_controller_plugin.xml)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)

@@ -6,7 +6,7 @@
 #include <ocs2_robotic_tools/common/RotationDerivativesTransforms.h>
 #include <ocs2_robotic_tools/common/RotationTransforms.h>
 
-namespace legged_robot
+namespace legged
 {
 
 	KalmanFilterEstimate::KalmanFilterEstimate(ocs2::PinocchioInterface pinocchioInterface,
