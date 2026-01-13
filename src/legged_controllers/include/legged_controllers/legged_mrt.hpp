@@ -6,18 +6,18 @@ A rewrit version of ocs2::MRT_ROS_Interface to fit legged robot controller
 
 #include <condition_variable>
 #include <string>
-#include <thread>
+// #include <thread>
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp_lifecycle/lifecycle_node.hpp>
+#include <rclcpp/logger.hpp>
 
 // MPC messages
 #include <ocs2_mpc/MRT_BASE.h>
 #include <ocs2_msgs/msg/mpc_flattened_controller.hpp>
 #include <ocs2_msgs/srv/reset.hpp>
-
 #include "ocs2_ros_interfaces/common/RosMsgConversions.h"
 
-#define PUBLISH_THREAD
+#include <realtime_tools/realtime_publisher.hpp>
 
 namespace legged {
     /**
@@ -34,7 +34,7 @@ namespace legged {
          * "topicPrefix_mpc_policy", and MPC reset service "topicPrefix_mpc_reset".
          * @param [in] mrtTransportHints: ROS transmission protocol.
          */
-        explicit MRT_ROS_Interface(std::string topicPrefix = "anonymousRobot");
+        explicit MRT_ROS_Interface(std::string topicPrefix ,const rclcpp_lifecycle::LifecycleNode::SharedPtr node);
 
         /**
          * Destructor
@@ -44,26 +44,11 @@ namespace legged {
         void resetMpcNode(const ocs2::TargetTrajectories &initTargetTrajectories) override;
 
         /**
-         * Shut down the ROS nodes.
-         */
-        void shutdownNodes();
-
-        /**
-         * Shut down publisher
-         */
-        void shutdownPublisher();
-
-        // /**
-        //  * spin the MRT callback queue
-        //  */
-        // void spinMRT();
-
-        /**
          * Launches the ROS publishers and subscribers to communicate with the MPC
          * node.
          * @param node
          */
-        void launchNodes(const rclcpp_lifecycle::LifecycleNode::SharedPtr& node);
+        void launchNodes();
 
         void setCurrentObservation(
             const ocs2::SystemObservation &currentObservation) override;
@@ -91,19 +76,14 @@ namespace legged {
                                   ocs2::PrimalSolution &primalSolution,
                                   ocs2::PerformanceIndex &performanceIndices);
 
-        /**
-         * A thread function which sends the current state and checks for a new MPC
-         * update.
-         */
-        void publisherWorkerThread();
-
     private:
         std::string topicPrefix_;
+        const rclcpp_lifecycle::LifecycleNode::SharedPtr node_;
 
         // Publishers and subscribers
-        rclcpp_lifecycle::LifecycleNode::SharedPtr node_;
-        rclcpp::Publisher<ocs2_msgs::msg::MpcObservation>::SharedPtr
-        mpcObservationPublisher_;
+        std::shared_ptr<realtime_tools::RealtimePublisher<ocs2_msgs::msg::MpcObservation>> mpcObservationPublisher_;
+        // rclcpp::Publisher<ocs2_msgs::msg::MpcObservation>::SharedPtr
+        // mpcObservationPublisher_;
         rclcpp::Subscription<ocs2_msgs::msg::MpcFlattenedController>::SharedPtr
         mpcPolicySubscriber_;
         rclcpp::Client<ocs2_msgs::srv::Reset>::SharedPtr mpcResetServiceClient_;
@@ -113,14 +93,13 @@ namespace legged {
         ocs2_msgs::msg::MpcObservation mpcObservationMsgBuffer_;
 
         // rclcpp::executors::SingleThreadedExecutor callback_executor_;
-        rclcpp::Logger LOGGER = rclcpp::get_logger("MRT_ROS_Interface");
 
         // Multi-threading for publishers
-        bool terminateThread_;
-        bool readyToPublish_;
-        std::thread publisherWorker_;
-        std::mutex publisherMutex_;
-        std::condition_variable msgReady_;
+        // bool terminateThread_;
+        // bool readyToPublish_;
+        // std::thread publisherWorker_;
+        // std::mutex publisherMutex_;
+        // std::condition_variable msgReady_;
     };
 
 } // namespace legged

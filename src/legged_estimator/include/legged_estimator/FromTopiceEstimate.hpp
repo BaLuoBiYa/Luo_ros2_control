@@ -25,7 +25,7 @@ namespace legged_robot
 		ocs2::vector_t update(const rclcpp::Time &time, const rclcpp::Duration &period) override;
 
 	private:
-		void callback(const nav_msgs::msg::Odometry::ConstPtr &msg);
+		void callback(const nav_msgs::msg::Odometry::ConstSharedPtr &msg);
 
 		rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr sub_;
 		realtime_tools::RealtimeBuffer<nav_msgs::msg::Odometry> buffer_;

@@ -1,7 +1,3 @@
-//
-// Created by qiayuan on 2021/11/15.
-//
-
 #include "legged_estimator/StateEstimateBase.hpp"
 
 #include <ocs2_centroidal_model/FactoryFunctions.h>
@@ -20,8 +16,10 @@ namespace legged_robot
 		  eeKinematics_(eeKinematics.clone()),
 		  rbdState_(ocs2::vector_t ::Zero(2 * info_.generalizedCoordinatesNum))
 	{
-		odomPub_ = std::make_shared<realtime_tools::RealtimePublisher<nav_msgs::msg::Odometry>>(node, "odom", 10);
-		posePub_ = std::make_shared<realtime_tools::RealtimePublisher<geometry_msgs::msg::PoseWithCovarianceStamped>>(node, "pose", 10);
+		auto odom = node->create_publisher<nav_msgs::msg::Odometry>("odom", 10);
+		odomPub_ = std::make_shared<realtime_tools::RealtimePublisher<nav_msgs::msg::Odometry>>(odom);
+		auto pose = node->create_publisher<geometry_msgs::msg::PoseWithCovarianceStamped>("pose", 10);
+		posePub_ = std::make_shared<realtime_tools::RealtimePublisher<geometry_msgs::msg::PoseWithCovarianceStamped>>(pose);
 	}
 
 	void StateEstimateBase::updateJointStates(const ocs2::vector_t &jointPos, const ocs2::vector_t &jointVel)

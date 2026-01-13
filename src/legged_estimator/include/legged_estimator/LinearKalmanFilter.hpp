@@ -34,7 +34,7 @@ namespace legged_robot
 	protected:
 		void updateFromTopic();
 
-		void callback(const nav_msgs::msg::Odometry::ConstPtr &msg);
+		void callback(const nav_msgs::msg::Odometry::ConstSharedPtr &msg);
 
 		nav_msgs::msg::Odometry getOdomMsg();
 

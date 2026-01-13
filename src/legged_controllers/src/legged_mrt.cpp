@@ -32,173 +32,137 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <ocs2_core/control/FeedforwardController.h>
 #include <ocs2_core/control/LinearController.h>
 
-namespace legged {
-    MRT_ROS_Interface::MRT_ROS_Interface(std::string topicPrefix)
-        :topicPrefix_(std::move(topicPrefix))
+namespace legged
+{
+    MRT_ROS_Interface::MRT_ROS_Interface(std::string topicPrefix,const rclcpp_lifecycle::LifecycleNode::SharedPtr node)
+        : topicPrefix_(topicPrefix),
+          node_(node) {}
+
+    MRT_ROS_Interface::~MRT_ROS_Interface() {}
+
+    void MRT_ROS_Interface::resetMpcNode(const ocs2::TargetTrajectories &initTargetTrajectories)
     {
-        // Start thread for publishing
-#ifdef PUBLISH_THREAD
-        // Close old thread if it is already running
-        shutdownPublisher();
-        terminateThread_ = false;
-        readyToPublish_ = false;
-        publisherWorker_ = std::thread(&MRT_ROS_Interface::publisherWorkerThread, this);
-#endif
-    }
-
-
-    MRT_ROS_Interface::~MRT_ROS_Interface() { shutdownNodes(); }
-
-
-    void MRT_ROS_Interface::resetMpcNode(
-        const ocs2::TargetTrajectories &initTargetTrajectories) {
         this->reset();
 
-        const auto resetSrvRequest = std::make_shared<ocs2_msgs::srv::Reset::Request>();;
+        const auto resetSrvRequest = std::make_shared<ocs2_msgs::srv::Reset::Request>();
         resetSrvRequest->reset = true;
         resetSrvRequest->target_trajectories =
-                ocs2::ros_msg_conversions::createTargetTrajectoriesMsg(initTargetTrajectories);
+            ocs2::ros_msg_conversions::createTargetTrajectoriesMsg(initTargetTrajectories);
 
-        while (!mpcResetServiceClient_->wait_for_service(std::chrono::seconds(5)) &&
-               rclcpp::ok()) {
-            RCLCPP_ERROR_STREAM(LOGGER,
-                                "Failed to call service to reset MPC, retrying...");
+        while (!mpcResetServiceClient_->wait_for_service(std::chrono::seconds(5)) && rclcpp::ok())
+        {
+            RCLCPP_ERROR_STREAM(node_->get_logger(),"Failed to call service to reset MPC, retrying...");
         }
 
         mpcResetServiceClient_->async_send_request(resetSrvRequest);
-        RCLCPP_INFO_STREAM(LOGGER, "MPC node has been reset.");
+        RCLCPP_INFO_STREAM(node_->get_logger(), "MPC node has been reset.");
     }
 
-
-    void MRT_ROS_Interface::setCurrentObservation(
-        const ocs2::SystemObservation &currentObservation) {
-#ifdef PUBLISH_THREAD
-        std::unique_lock<std::mutex> lk(publisherMutex_);
-#endif
-
-        // create the message
-        mpcObservationMsg_ =
-                ocs2::ros_msg_conversions::createObservationMsg(currentObservation);
-
-        // publish the current observation
-#ifdef PUBLISH_THREAD
-        readyToPublish_ = true;
-        lk.unlock();
-        msgReady_.notify_one();
-#else
-  mpcObservationPublisher_.publish(mpcObservationMsg_);
-#endif
-    }
-
-
-    void MRT_ROS_Interface::publisherWorkerThread() {
-        while (!terminateThread_) {
-            std::unique_lock<std::mutex> lk(publisherMutex_);
-
-            msgReady_.wait(lk, [&] { return (readyToPublish_ || terminateThread_); });
-
-            if (terminateThread_) {
-                break;
-            }
-
-            mpcObservationMsgBuffer_ = std::move(mpcObservationMsg_);
-
-            readyToPublish_ = false;
-
-            lk.unlock();
-            msgReady_.notify_one();
-
-            mpcObservationPublisher_->publish(mpcObservationMsgBuffer_);
+    void MRT_ROS_Interface::setCurrentObservation(const ocs2::SystemObservation &currentObservation)
+    {
+        mpcObservationMsg_ = ocs2::ros_msg_conversions::createObservationMsg(currentObservation);
+        if (mpcObservationPublisher_->trylock())
+        {
+            mpcObservationPublisher_->msg_ = mpcObservationMsg_;
+            mpcObservationPublisher_->unlockAndPublish();
         }
     }
 
-
-    void MRT_ROS_Interface::readPolicyMsg(
-        const ocs2_msgs::msg::MpcFlattenedController &msg, ocs2::CommandData &commandData,
-        ocs2::PrimalSolution &primalSolution, ocs2::PerformanceIndex &performanceIndices) {
+    void MRT_ROS_Interface::readPolicyMsg(const ocs2_msgs::msg::MpcFlattenedController &msg, 
+                                          ocs2::CommandData &commandData,
+                                          ocs2::PrimalSolution &primalSolution, 
+                                          ocs2::PerformanceIndex &performanceIndices)
+    {
         commandData.mpcInitObservation_ =
-                ocs2::ros_msg_conversions::readObservationMsg(msg.init_observation);
+            ocs2::ros_msg_conversions::readObservationMsg(msg.init_observation);
         commandData.mpcTargetTrajectories_ =
-                ocs2::ros_msg_conversions::readTargetTrajectoriesMsg(
-                    msg.plan_target_trajectories);
+            ocs2::ros_msg_conversions::readTargetTrajectoriesMsg(
+                msg.plan_target_trajectories);
         performanceIndices =
-                ocs2::ros_msg_conversions::readPerformanceIndicesMsg(msg.performance_indices);
+            ocs2::ros_msg_conversions::readPerformanceIndicesMsg(msg.performance_indices);
 
         const size_t N = msg.time_trajectory.size();
-        if (N == 0) {
+        if (N == 0)
+        {
             throw std::runtime_error(
                 "[MRT_ROS_Interface::readPolicyMsg] controller message is empty!");
         }
-        if (msg.state_trajectory.size() != N && msg.input_trajectory.size() != N) {
+        if (msg.state_trajectory.size() != N && msg.input_trajectory.size() != N)
+        {
             throw std::runtime_error(
                 "[MRT_ROS_Interface::readPolicyMsg] state and input trajectories must "
                 "have same length!");
         }
-        if (msg.data.size() != N) {
+        if (msg.data.size() != N)
+        {
             throw std::runtime_error(
                 "[MRT_ROS_Interface::readPolicyMsg] Data has the wrong length!");
         }
 
         primalSolution.clear();
 
-        primalSolution.modeSchedule_ =
-                ocs2::ros_msg_conversions::readModeScheduleMsg(msg.mode_schedule);
+        primalSolution.modeSchedule_ = ocs2::ros_msg_conversions::readModeScheduleMsg(msg.mode_schedule);
 
         ocs2::size_array_t stateDim(N);
         ocs2::size_array_t inputDim(N);
         primalSolution.timeTrajectory_.reserve(N);
         primalSolution.stateTrajectory_.reserve(N);
         primalSolution.inputTrajectory_.reserve(N);
-        for (size_t i = 0; i < N; i++) {
+        for (size_t i = 0; i < N; i++)
+        {
             stateDim[i] = msg.state_trajectory[i].value.size();
             inputDim[i] = msg.input_trajectory[i].value.size();
             primalSolution.timeTrajectory_.emplace_back(msg.time_trajectory[i]);
             primalSolution.stateTrajectory_.emplace_back(
                 Eigen::Map<const Eigen::VectorXf>(msg.state_trajectory[i].value.data(),
                                                   stateDim[i])
-                .cast<ocs2::scalar_t>());
+                    .cast<ocs2::scalar_t>());
             primalSolution.inputTrajectory_.emplace_back(
                 Eigen::Map<const Eigen::VectorXf>(msg.input_trajectory[i].value.data(),
                                                   inputDim[i])
-                .cast<ocs2::scalar_t>());
+                    .cast<ocs2::scalar_t>());
         }
 
         primalSolution.postEventIndices_.reserve(msg.post_event_indices.size());
-        for (auto ind: msg.post_event_indices) {
+        for (auto ind : msg.post_event_indices)
+        {
             primalSolution.postEventIndices_.emplace_back(static_cast<size_t>(ind));
         }
 
         std::vector<std::vector<float> const *> controllerDataPtrArray(N, nullptr);
-        for (size_t i = 0; i < N; i++) {
+        for (size_t i = 0; i < N; i++)
+        {
             controllerDataPtrArray[i] = &(msg.data[i].data);
         }
 
         // instantiate the correct controller
-        switch (msg.controller_type) {
-            case ocs2_msgs::msg::MpcFlattenedController::CONTROLLER_FEEDFORWARD: {
-                auto controller = ocs2::FeedforwardController::unFlatten(
-                    primalSolution.timeTrajectory_, controllerDataPtrArray);
-                primalSolution.controllerPtr_.reset(
-                    new ocs2::FeedforwardController(std::move(controller)));
-                break;
-            }
-            case ocs2_msgs::msg::MpcFlattenedController::CONTROLLER_LINEAR: {
-                auto controller = ocs2::LinearController::unFlatten(
-                    stateDim, inputDim, primalSolution.timeTrajectory_,
-                    controllerDataPtrArray);
-                primalSolution.controllerPtr_.reset(
-                    new ocs2::LinearController(std::move(controller)));
-                break;
-            }
-            default:
-                throw std::runtime_error(
-                    "[MRT_ROS_Interface::readPolicyMsg] Unknown controllerType!");
+        switch (msg.controller_type)
+        {
+        case ocs2_msgs::msg::MpcFlattenedController::CONTROLLER_FEEDFORWARD:
+        {
+            auto controller = ocs2::FeedforwardController::unFlatten(
+                primalSolution.timeTrajectory_, controllerDataPtrArray);
+            primalSolution.controllerPtr_.reset(
+                new ocs2::FeedforwardController(std::move(controller)));
+            break;
+        }
+        case ocs2_msgs::msg::MpcFlattenedController::CONTROLLER_LINEAR:
+        {
+            auto controller = ocs2::LinearController::unFlatten(
+                stateDim, inputDim, primalSolution.timeTrajectory_,
+                controllerDataPtrArray);
+            primalSolution.controllerPtr_.reset(
+                new ocs2::LinearController(std::move(controller)));
+            break;
+        }
+        default:
+            throw std::runtime_error(
+                "[MRT_ROS_Interface::readPolicyMsg] Unknown controllerType!");
         }
     }
 
-
-    void MRT_ROS_Interface::mpcPolicyCallback(
-        const ocs2_msgs::msg::MpcFlattenedController::ConstSharedPtr &msg) {
+    void MRT_ROS_Interface::mpcPolicyCallback(const ocs2_msgs::msg::MpcFlattenedController::ConstSharedPtr &msg)
+    {
         // read new policy and command from msg
         auto commandPtr = std::make_unique<ocs2::CommandData>();
         auto primalSolutionPtr = std::make_unique<ocs2::PrimalSolution>();
@@ -209,71 +173,40 @@ namespace legged {
                            std::move(performanceIndicesPtr));
     }
 
-
-    void MRT_ROS_Interface::shutdownNodes() {
-#ifdef PUBLISH_THREAD
-        RCLCPP_INFO_STREAM(LOGGER, "Shutting down workers ...");
-
-        shutdownPublisher();
-
-        RCLCPP_INFO_STREAM(LOGGER, "All workers are shut down.");
-#endif
-
-        // clean up callback queue
-        // callback_executor_.cancel();
-    }
-
-
-    void MRT_ROS_Interface::shutdownPublisher() {
-        std::unique_lock<std::mutex> lk(publisherMutex_);
-        terminateThread_ = true;
-        lk.unlock();
-
-        msgReady_.notify_all();
-
-        if (publisherWorker_.joinable()) {
-            publisherWorker_.join();
-        }
-    }
-
-    void MRT_ROS_Interface::launchNodes(const rclcpp_lifecycle::LifecycleNode::SharedPtr& node) {
+    void MRT_ROS_Interface::launchNodes()
+    {
         this->reset();
-        node_ = node;
-        LOGGER = node_->get_logger();
+        
         // display
-        RCLCPP_INFO_STREAM(LOGGER, "MRT node is setting up ...");
+        RCLCPP_INFO_STREAM(node_->get_logger(), "MRT node is setting up ...");
 
         // observation publisher
-        mpcObservationPublisher_ =
-                node_->create_publisher<ocs2_msgs::msg::MpcObservation>(
-                    topicPrefix_ + "_mpc_observation", 1);
+        auto obs_pub = node_->create_publisher<ocs2_msgs::msg::MpcObservation>(
+            topicPrefix_ + "_mpc_observation", 1);
+        mpcObservationPublisher_ = std::make_shared<realtime_tools::RealtimePublisher<ocs2_msgs::msg::MpcObservation>>(obs_pub);
 
         // policy subscriber
-        mpcPolicySubscriber_ =
-                node_->create_subscription<ocs2_msgs::msg::MpcFlattenedController>(
-                    topicPrefix_ + "_mpc_policy", // topic name
-                    1, // queue length
-                    std::bind(&MRT_ROS_Interface::mpcPolicyCallback, this,
-                              std::placeholders::_1));
+        mpcPolicySubscriber_ = node_->create_subscription<ocs2_msgs::msg::MpcFlattenedController>(
+            topicPrefix_ + "_mpc_policy", // topic name
+            1,                            // queue length
+            std::bind(&MRT_ROS_Interface::mpcPolicyCallback, this, std::placeholders::_1));
 
         // MPC reset service client
-        mpcResetServiceClient_ =
-                node_->create_client<ocs2_msgs::srv::Reset>(topicPrefix_ + "_mpc_reset");
+        mpcResetServiceClient_ = node_->create_client<ocs2_msgs::srv::Reset>(topicPrefix_ + "_mpc_reset");
 
         // display
-#ifdef PUBLISH_THREAD
-        RCLCPP_INFO_STREAM(LOGGER, "Publishing MRT messages on a separate thread.");
-#endif
-        RCLCPP_INFO_STREAM(LOGGER, "MRT node is ready.");
+        RCLCPP_INFO_STREAM(node_->get_logger(), "MRT node is ready.");
     }
 } // namespace legged
 
-namespace legged_robot{
+namespace legged_robot
+{
     controller_interface::CallbackReturn legged_mrt::on_init()
     {
         // Initialize parameters
         joint_names_ = auto_declare<std::vector<std::string>>("joints", {});
-        if (joint_names_.size() != 12u) {
+        if (joint_names_.size() != 12u)
+        {
             RCLCPP_ERROR(
                 get_node()->get_logger(), "Expected 12 joint names, got %zu", joint_names_.size());
             return CallbackReturn::ERROR;
@@ -293,7 +226,7 @@ namespace legged_robot{
     {
         controller_interface::InterfaceConfiguration config;
         config.type = controller_interface::interface_configuration_type::INDIVIDUAL;
-        config.names.reserve(12+12+12);
+        config.names.reserve(12 + 12 + 12);
 
         config.names.push_back("estimation/orientation_roll");
         config.names.push_back("estimation/orientation_pitch");
@@ -311,14 +244,16 @@ namespace legged_robot{
         config.names.push_back("estimation/angular_y");
         config.names.push_back("estimation/angular_z");
 
-        for (const auto &joint_name : joint_names_){
+        for (const auto &joint_name : joint_names_)
+        {
             config.names.push_back(joint_name + "/position");
         }
-        //申请关节位置接口
-        for (const auto &joint_name : joint_names_){
+        // 申请关节位置接口
+        for (const auto &joint_name : joint_names_)
+        {
             config.names.push_back(joint_name + "/velocity");
         }
-        //申请关节速度接口
+        // 申请关节速度接口
 
         return config;
     }
@@ -343,29 +278,30 @@ namespace legged_robot{
 
     controller_interface::CallbackReturn legged_mrt::on_configure(const rclcpp_lifecycle::State &previous_state)
     {
-        (void) previous_state;
+        (void)previous_state;
 
         leggedInterface_ = legged_robot::LeggedInterfaceProvider::get(taskFile, urdfFile, referenceFile);
         ocs2::CentroidalModelPinocchioMapping pinocchioMapping(leggedInterface_->getCentroidalModelInfo());
 
         // Visualization
-        if (visualization_enable_){
-        ocs2::CentroidalModelPinocchioMapping pinocchioMapping(
-            leggedInterface_->getCentroidalModelInfo());
-        ocs2::PinocchioEndEffectorKinematics endEffectorKinematics(
-            leggedInterface_->getPinocchioInterface(), 
-            pinocchioMapping,
-            leggedInterface_->modelSettings().contactNames3DoF);
-        leggedRobotVisualizer_ = std::make_shared<ocs2::legged_robot::LeggedRobotVisualizer>(
-            leggedInterface_->getPinocchioInterface(),
-            leggedInterface_->getCentroidalModelInfo(),
-            endEffectorKinematics, get_node());
+        if (visualization_enable_)
+        {
+            ocs2::CentroidalModelPinocchioMapping pinocchioMapping(
+                leggedInterface_->getCentroidalModelInfo());
+            ocs2::PinocchioEndEffectorKinematics endEffectorKinematics(
+                leggedInterface_->getPinocchioInterface(),
+                pinocchioMapping,
+                leggedInterface_->modelSettings().contactNames3DoF);
+            leggedRobotVisualizer_ = std::make_shared<ocs2::legged_robot::LeggedRobotVisualizer>(
+                leggedInterface_->getPinocchioInterface(),
+                leggedInterface_->getCentroidalModelInfo(),
+                endEffectorKinematics, get_node());
         }
 
         // MRT
-        mrt_ = std::make_shared<legged::MRT_ROS_Interface>(robotName);
+        mrt_ = std::make_shared<legged::MRT_ROS_Interface>(robotName, get_node());
         mrt_->initRollout(&leggedInterface_->getRollout());
-        mrt_->launchNodes(get_node());
+        mrt_->launchNodes();
 
         // Resize state and input
         info_ = leggedInterface_->getCentroidalModelInfo();
@@ -377,17 +313,17 @@ namespace legged_robot{
 
     controller_interface::CallbackReturn legged_mrt::on_activate(const rclcpp_lifecycle::State &previous_state)
     {
-        (void) previous_state;
+        (void)previous_state;
         // Initial state
         ocs2::SystemObservation initObservation;
         initObservation.state = leggedInterface_->getInitialState();
         initObservation.input =
-                ocs2::vector_t::Zero(leggedInterface_->getCentroidalModelInfo().inputDim);
+            ocs2::vector_t::Zero(leggedInterface_->getCentroidalModelInfo().inputDim);
         initObservation.mode = ocs2::legged_robot::ModeNumber::STANCE;
 
         // Initial command
         ocs2::TargetTrajectories initTargetTrajectories({0.0}, {initObservation.state},
-                                                {initObservation.input});
+                                                        {initObservation.input});
 
         RCLCPP_INFO_STREAM(get_node()->get_logger(), "Waiting for the initial policy ...");
 
@@ -395,7 +331,8 @@ namespace legged_robot{
         mrt_->resetMpcNode(initTargetTrajectories);
 
         // Wait for the initial policy
-        while (!mrt_->initialPolicyReceived() && rclcpp::ok()) {
+        while (!mrt_->initialPolicyReceived() && rclcpp::ok())
+        {
             rclcpp::sleep_for(std::chrono::milliseconds(10));
             mrt_->setCurrentObservation(initObservation);
         }
@@ -404,31 +341,33 @@ namespace legged_robot{
         return controller_interface::CallbackReturn::SUCCESS;
     }
 
-    controller_interface::return_type legged_mrt::update_reference_from_subscribers(const rclcpp::Time & time, const rclcpp::Duration & period)
+    controller_interface::return_type legged_mrt::update_reference_from_subscribers(const rclcpp::Time &time, const rclcpp::Duration &period)
     {
-        (void) time;
-        (void) period;
+        (void)time;
+        (void)period;
         return controller_interface::return_type::OK;
     }
 
-    controller_interface::return_type legged_mrt::update_and_write_commands(const rclcpp::Time & time, const rclcpp::Duration & period)
+    controller_interface::return_type legged_mrt::update_and_write_commands(const rclcpp::Time &time, const rclcpp::Duration &period)
     {
-        (void) period;
+        (void)period;
 
         currentObservation_.time = time.seconds();
-        ocs2::legged_robot::vector3_t zyx,angularVel,pos,linearVel;
-        ocs2::vector_t jointPos,jointVel;
+        ocs2::legged_robot::vector3_t zyx, angularVel, pos, linearVel;
+        ocs2::vector_t jointPos, jointVel;
         jointPos.resize(12);
         jointVel.resize(12);
 
-        for (uint8_t i = 0; i < 3; i++){
+        for (uint8_t i = 0; i < 3; i++)
+        {
             zyx(i) = state_interfaces_[i].get_optional().value();
-            pos(i) = state_interfaces_[i+3].get_optional().value();
-            linearVel(i) = state_interfaces_[i+6].get_optional().value();
-            angularVel(i) = state_interfaces_[i+9].get_optional().value();
+            pos(i) = state_interfaces_[i + 3].get_optional().value();
+            linearVel(i) = state_interfaces_[i + 6].get_optional().value();
+            angularVel(i) = state_interfaces_[i + 9].get_optional().value();
         }
 
-        for(uint8_t i = 0; i < 12; i++){
+        for (uint8_t i = 0; i < 12; i++)
+        {
             jointPos(i) = state_interfaces_[12 + i].get_optional().value();
             jointVel(i) = state_interfaces_[24 + i].get_optional().value();
         }
@@ -441,23 +380,24 @@ namespace legged_robot{
 
         rbdState_.segment(6, info_.actuatedDofNum) = jointPos;
         rbdState_.segment(6 + info_.generalizedCoordinatesNum, info_.actuatedDofNum) = jointVel;
-        //从观测值更新刚体动力学模型状态
+        // 从观测值更新刚体动力学模型状态
 
         ocs2::scalar_t yawLast = currentObservation_.state(9);
         currentObservation_.state = rbdConversions_->computeCentroidalStateFromRbdModel(rbdState_);
         currentObservation_.state(9) = yawLast + angles::shortest_angular_distance(yawLast, currentObservation_.state(9));
         currentObservation_.mode = static_cast<size_t>(state_interfaces_.back().get_optional().value());
-        //从刚体动力学模型更新MPC观测值
+        // 从刚体动力学模型更新MPC观测值
 
         mrt_->setCurrentObservation(currentObservation_);
         mrt_->updatePolicy();
 
-        size_t plannedMode = 0;  // The mode that is active at the time the policy is evaluated at.
+        size_t plannedMode = 0; // The mode that is active at the time the policy is evaluated at.
         mrt_->evaluatePolicy(currentObservation_.time, currentObservation_.state, optimizedState_, optimizedInput_, plannedMode);
         plannedMode_ = static_cast<double>(plannedMode);
         // 从MPC获取优化结果
 
-        if (visualization_enable_){
+        if (visualization_enable_)
+        {
             leggedRobotVisualizer_->update(currentObservation_, mrt_->getPolicy(), mrt_->getCommand());
         }
         // Visualization
@@ -465,88 +405,91 @@ namespace legged_robot{
         return controller_interface::return_type::OK;
     }
 
-    void legged_mrt::ExportoptimizedState(std::vector<hardware_interface::StateInterface> * state_interfaces)
+    void legged_mrt::ExportoptimizedState(std::vector<hardware_interface::StateInterface> *state_interfaces)
     {
         const std::vector<std::string> names = {
-            "vcom_x","vcom_y","vcom_z",
+            "vcom_x", "vcom_y", "vcom_z",
             // linear momentum
-            "L_x","L_y","L_z",
+            "L_x", "L_y", "L_z",
             // angular momentum
-            "p_base_x","p_base_y","p_base_z",
+            "p_base_x", "p_base_y", "p_base_z",
             // base postion
-            "theta_base_z","theta_base_y","theta_base_x",
+            "theta_base_z", "theta_base_y", "theta_base_x",
             // base orientation
-            "LF_HAA","LF_HFE","LF_KFE",
+            "LF_HAA", "LF_HFE", "LF_KFE",
             // left front leg positions
-            "LH_HAA","LH_HFE","LH_KFE",
+            "LH_HAA", "LH_HFE", "LH_KFE",
             // left hind leg positions
-            "RF_HAA","RF_HFE","RF_KFE",
+            "RF_HAA", "RF_HFE", "RF_KFE",
             // right front leg positions
-            "RH_HAA","RH_HFE","RH_KFE"
+            "RH_HAA", "RH_HFE", "RH_KFE"
             // right hind leg positions
         };
 
         state_interfaces->reserve(names.size());
-        for (size_t i = 0; i < names.size(); i++) {
+        for (size_t i = 0; i < names.size(); i++)
+        {
             state_interfaces->emplace_back(
                 hardware_interface::StateInterface("optimizedState", names[i], &optimizedState_(i)));
         }
     }
 
-    void legged_mrt::ExportoptimizedInput(std::vector<hardware_interface::StateInterface> * state_interfaces)
+    void legged_mrt::ExportoptimizedInput(std::vector<hardware_interface::StateInterface> *state_interfaces)
     {
         const std::vector<std::string> names = {
-            "left_front_force_x","left_front_force_y","left_front_force_z",
-            "right_front_force_x","right_front_force_y","right_front_force_z",
-            "left_hind_force_x","left_hind_force_y","left_hind_force_z",
-            "right_hind_force_x","right_hind_force_y","right_hind_force_z",
+            "left_front_force_x", "left_front_force_y", "left_front_force_z",
+            "right_front_force_x", "right_front_force_y", "right_front_force_z",
+            "left_hind_force_x", "left_hind_force_y", "left_hind_force_z",
+            "right_hind_force_x", "right_hind_force_y", "right_hind_force_z",
             // contact forces
-            "LF_x","LF_y","LF_z",
-            "LH_x","LH_y","LH_z",
-            "RF_x","RF_y","RF_z",
-            "RH_x","RH_y","RH_z"
+            "LF_x", "LF_y", "LF_z",
+            "LH_x", "LH_y", "LH_z",
+            "RF_x", "RF_y", "RF_z",
+            "RH_x", "RH_y", "RH_z"
             // feet contact forces
         };
 
         state_interfaces->reserve(names.size());
-        for (size_t i = 0; i < names.size(); i++) {
+        for (size_t i = 0; i < names.size(); i++)
+        {
             state_interfaces->emplace_back(
                 hardware_interface::StateInterface("optimizedInput", names[i], &optimizedInput_(i)));
         }
     }
 
-    void legged_mrt::ExportRbdState(std::vector<hardware_interface::StateInterface> * state_interfaces)
+    void legged_mrt::ExportRbdState(std::vector<hardware_interface::StateInterface> *state_interfaces)
     {
         const std::vector<std::string> names = {
-            "base_roll","base_pitch","base_yaw",
+            "base_roll", "base_pitch", "base_yaw",
             // base orientation
-            "base_pos_x","base_pos_y","base_pos_z",
+            "base_pos_x", "base_pos_y", "base_pos_z",
             // base position
-            "LF_HAA_pos","LF_HFE_pos","LF_KFE_pos",
+            "LF_HAA_pos", "LF_HFE_pos", "LF_KFE_pos",
             // left front leg joint positions
-            "LH_HAA_pos","LH_HFE_pos","LH_KFE_pos",
+            "LH_HAA_pos", "LH_HFE_pos", "LH_KFE_pos",
             // left hind leg joint positions
-            "RF_HAA_pos","RF_HFE_pos","RF_KFE_pos",
+            "RF_HAA_pos", "RF_HFE_pos", "RF_KFE_pos",
             // right front leg joint positions
-            "RH_HAA_pos","RH_HFE_pos","RH_KFE_pos",
+            "RH_HAA_pos", "RH_HFE_pos", "RH_KFE_pos",
             // right hind leg joint positions
 
-            "base_angular_vel_x","base_angular_vel_y","base_angular_vel_z",
+            "base_angular_vel_x", "base_angular_vel_y", "base_angular_vel_z",
             // base angular velocity
-            "base_linear_vel_x","base_linear_vel_y","base_linear_vel_z",
+            "base_linear_vel_x", "base_linear_vel_y", "base_linear_vel_z",
             // base linear velocity
-            "LF_HAA_vel","LF_HFE_vel","LF_KFE_vel",
+            "LF_HAA_vel", "LF_HFE_vel", "LF_KFE_vel",
             // left front leg joint velocities
-            "LH_HAA_vel","LH_HFE_vel","LH_KFE_vel",
+            "LH_HAA_vel", "LH_HFE_vel", "LH_KFE_vel",
             // left hind leg joint velocities
-            "RF_HAA_vel","RF_HFE_vel","RF_KFE_vel",
+            "RF_HAA_vel", "RF_HFE_vel", "RF_KFE_vel",
             // right front leg joint velocities
-            "RH_HAA_vel","RH_HFE_vel","RH_KFE_vel"
+            "RH_HAA_vel", "RH_HFE_vel", "RH_KFE_vel"
             // right hind leg joint velocities
         };
 
         state_interfaces->reserve(names.size());
-        for (size_t i = 0; i < names.size(); i++) {
+        for (size_t i = 0; i < names.size(); i++)
+        {
             state_interfaces->emplace_back(
                 hardware_interface::StateInterface("rbdState", names[i], &rbdState_(i)));
         }
@@ -555,4 +498,3 @@ namespace legged_robot{
 
 #include <pluginlib/class_list_macros.hpp>
 PLUGINLIB_EXPORT_CLASS(legged_robot::legged_mrt, controller_interface::ChainableControllerInterface)
-

@@ -1,7 +1,3 @@
-//
-// Created by qiayuan on 2022/7/24.
-//
-
 #include "legged_estimator/FromTopiceEstimate.hpp"
 
 namespace legged_robot
@@ -13,13 +9,12 @@ namespace legged_robot
 												   const rclcpp_lifecycle::LifecycleNode::SharedPtr &node)
 		: StateEstimateBase(std::move(pinocchioInterface), std::move(info), eeKinematics, node)
 	{
-		sub_ = std::make_shared<rclcpp::Subscription<nav_msgs::msg::Odometry>>(
-			node->create_subscription<nav_msgs::msg::Odometry>(
+		sub_ = node->create_subscription<nav_msgs::msg::Odometry>(
 				"/ground_truth/state", 10,
-				std::bind(&FromTopicStateEstimate::callback, this, std::placeholders::_1)));
+				std::bind(&FromTopicStateEstimate::callback, this, std::placeholders::_1));
 	}
 
-	void FromTopicStateEstimate::callback(const nav_msgs::msg::Odometry::ConstPtr &msg)
+	void FromTopicStateEstimate::callback(const nav_msgs::msg::Odometry::ConstSharedPtr &msg)
 	{
 		buffer_.writeFromNonRT(*msg);
 	}

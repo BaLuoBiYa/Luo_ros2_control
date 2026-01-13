@@ -1,7 +1,3 @@
-//
-// Created by qiayuan on 2022/7/24.
-//
-
 #include <pinocchio/algorithm/frames.hpp>
 #include <pinocchio/algorithm/kinematics.hpp>
 
@@ -24,7 +20,7 @@ namespace legged_robot
 		  numObserve_(2 * dimContacts_ + numContacts_),
 		  topicUpdated_(false)
 	{
-		tfBuffer_ = std::make_shared<tf2_ros::Buffer>(rclcpp::Clock());
+		tfBuffer_ = std::make_shared<tf2_ros::Buffer>(node->get_clock());
 		tfListener_ = std::make_shared<tf2_ros::TransformListener>(*tfBuffer_);
 
 		xHat_.setZero(numState_);
@@ -52,9 +48,11 @@ namespace legged_robot
 		eeKinematics_->setPinocchioInterface(pinocchioInterface_);
 
 		world2odom_.setRotation(tf2::Quaternion::getIdentity());
+
 		sub_ = node->create_subscription<nav_msgs::msg::Odometry>(
 			"/tracking_camera/odom/sample", 
-			10, std::bind(&KalmanFilterEstimate::callback, this, std::placeholders::_1));
+			rclcpp::QoS(10), 
+			std::bind(&KalmanFilterEstimate::callback, this, std::placeholders::_1));
 	}
 
 	ocs2::vector_t KalmanFilterEstimate::update(const rclcpp::Time &time, const rclcpp::Duration &period)
@@ -224,7 +222,7 @@ namespace legged_robot
 		publishMsgs(odom);
 	}
 
-	void KalmanFilterEstimate::callback(const nav_msgs::msg::Odometry::ConstPtr &msg)
+	void KalmanFilterEstimate::callback(const nav_msgs::msg::Odometry::ConstSharedPtr &msg)
 	{
 		buffer_.writeFromNonRT(*msg);
 		topicUpdated_ = true;

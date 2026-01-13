@@ -11,7 +11,6 @@ set(dependencies
         ocs2_sqp
         ocs2_ipm
         ocs2_centroidal_model
-        qpoases_colcon
 )
 
 find_package(ament_cmake REQUIRED)
@@ -20,7 +19,6 @@ find_package(ocs2_mpc REQUIRED)
 find_package(ocs2_sqp REQUIRED)
 find_package(ocs2_ipm REQUIRED)
 find_package(ocs2_centroidal_model REQUIRED)
-find_package(qpoases_colcon REQUIRED)
 
 ###########
 ## Build ##
@@ -61,10 +59,6 @@ add_library(${PROJECT_NAME}
         src/gait/ModeSequenceTemplate.cpp
         src/LeggedRobotInterface.cpp
         src/LeggedRobotPreComputation.cpp
-        src/wbc/HierarchicalWbc.cpp
-        src/wbc/HoQp.cpp
-        src/wbc/WbcBase.cpp
-        src/wbc/WeightedWbc.cpp
 )
 
 target_include_directories(${PROJECT_NAME}
