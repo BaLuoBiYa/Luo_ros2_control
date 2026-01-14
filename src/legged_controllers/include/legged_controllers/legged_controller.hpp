@@ -1,3 +1,5 @@
+#pragma once
+
 #include <controller_interface/controller_interface.hpp>
 #include <controller_interface/semantic_components/imu_sensor.hpp>
 #include <angles/angles.h>

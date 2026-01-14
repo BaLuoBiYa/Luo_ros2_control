@@ -1,3 +1,4 @@
+#pragma once
 #include <controller_interface/semantic_components/imu_sensor.hpp>
 #include <eigen3/Eigen/Dense>
 
