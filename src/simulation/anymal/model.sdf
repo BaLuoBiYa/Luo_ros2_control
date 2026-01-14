@@ -1,0 +1,1630 @@
+<sdf version='1.11'>
+  <model name='anymal'>
+    <link name='base'>
+      <inertial>
+        <pose>-0.017793943143734711 -0.00017816961328741469 0.0085043390156462131 0 0 0</pose>
+        <mass>26.373170000000009</mass>
+        <inertia>
+          <ixx>0.21671174330797921</ixx>
+          <ixy>0.0092238113073508411</ixy>
+          <ixz>0.058933188704784728</ixz>
+          <iyy>1.785161688617307</iyy>
+          <iyz>-0.0001637780172926634</iyz>
+          <izz>1.8336994495846779</izz>
+        </inertia>
+      </inertial>
+      <collision name='base_collision'>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.57999999999999996 0.14000000000000001 0.17999999999999999</size>
+          </box>
+        </geometry>
+      </collision>
+      <collision name='base_collision_1'>
+        <pose>0.2175 0.070000000000000007 0 0 1.5707963267948966 0</pose>
+        <geometry>
+          <cylinder>
+            <length>0.14499999999999999</length>
+            <radius>0.089999999999999997</radius>
+          </cylinder>
+        </geometry>
+      </collision>
+      <collision name='base_collision_2'>
+        <pose>-0.2175 0.070000000000000007 0 0 1.5707963267948966 0</pose>
+        <geometry>
+          <cylinder>
+            <length>0.14499999999999999</length>
+            <radius>0.089999999999999997</radius>
+          </cylinder>
+        </geometry>
+      </collision>
+      <collision name='base_collision_3'>
+        <pose>0.2175 -0.070000000000000007 0 0 1.5707963267948966 0</pose>
+        <geometry>
+          <cylinder>
+            <length>0.14499999999999999</length>
+            <radius>0.089999999999999997</radius>
+          </cylinder>
+        </geometry>
+      </collision>
+      <collision name='base_collision_4'>
+        <pose>-0.2175 -0.070000000000000007 0 0 1.5707963267948966 0</pose>
+        <geometry>
+          <cylinder>
+            <length>0.14499999999999999</length>
+            <radius>0.089999999999999997</radius>
+          </cylinder>
+        </geometry>
+      </collision>
+      <collision name='base_fixed_joint_lump__face_front_collision_5'>
+        <pose>0.46949999999999997 0 0 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.11 0.14000000000000001 0.17999999999999999</size>
+          </box>
+        </geometry>
+      </collision>
+      <collision name='base_fixed_joint_lump__face_front_collision_6'>
+        <pose>0.46949999999999997 0.070000000000000007 0 0 1.5707963267948966 0</pose>
+        <geometry>
+          <cylinder>
+            <length>0.11</length>
+            <radius>0.089999999999999997</radius>
+          </cylinder>
+        </geometry>
+      </collision>
+      <collision name='base_fixed_joint_lump__face_front_collision_7'>
+        <pose>0.46949999999999997 -0.070000000000000007 0 0 1.5707963267948966 0</pose>
+        <geometry>
+          <cylinder>
+            <length>0.11</length>
+            <radius>0.089999999999999997</radius>
+          </cylinder>
+        </geometry>
+      </collision>
+      <collision name='base_fixed_joint_lump__face_rear_collision_8'>
+        <pose>-0.46949999999999997 -1.137527089106179e-14 0 0 0 -3.1415926535895871</pose>
+        <geometry>
+          <box>
+            <size>0.11 0.14000000000000001 0.17999999999999999</size>
+          </box>
+        </geometry>
+      </collision>
+      <collision name='base_fixed_joint_lump__face_rear_collision_9'>
+        <pose>-0.46949999999998548 -0.070000000000011386 0 3.1415926535895866 1.5707963267948966 0</pose>
+        <geometry>
+          <cylinder>
+            <length>0.11</length>
+            <radius>0.089999999999999997</radius>
+          </cylinder>
+        </geometry>
+      </collision>
+      <collision name='base_fixed_joint_lump__face_rear_collision_10'>
+        <pose>-0.46950000000001452 0.069999999999988627 0 3.1415926535895866 1.5707963267948966 0</pose>
+        <geometry>
+          <cylinder>
+            <length>0.11</length>
+            <radius>0.089999999999999997</radius>
+          </cylinder>
+        </geometry>
+      </collision>
+      <collision name='base_fixed_joint_lump__lidar_cage_collision_11'>
+        <pose>-0.36399999999999999 0 0.13350000000000001 0 0 0</pose>
+        <geometry>
+          <cylinder>
+            <length>0.12</length>
+            <radius>0.070000000000000007</radius>
+          </cylinder>
+        </geometry>
+      </collision>
+      <collision name='base_fixed_joint_lump__imu_link_collision_12'>
+        <pose>0.24879999999999999 0.0083499999999999998 0.051279999999999999 0 0 1.57079632679</pose>
+        <geometry>
+          <box>
+            <size>0.024 0.024 0.01</size>
+          </box>
+        </geometry>
+      </collision>
+      <visual name='base_visual'>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>meshes/base.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+      <visual name='base_fixed_joint_lump__LF_HAA_link_visual_1'>
+        <pose>0.2999 0.104 0 2.6179938779900001 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>meshes/drive.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+      <visual name='base_fixed_joint_lump__LH_HAA_link_visual_2'>
+        <pose>-0.2999 0.104 0 -2.6179938779900001 -6.3108872417680944e-30 3.1415926535895871</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>meshes/drive.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+      <visual name='base_fixed_joint_lump__RF_HAA_link_visual_3'>
+        <pose>0.2999 -0.104 0 -2.6179938779900001 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>meshes/drive.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+      <visual name='base_fixed_joint_lump__RH_HAA_link_visual_4'>
+        <pose>-0.2999 -0.104 0 2.6179938779900001 6.3108872417680944e-30 3.1415926535895871</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>meshes/drive.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+      <visual name='base_fixed_joint_lump__battery_visual_5'>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>meshes/battery.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+      <visual name='base_fixed_joint_lump__bottom_shell_visual_6'>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>meshes/bottom_shell.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+      <visual name='base_fixed_joint_lump__face_front_visual_7'>
+        <pose>0.41449999999999998 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>meshes/face.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+      <visual name='base_fixed_joint_lump__depth_camera_front_camera_visual_8'>
+        <pose>0.46165 0 -0.0292 0 0.52359877559800005 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>meshes/depth_camera.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+      <visual name='base_fixed_joint_lump__wide_angle_camera_front_camera_visual_9'>
+        <pose>0.51300000000000001 0 0.014970000000000001 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>meshes/wide_angle_camera.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+      <visual name='base_fixed_joint_lump__face_rear_visual_10'>
+        <pose>-0.41449999999999998 0 0 0 0 -3.1415926535895871</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>meshes/face.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+      <visual name='base_fixed_joint_lump__depth_camera_rear_camera_visual_11'>
+        <pose>-0.46165 -9.7517095002466099e-15 -0.0292 -7.287184895719111e-30 0.52359877559800005 -3.1415926535895871</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>meshes/depth_camera.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+      <visual name='base_fixed_joint_lump__wide_angle_camera_rear_camera_visual_12'>
+        <pose>-0.51300000000000001 -2.037207605035612e-14 0.014970000000000001 0 0 -3.1415926535895871</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>meshes/wide_angle_camera.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+      <visual name='base_fixed_joint_lump__handle_visual_13'>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>meshes/handle.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+      <visual name='base_fixed_joint_lump__hatch_visual_14'>
+        <pose>0.11600000000000001 0 0.072999999999999995 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>meshes/hatch.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+      <visual name='base_fixed_joint_lump__remote_visual_15'>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>meshes/remote.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+      <visual name='base_fixed_joint_lump__depth_camera_left_camera_visual_16'>
+        <pose>0 0.07646 0.029049999999999999 -3.2049378106387202e-17 0.52359877559800005 1.5707963267899998</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>meshes/depth_camera.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+      <visual name='base_fixed_joint_lump__depth_camera_right_camera_visual_17'>
+        <pose>0 -0.07646 0.029049999999999999 3.2049378106387202e-17 0.52359877559800005 -1.5707963267899998</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>meshes/depth_camera.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+      <visual name='base_fixed_joint_lump__lidar_cage_visual_18'>
+        <pose>-0.36399999999999999 0 0.073499999999999996 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>meshes/lidar_cage.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+      <visual name='base_fixed_joint_lump__lidar_visual_19'>
+        <pose>-0.36399999999999999 0 0.14219999999999999 0 0 -1.57079632679</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>meshes/lidar.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+      <visual name='base_fixed_joint_lump__top_shell_visual_20'>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>meshes/top_shell.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+      <visual name='base_fixed_joint_lump__imu_link_visual_21'>
+        <pose>0.24879999999999999 0.0083499999999999998 0.051279999999999999 0 0 1.57079632679</pose>
+        <geometry>
+          <box>
+            <size>0.024 0.024 0.01</size>
+          </box>
+        </geometry>
+      </visual>
+    </link>
+    <joint name='LF_HAA' type='revolute'>
+      <pose relative_to='base'>0.2999 0.104 0 2.6179938779900001 0 0</pose>
+      <parent>base</parent>
+      <child>LF_HIP</child>
+      <axis>
+        <xyz>1 0 0</xyz>
+        <limit>
+          <lower>-0.71999999999999997</lower>
+          <upper>0.48999999999999999</upper>
+          <effort>80</effort>
+          <velocity>7.5</velocity>
+        </limit>
+        <dynamics>
+          <damping>0</damping>
+          <friction>0</friction>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+    </joint>
+    <link name='LF_HIP'>
+      <pose relative_to='LF_HAA'>0 0 0 0 0 0</pose>
+      <inertial>
+        <pose>0.056660625673991612 -0.015293968803304031 -0.0082978431652548611 0 0 0</pose>
+        <mass>2.7810000000000001</mass>
+        <inertia>
+          <ixx>0.003295526429711179</ixx>
+          <ixy>-1.0388233058723431e-05</ixy>
+          <ixz>0.0001070622327342813</ixz>
+          <iyy>0.0050443492876884287</iyy>
+          <iyz>-0.00031949181072328699</iyz>
+          <izz>0.0057269038510383181</izz>
+        </inertia>
+      </inertial>
+      <collision name='LF_HIP_fixed_joint_lump__LF_HFE_link_collision'>
+        <pose>0.059899999999657227 -0.011959810826252771 -0.0069050000000178656 -3.141592653584897 -1.0471975511902076 -1.570796326794897</pose>
+        <geometry>
+          <cylinder>
+            <length>0.14000000000000001</length>
+            <radius>0.050000000000000003</radius>
+          </cylinder>
+        </geometry>
+      </collision>
+      <visual name='LF_HIP_fixed_joint_lump__LF_hip_fixed_visual'>
+        <pose>0 0 0 -2.6179938779900001 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>meshes/hip_l.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+      <visual name='LF_HIP_fixed_joint_lump__LF_HFE_link_visual_1'>
+        <pose>0.059900000000000002 -0.072581589091111176 -0.041905000000108453 -3.141592653586966 0.52359877559979318 -1.570796326789242</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>meshes/drive.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+    <joint name='LF_HFE' type='revolute'>
+      <pose relative_to='LF_HIP'>0.059900000000000002 -0.072581589091111176 -0.041905000000108453 -3.141592653586966 0.52359877559979318 -1.570796326789242</pose>
+      <parent>LF_HIP</parent>
+      <child>LF_THIGH</child>
+      <axis>
+        <xyz>1 0 0</xyz>
+        <limit>
+          <lower>-9.4247779607699993</lower>
+          <upper>9.4247779607699993</upper>
+          <effort>80</effort>
+          <velocity>7.5</velocity>
+        </limit>
+        <dynamics>
+          <damping>0</damping>
+          <friction>0</friction>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+    </joint>
+    <link name='LF_THIGH'>
+      <pose relative_to='LF_HFE'>0 0 0 0 0 0</pose>
+      <inertial>
+        <pose>0.03081471833279063 4.6499511915559621e-05 -0.24569573428850541 0 0 0</pose>
+        <mass>3.0710000000000002</mass>
+        <inertia>
+          <ixx>0.029563793513988971</ixx>
+          <ixy>4.4291901775859802e-05</ixy>
+          <ixz>0.0041424259528102039</ixz>
+          <iyy>0.029904049332850569</iyy>
+          <iyz>9.4479961187896678e-05</iyz>
+          <izz>0.004861084530601148</izz>
+        </inertia>
+      </inertial>
+      <collision name='LF_THIGH_fixed_joint_lump__LF_thigh_fixed_collision'>
+        <pose>0.040000000000000001 1.9587109711949319e-13 0 1.57079632679 5.5511151231257827e-17 -1.57079632679</pose>
+        <geometry>
+          <cylinder>
+            <length>0.080000000000000002</length>
+            <radius>0.065000000000000002</radius>
+          </cylinder>
+        </geometry>
+      </collision>
+      <collision name='LF_THIGH_fixed_joint_lump__LF_thigh_fixed_collision_1'>
+        <pose>0.029999999999999999 1.46899853392668e-13 -0.14131350000000001 0 0 -1.57079632679</pose>
+        <geometry>
+          <box>
+            <size>0.074999999999999997 0.059999999999999998 0.28262700000000002</size>
+          </box>
+        </geometry>
+      </collision>
+      <collision name='LF_THIGH_fixed_joint_lump__LF_KFE_link_collision_2'>
+        <pose>0.03029999999999999 4.9113837996550558e-13 -0.28499999999999998 0 1.5707963267948966 0</pose>
+        <geometry>
+          <cylinder>
+            <length>0.14000000000000001</length>
+            <radius>0.050000000000000003</radius>
+          </cylinder>
+        </geometry>
+      </collision>
+      <visual name='LF_THIGH_fixed_joint_lump__LF_thigh_fixed_visual'>
+        <pose>0 0 0 0 0 -1.57079632679</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>meshes/thigh.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+      <visual name='LF_THIGH_fixed_joint_lump__LF_KFE_link_visual_1'>
+        <pose>0.1003 4.9113491051855362e-13 -0.28499999999999998 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>meshes/drive.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+    <joint name='LF_KFE' type='revolute'>
+      <pose relative_to='LF_THIGH'>0.1003 4.9113491051855362e-13 -0.28499999999999998 0 0 0</pose>
+      <parent>LF_THIGH</parent>
+      <child>LF_SHANK</child>
+      <axis>
+        <xyz>1 0 0</xyz>
+        <limit>
+          <lower>-9.4247779607699993</lower>
+          <upper>9.4247779607699993</upper>
+          <effort>80</effort>
+          <velocity>7.5</velocity>
+        </limit>
+        <dynamics>
+          <damping>0</damping>
+          <friction>0</friction>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+    </joint>
+    <link name='LF_SHANK'>
+      <pose relative_to='LF_KFE'>0 0 0 0 0 0</pose>
+      <inertial>
+        <pose>0.0054619992525347279 -0.061252769450365827 -0.080659781108731843 0 0 0</pose>
+        <mass>0.58842000000000005</mass>
+        <inertia>
+          <ixx>0.010161141436439239</ixx>
+          <ixy>-5.3571329219367323e-05</ixy>
+          <ixz>-2.2660426829587631e-05</ixz>
+          <iyy>0.0088103798213393578</iyy>
+          <iyz>-0.001819353694812817</iyz>
+          <izz>0.0015497840809709841</izz>
+        </inertia>
+      </inertial>
+      <collision name='LF_SHANK_fixed_joint_lump__LF_shank_fixed_collision'>
+        <pose>0.02 9.7935548559746621e-14 0 1.57079632679 5.5511151231257827e-17 -1.57079632679</pose>
+        <geometry>
+          <cylinder>
+            <length>0.040000000000000001</length>
+            <radius>0.059999999999999998</radius>
+          </cylinder>
+        </geometry>
+      </collision>
+      <collision name='LF_SHANK_fixed_joint_lump__LF_shank_fixed_collision_1'>
+        <pose>0.02000000000028155 -0.057498999999902073 0 1.57079632679 5.5511151231257827e-17 -1.57079632679</pose>
+        <geometry>
+          <box>
+            <size>0.114998 0.067500000000000004 0.040000000000000001</size>
+          </box>
+        </geometry>
+      </collision>
+      <collision name='LF_SHANK_fixed_joint_lump__LF_FOOT_collision_2'>
+        <pose>0.01305000000043066 -0.087949999999936093 -0.168985 0 0 -1.57079632679</pose>
+        <geometry>
+          <cylinder>
+            <length>0.28250399999999998</length>
+            <radius>0.017500000000000002</radius>
+          </cylinder>
+        </geometry>
+      </collision>
+      <collision name='LF_SHANK_fixed_joint_lump__LF_FOOT_collision_3'>
+        <pose>0.01305000000043066 -0.087949999999936093 -0.31546999999999997 0 0 -1.57079632679</pose>
+        <geometry>
+          <sphere>
+            <radius>0.029999999999999999</radius>
+          </sphere>
+        </geometry>
+      </collision>
+      <visual name='LF_SHANK_fixed_joint_lump__LF_shank_fixed_visual'>
+        <pose>0 0 0 0 0 -1.57079632679</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>meshes/shank_l.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+      <visual name='LF_SHANK_fixed_joint_lump__LF_FOOT_visual_1'>
+        <pose>0.01305000000043066 -0.087949999999936093 -0.33796999999999999 0 0 -2.3561944901869998</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>meshes/foot.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+    <joint name='LH_HAA' type='revolute'>
+      <pose relative_to='base'>-0.2999 0.104 0 -2.6179938779900001 -6.3108872417680944e-30 3.1415926535895871</pose>
+      <parent>base</parent>
+      <child>LH_HIP</child>
+      <axis>
+        <xyz>-1 0 0</xyz>
+        <limit>
+          <lower>-0.71999999999999997</lower>
+          <upper>0.48999999999999999</upper>
+          <effort>80</effort>
+          <velocity>7.5</velocity>
+        </limit>
+        <dynamics>
+          <damping>0</damping>
+          <friction>0</friction>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+    </joint>
+    <link name='LH_HIP'>
+      <pose relative_to='LH_HAA'>0 0 0 0 0 0</pose>
+      <inertial>
+        <pose>0.056763322546076272 0.015293968803292301 -0.0082978431652548611 0 0 0</pose>
+        <mass>2.7810000000000001</mass>
+        <inertia>
+          <ixx>0.0032955264297111742</ixx>
+          <ixy>-1.1005261347922599e-05</ixy>
+          <ixz>-0.00010912110284194391</ixz>
+          <iyy>0.0050461702880848017</iyy>
+          <iyz>0.00031949181072330873</iyz>
+          <izz>0.0057287248514346816</izz>
+        </inertia>
+      </inertial>
+      <collision name='LH_HIP_fixed_joint_lump__LH_HFE_link_collision'>
+        <pose>0.059900000000345253 0.011959810826240379 -0.0069050000000178656 -3.1415926535848975 -1.0471975511902067 1.5707963267946903</pose>
+        <geometry>
+          <cylinder>
+            <length>0.14000000000000001</length>
+            <radius>0.050000000000000003</radius>
+          </cylinder>
+        </geometry>
+      </collision>
+      <visual name='LH_HIP_fixed_joint_lump__LH_hip_fixed_visual'>
+        <pose>0 0 0 2.6179938779900001 1.0341155355537489e-13 -2.7709042263293297e-14</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>meshes/hip_r.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+      <visual name='LH_HIP_fixed_joint_lump__LH_HFE_link_visual_1'>
+        <pose>0.059900000000014997 0.072581589091098797 -0.041905000000108453 -3.141592653586966 0.52359877559979318 1.5707963268003442</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>meshes/drive.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+    <joint name='LH_HFE' type='revolute'>
+      <pose relative_to='LH_HIP'>0.059900000000014997 0.072581589091098797 -0.041905000000108453 -3.141592653586966 0.52359877559979318 1.5707963268003442</pose>
+      <parent>LH_HIP</parent>
+      <child>LH_THIGH</child>
+      <axis>
+        <xyz>1 0 0</xyz>
+        <limit>
+          <lower>-9.4247779607699993</lower>
+          <upper>9.4247779607699993</upper>
+          <effort>80</effort>
+          <velocity>7.5</velocity>
+        </limit>
+        <dynamics>
+          <damping>0</damping>
+          <friction>0</friction>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+    </joint>
+    <link name='LH_THIGH'>
+      <pose relative_to='LH_HFE'>0 0 0 0 0 0</pose>
+      <inertial>
+        <pose>0.03081471833279063 4.6499511915559621e-05 -0.24569573428850541 0 0 0</pose>
+        <mass>3.0710000000000002</mass>
+        <inertia>
+          <ixx>0.029563793513988971</ixx>
+          <ixy>4.43959017758598e-05</ixy>
+          <ixz>0.0041424259528101033</ixz>
+          <iyy>0.029904049332850569</iyy>
+          <iyz>0.0001147939611878967</iyz>
+          <izz>0.004861084530601148</izz>
+        </inertia>
+      </inertial>
+      <collision name='LH_THIGH_fixed_joint_lump__LH_thigh_fixed_collision'>
+        <pose>0.040000000000000001 1.9587109711949319e-13 0 1.57079632679 5.5511151231257827e-17 -1.57079632679</pose>
+        <geometry>
+          <cylinder>
+            <length>0.080000000000000002</length>
+            <radius>0.065000000000000002</radius>
+          </cylinder>
+        </geometry>
+      </collision>
+      <collision name='LH_THIGH_fixed_joint_lump__LH_thigh_fixed_collision_1'>
+        <pose>0.029999999999999999 1.46899853392668e-13 -0.14131350000000001 0 0 -1.57079632679</pose>
+        <geometry>
+          <box>
+            <size>0.074999999999999997 0.059999999999999998 0.28262700000000002</size>
+          </box>
+        </geometry>
+      </collision>
+      <collision name='LH_THIGH_fixed_joint_lump__LH_KFE_link_collision_2'>
+        <pose>0.03029999999999999 4.9113837996550558e-13 -0.28499999999999998 0 1.5707963267948966 0</pose>
+        <geometry>
+          <cylinder>
+            <length>0.14000000000000001</length>
+            <radius>0.050000000000000003</radius>
+          </cylinder>
+        </geometry>
+      </collision>
+      <visual name='LH_THIGH_fixed_joint_lump__LH_thigh_fixed_visual'>
+        <pose>0 0 0 0 0 -1.57079632679</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>meshes/thigh.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+      <visual name='LH_THIGH_fixed_joint_lump__LH_KFE_link_visual_1'>
+        <pose>0.1003 4.9113491051855362e-13 -0.28499999999999998 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>meshes/drive.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+    <joint name='LH_KFE' type='revolute'>
+      <pose relative_to='LH_THIGH'>0.1003 4.9113491051855362e-13 -0.28499999999999998 0 0 0</pose>
+      <parent>LH_THIGH</parent>
+      <child>LH_SHANK</child>
+      <axis>
+        <xyz>1 0 0</xyz>
+        <limit>
+          <lower>-9.4247779607699993</lower>
+          <upper>9.4247779607699993</upper>
+          <effort>80</effort>
+          <velocity>7.5</velocity>
+        </limit>
+        <dynamics>
+          <damping>0</damping>
+          <friction>0</friction>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+    </joint>
+    <link name='LH_SHANK'>
+      <pose relative_to='LH_KFE'>0 0 0 0 0 0</pose>
+      <inertial>
+        <pose>0.0054619992519348683 0.061252769450419318 -0.080659781108731843 0 0 0</pose>
+        <mass>0.58842000000000005</mass>
+        <inertia>
+          <ixx>0.010161141436438179</ixx>
+          <ixy>5.3571329232595592e-05</ixy>
+          <ixz>-2.2660426847404861e-05</ixz>
+          <iyy>0.008810379821340409</iyy>
+          <iyz>0.001819353694812596</iyz>
+          <izz>0.0015497840809709841</izz>
+        </inertia>
+      </inertial>
+      <collision name='LH_SHANK_fixed_joint_lump__LH_shank_fixed_collision'>
+        <pose>0.02 9.7935548559746621e-14 0 1.57079632679 5.5511151231257827e-17 -1.57079632679</pose>
+        <geometry>
+          <cylinder>
+            <length>0.040000000000000001</length>
+            <radius>0.059999999999999998</radius>
+          </cylinder>
+        </geometry>
+      </collision>
+      <collision name='LH_SHANK_fixed_joint_lump__LH_shank_fixed_collision_1'>
+        <pose>0.019999999999718441 0.05749900000009793 0 1.57079632679 5.5511151231257827e-17 -1.57079632679</pose>
+        <geometry>
+          <box>
+            <size>0.114998 0.067500000000000004 0.040000000000000001</size>
+          </box>
+        </geometry>
+      </collision>
+      <collision name='LH_SHANK_fixed_joint_lump__LH_FOOT_collision_2'>
+        <pose>0.013049999999569351 0.087950000000063908 -0.168985 0 0 -1.57079632679</pose>
+        <geometry>
+          <cylinder>
+            <length>0.28250399999999998</length>
+            <radius>0.017500000000000002</radius>
+          </cylinder>
+        </geometry>
+      </collision>
+      <collision name='LH_SHANK_fixed_joint_lump__LH_FOOT_collision_3'>
+        <pose>0.013049999999569351 0.087950000000063908 -0.31546999999999997 0 0 -1.57079632679</pose>
+        <geometry>
+          <sphere>
+            <radius>0.029999999999999999</radius>
+          </sphere>
+        </geometry>
+      </collision>
+      <visual name='LH_SHANK_fixed_joint_lump__LH_shank_fixed_visual'>
+        <pose>0 0 0 0 0 1.5707963267995859</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>meshes/shank_r.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+      <visual name='LH_SHANK_fixed_joint_lump__LH_FOOT_visual_1'>
+        <pose>0.013049999999569351 0.087950000000063908 -0.33796999999999999 0 0 2.356194490199587</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>meshes/foot.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+    <joint name='RF_HAA' type='revolute'>
+      <pose relative_to='base'>0.2999 -0.104 0 -2.6179938779900001 0 0</pose>
+      <parent>base</parent>
+      <child>RF_HIP</child>
+      <axis>
+        <xyz>1 0 0</xyz>
+        <limit>
+          <lower>-0.48999999999999999</lower>
+          <upper>0.71999999999999997</upper>
+          <effort>80</effort>
+          <velocity>7.5</velocity>
+        </limit>
+        <dynamics>
+          <damping>0</damping>
+          <friction>0</friction>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+    </joint>
+    <link name='RF_HIP'>
+      <pose relative_to='RF_HAA'>0 0 0 0 0 0</pose>
+      <inertial>
+        <pose>0.056763322545620533 0.01529396880330359 -0.0082978431652546061 0 0 0</pose>
+        <mass>2.7810000000000001</mass>
+        <inertia>
+          <ixx>0.003295526429712052</ixx>
+          <ixy>-1.1005261351951489e-05</ixy>
+          <ixz>-0.0001091211028422321</ixz>
+          <iyy>0.0050461702880768983</iyy>
+          <iyz>0.00031949181072414942</iyz>
+          <izz>0.0057287248514255439</izz>
+        </inertia>
+      </inertial>
+      <collision name='RF_HIP_fixed_joint_lump__RF_HFE_link_collision'>
+        <pose>0.059899999999657227 0.011959810826252771 -0.0069050000000178656 3.141592653584897 -1.0471975511902076 1.570796326794897</pose>
+        <geometry>
+          <cylinder>
+            <length>0.14000000000000001</length>
+            <radius>0.050000000000000003</radius>
+          </cylinder>
+        </geometry>
+      </collision>
+      <visual name='RF_HIP_fixed_joint_lump__RF_hip_fixed_visual'>
+        <pose>0 0 0 2.6179938779900001 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>meshes/hip_r.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+      <visual name='RF_HIP_fixed_joint_lump__RF_HFE_link_visual_1'>
+        <pose>0.059900000000000002 0.072581589091111176 -0.041905000000108453 3.141592653586966 0.52359877559979318 1.570796326789242</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>meshes/drive.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+    <joint name='RF_HFE' type='revolute'>
+      <pose relative_to='RF_HIP'>0.059900000000000002 0.072581589091111176 -0.041905000000108453 3.141592653586966 0.52359877559979318 1.570796326789242</pose>
+      <parent>RF_HIP</parent>
+      <child>RF_THIGH</child>
+      <axis>
+        <xyz>-1 0 0</xyz>
+        <limit>
+          <lower>-9.4247779607699993</lower>
+          <upper>9.4247779607699993</upper>
+          <effort>80</effort>
+          <velocity>7.5</velocity>
+        </limit>
+        <dynamics>
+          <damping>0</damping>
+          <friction>0</friction>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+    </joint>
+    <link name='RF_THIGH'>
+      <pose relative_to='RF_HFE'>0 0 0 0 0 0</pose>
+      <inertial>
+        <pose>0.030814718332790619 4.6499511203945423e-05 -0.24569573428850541 0 0 0</pose>
+        <mass>3.0710000000000002</mass>
+        <inertia>
+          <ixx>0.029563793513988881</ixx>
+          <ixy>4.4395901779985203e-05</ixy>
+          <ixz>0.0041424259528102074</ixz>
+          <iyy>0.029904049332850541</iyy>
+          <iyz>0.0001147939610993062</iyz>
+          <izz>0.0048610845306010673</izz>
+        </inertia>
+      </inertial>
+      <collision name='RF_THIGH_fixed_joint_lump__RF_thigh_fixed_collision'>
+        <pose>0.040000000000000001 -1.9587109711949319e-13 0 1.57079632679 -5.5511151231257827e-17 1.57079632679</pose>
+        <geometry>
+          <cylinder>
+            <length>0.080000000000000002</length>
+            <radius>0.065000000000000002</radius>
+          </cylinder>
+        </geometry>
+      </collision>
+      <collision name='RF_THIGH_fixed_joint_lump__RF_thigh_fixed_collision_1'>
+        <pose>0.029999999999999999 -1.46899853392668e-13 -0.14131350000000001 0 0 1.57079632679</pose>
+        <geometry>
+          <box>
+            <size>0.074999999999999997 0.059999999999999998 0.28262700000000002</size>
+          </box>
+        </geometry>
+      </collision>
+      <collision name='RF_THIGH_fixed_joint_lump__RF_KFE_link_collision_2'>
+        <pose>0.03029999999999999 -4.9113837996550558e-13 -0.28499999999999998 0 1.5707963267948966 0</pose>
+        <geometry>
+          <cylinder>
+            <length>0.14000000000000001</length>
+            <radius>0.050000000000000003</radius>
+          </cylinder>
+        </geometry>
+      </collision>
+      <visual name='RF_THIGH_fixed_joint_lump__RF_thigh_fixed_visual'>
+        <pose>0 0 0 0 0 -1.5707963268</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>meshes/thigh.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+      <visual name='RF_THIGH_fixed_joint_lump__RF_KFE_link_visual_1'>
+        <pose>0.1003 -4.9113491051855362e-13 -0.28499999999999998 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>meshes/drive.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+    <joint name='RF_KFE' type='revolute'>
+      <pose relative_to='RF_THIGH'>0.1003 -4.9113491051855362e-13 -0.28499999999999998 0 0 0</pose>
+      <parent>RF_THIGH</parent>
+      <child>RF_SHANK</child>
+      <axis>
+        <xyz>-1 0 0</xyz>
+        <limit>
+          <lower>-9.4247779607699993</lower>
+          <upper>9.4247779607699993</upper>
+          <effort>80</effort>
+          <velocity>7.5</velocity>
+        </limit>
+        <dynamics>
+          <damping>0</damping>
+          <friction>0</friction>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+    </joint>
+    <link name='RF_SHANK'>
+      <pose relative_to='RF_KFE'>0 0 0 0 0 0</pose>
+      <inertial>
+        <pose>0.0054619992525347279 0.061252769450365827 -0.080659781108731843 0 0 0</pose>
+        <mass>0.58842000000000005</mass>
+        <inertia>
+          <ixx>0.010161141436439239</ixx>
+          <ixy>5.3571329219367323e-05</ixy>
+          <ixz>-2.2660426829587631e-05</ixz>
+          <iyy>0.0088103798213393578</iyy>
+          <iyz>0.001819353694812817</iyz>
+          <izz>0.0015497840809709841</izz>
+        </inertia>
+      </inertial>
+      <collision name='RF_SHANK_fixed_joint_lump__RF_shank_fixed_collision'>
+        <pose>0.02 -9.7935548559746621e-14 0 1.57079632679 -5.5511151231257827e-17 1.57079632679</pose>
+        <geometry>
+          <cylinder>
+            <length>0.040000000000000001</length>
+            <radius>0.059999999999999998</radius>
+          </cylinder>
+        </geometry>
+      </collision>
+      <collision name='RF_SHANK_fixed_joint_lump__RF_shank_fixed_collision_1'>
+        <pose>0.02000000000028155 0.057498999999902073 0 1.57079632679 -5.5511151231257827e-17 1.57079632679</pose>
+        <geometry>
+          <box>
+            <size>0.114998 0.067500000000000004 0.040000000000000001</size>
+          </box>
+        </geometry>
+      </collision>
+      <collision name='RF_SHANK_fixed_joint_lump__RF_FOOT_collision_2'>
+        <pose>0.01305000000043066 0.087949999999936093 -0.168985 0 0 1.57079632679</pose>
+        <geometry>
+          <cylinder>
+            <length>0.28250399999999998</length>
+            <radius>0.017500000000000002</radius>
+          </cylinder>
+        </geometry>
+      </collision>
+      <collision name='RF_SHANK_fixed_joint_lump__RF_FOOT_collision_3'>
+        <pose>0.01305000000043066 0.087949999999936093 -0.31546999999999997 0 0 1.57079632679</pose>
+        <geometry>
+          <sphere>
+            <radius>0.029999999999999999</radius>
+          </sphere>
+        </geometry>
+      </collision>
+      <visual name='RF_SHANK_fixed_joint_lump__RF_shank_fixed_visual'>
+        <pose>0 0 0 0 0 1.57079632679</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>meshes/shank_r.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+      <visual name='RF_SHANK_fixed_joint_lump__RF_FOOT_visual_1'>
+        <pose>0.01305000000043066 0.087949999999936093 -0.33796999999999999 0 0 2.3561944901869998</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>meshes/foot.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+    <joint name='RH_HAA' type='revolute'>
+      <pose relative_to='base'>-0.2999 -0.104 0 2.6179938779900001 6.3108872417680944e-30 3.1415926535895871</pose>
+      <parent>base</parent>
+      <child>RH_HIP</child>
+      <axis>
+        <xyz>-1 0 0</xyz>
+        <limit>
+          <lower>-0.48999999999999999</lower>
+          <upper>0.71999999999999997</upper>
+          <effort>80</effort>
+          <velocity>7.5</velocity>
+        </limit>
+        <dynamics>
+          <damping>0</damping>
+          <friction>0</friction>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+    </joint>
+    <link name='RH_HIP'>
+      <pose relative_to='RH_HAA'>0 0 0 0 0 0</pose>
+      <inertial>
+        <pose>0.056660625674441023 -0.015293968803315299 -0.0082978431652546061 0 0 0</pose>
+        <mass>2.7810000000000001</mass>
+        <inertia>
+          <ixx>0.0032955264297120481</ixx>
+          <ixy>-1.038823306203805e-05</ixy>
+          <ixz>0.0001070622327344326</ixz>
+          <iyy>0.0050443492876965819</iyy>
+          <iyz>-0.00031949181072417148</iyz>
+          <izz>0.0057269038510452223</izz>
+        </inertia>
+      </inertial>
+      <collision name='RH_HIP_fixed_joint_lump__RH_HFE_link_collision'>
+        <pose>0.059900000000340292 -0.01195981082626516 -0.0069050000000178656 3.141592653584897 -1.0471975511902074 -1.5707963267951028</pose>
+        <geometry>
+          <cylinder>
+            <length>0.14000000000000001</length>
+            <radius>0.050000000000000003</radius>
+          </cylinder>
+        </geometry>
+      </collision>
+      <visual name='RH_HIP_fixed_joint_lump__RH_hip_fixed_visual'>
+        <pose>0 0 0 -2.6179938779900001 -1.0341155355537489e-13 -2.7709042263293297e-14</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>meshes/hip_l.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+      <visual name='RH_HIP_fixed_joint_lump__RH_HFE_link_visual_1'>
+        <pose>0.059899999999984979 -0.072581589091123569 -0.041905000000108453 3.141592653586966 0.52359877559979318 -1.5707963268007583</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>meshes/drive.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+    <joint name='RH_HFE' type='revolute'>
+      <pose relative_to='RH_HIP'>0.059899999999984979 -0.072581589091123569 -0.041905000000108453 3.141592653586966 0.52359877559979318 -1.5707963268007583</pose>
+      <parent>RH_HIP</parent>
+      <child>RH_THIGH</child>
+      <axis>
+        <xyz>-1 0 0</xyz>
+        <limit>
+          <lower>-9.4247779607699993</lower>
+          <upper>9.4247779607699993</upper>
+          <effort>80</effort>
+          <velocity>7.5</velocity>
+        </limit>
+        <dynamics>
+          <damping>0</damping>
+          <friction>0</friction>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+    </joint>
+    <link name='RH_THIGH'>
+      <pose relative_to='RH_HFE'>0 0 0 0 0 0</pose>
+      <inertial>
+        <pose>0.030814718332790619 4.6499511203945423e-05 -0.24569573428850541 0 0 0</pose>
+        <mass>3.0710000000000002</mass>
+        <inertia>
+          <ixx>0.029563793513988881</ixx>
+          <ixy>4.4291901779985212e-05</ixy>
+          <ixz>0.0041424259528101068</ixz>
+          <iyy>0.029904049332850541</iyy>
+          <iyz>9.4479961099306194e-05</iyz>
+          <izz>0.0048610845306010673</izz>
+        </inertia>
+      </inertial>
+      <collision name='RH_THIGH_fixed_joint_lump__RH_thigh_fixed_collision'>
+        <pose>0.040000000000000001 -1.9587109711949319e-13 0 1.57079632679 -5.5511151231257827e-17 1.57079632679</pose>
+        <geometry>
+          <cylinder>
+            <length>0.080000000000000002</length>
+            <radius>0.065000000000000002</radius>
+          </cylinder>
+        </geometry>
+      </collision>
+      <collision name='RH_THIGH_fixed_joint_lump__RH_thigh_fixed_collision_1'>
+        <pose>0.029999999999999999 -1.46899853392668e-13 -0.14131350000000001 0 0 1.57079632679</pose>
+        <geometry>
+          <box>
+            <size>0.074999999999999997 0.059999999999999998 0.28262700000000002</size>
+          </box>
+        </geometry>
+      </collision>
+      <collision name='RH_THIGH_fixed_joint_lump__RH_KFE_link_collision_2'>
+        <pose>0.03029999999999999 -4.9113837996550558e-13 -0.28499999999999998 0 1.5707963267948966 0</pose>
+        <geometry>
+          <cylinder>
+            <length>0.14000000000000001</length>
+            <radius>0.050000000000000003</radius>
+          </cylinder>
+        </geometry>
+      </collision>
+      <visual name='RH_THIGH_fixed_joint_lump__RH_thigh_fixed_visual'>
+        <pose>0 0 0 0 0 -1.5707963268</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>meshes/thigh.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+      <visual name='RH_THIGH_fixed_joint_lump__RH_KFE_link_visual_1'>
+        <pose>0.1003 -4.9113491051855362e-13 -0.28499999999999998 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>meshes/drive.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+    <joint name='RH_KFE' type='revolute'>
+      <pose relative_to='RH_THIGH'>0.1003 -4.9113491051855362e-13 -0.28499999999999998 0 0 0</pose>
+      <parent>RH_THIGH</parent>
+      <child>RH_SHANK</child>
+      <axis>
+        <xyz>-1 0 0</xyz>
+        <limit>
+          <lower>-9.4247779607699993</lower>
+          <upper>9.4247779607699993</upper>
+          <effort>80</effort>
+          <velocity>7.5</velocity>
+        </limit>
+        <dynamics>
+          <damping>0</damping>
+          <friction>0</friction>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+    </joint>
+    <link name='RH_SHANK'>
+      <pose relative_to='RH_KFE'>0 0 0 0 0 0</pose>
+      <inertial>
+        <pose>0.0054619992519348683 -0.061252769450419318 -0.080659781108731843 0 0 0</pose>
+        <mass>0.58842000000000005</mass>
+        <inertia>
+          <ixx>0.010161141436438179</ixx>
+          <ixy>-5.3571329232595592e-05</ixy>
+          <ixz>-2.2660426847404861e-05</ixz>
+          <iyy>0.008810379821340409</iyy>
+          <iyz>-0.001819353694812596</iyz>
+          <izz>0.0015497840809709841</izz>
+        </inertia>
+      </inertial>
+      <collision name='RH_SHANK_fixed_joint_lump__RH_shank_fixed_collision'>
+        <pose>0.02 -9.7935548559746621e-14 0 1.57079632679 -5.5511151231257827e-17 1.57079632679</pose>
+        <geometry>
+          <cylinder>
+            <length>0.040000000000000001</length>
+            <radius>0.059999999999999998</radius>
+          </cylinder>
+        </geometry>
+      </collision>
+      <collision name='RH_SHANK_fixed_joint_lump__RH_shank_fixed_collision_1'>
+        <pose>0.019999999999718441 -0.05749900000009793 0 1.57079632679 -5.5511151231257827e-17 1.57079632679</pose>
+        <geometry>
+          <box>
+            <size>0.114998 0.067500000000000004 0.040000000000000001</size>
+          </box>
+        </geometry>
+      </collision>
+      <collision name='RH_SHANK_fixed_joint_lump__RH_FOOT_collision_2'>
+        <pose>0.013049999999569351 -0.087950000000063908 -0.168985 0 0 1.57079632679</pose>
+        <geometry>
+          <cylinder>
+            <length>0.28250399999999998</length>
+            <radius>0.017500000000000002</radius>
+          </cylinder>
+        </geometry>
+      </collision>
+      <collision name='RH_SHANK_fixed_joint_lump__RH_FOOT_collision_3'>
+        <pose>0.013049999999569351 -0.087950000000063908 -0.31546999999999997 0 0 1.57079632679</pose>
+        <geometry>
+          <sphere>
+            <radius>0.029999999999999999</radius>
+          </sphere>
+        </geometry>
+      </collision>
+      <visual name='RH_SHANK_fixed_joint_lump__RH_shank_fixed_visual'>
+        <pose>0 0 0 0 0 -1.5707963268</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>meshes/shank_l.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+      <visual name='RH_SHANK_fixed_joint_lump__RH_FOOT_visual_1'>
+        <pose>0.013049999999569351 -0.087950000000063908 -0.33796999999999999 0 0 -2.3561944902</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>meshes/foot.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+    <frame name='base_LF_HAA' attached_to='base'>
+      <pose>0.2999 0.104 0 2.6179938779900001 0 0</pose>
+    </frame>
+    <frame name='LF_HAA_link' attached_to='base_LF_HAA'>
+      <pose>0 0 0 0 0 0</pose>
+    </frame>
+    <frame name='LF_hip_fixed_LF_HFE' attached_to='LF_hip_fixed'>
+      <pose>0.059900000000000002 0.083809999999999996 0 0 0 1.57079632679</pose>
+    </frame>
+    <frame name='LF_HFE_link' attached_to='LF_hip_fixed_LF_HFE'>
+      <pose>0 0 0 0 0 0</pose>
+    </frame>
+    <frame name='LF_thigh_fixed_LF_KFE' attached_to='LF_thigh_fixed'>
+      <pose>0 0.1003 -0.28499999999999998 0 0 1.57079632679</pose>
+    </frame>
+    <frame name='LF_KFE_link' attached_to='LF_thigh_fixed_LF_KFE'>
+      <pose>0 0 0 0 0 0</pose>
+    </frame>
+    <frame name='LF_shank_fixed_LF_FOOT' attached_to='LF_shank_fixed'>
+      <pose>0.08795 0.013050000000000001 -0.33796999999999999 0 0 0</pose>
+    </frame>
+    <frame name='LF_FOOT' attached_to='LF_shank_fixed_LF_FOOT'>
+      <pose>0 0 0 0 0 0</pose>
+    </frame>
+    <frame name='LF_shank_LF_shank_fixed' attached_to='LF_SHANK'>
+      <pose>0 0 0 0 0 -1.57079632679</pose>
+    </frame>
+    <frame name='LF_shank_fixed' attached_to='LF_shank_LF_shank_fixed'>
+      <pose>0 0 0 0 0 0</pose>
+    </frame>
+    <frame name='LF_THIGH_LF_thigh_fixed' attached_to='LF_THIGH'>
+      <pose>0 0 0 0 0 -1.57079632679</pose>
+    </frame>
+    <frame name='LF_thigh_fixed' attached_to='LF_THIGH_LF_thigh_fixed'>
+      <pose>0 0 0 0 0 0</pose>
+    </frame>
+    <frame name='LF_HIP_LF_hip_fixed' attached_to='LF_HIP'>
+      <pose>0 0 0 -2.6179938779900001 0 0</pose>
+    </frame>
+    <frame name='LF_hip_fixed' attached_to='LF_HIP_LF_hip_fixed'>
+      <pose>0 0 0 0 0 0</pose>
+    </frame>
+    <frame name='base_LH_HAA' attached_to='base'>
+      <pose>-0.2999 0.104 0 -2.6179938779900001 -6.3108872417680944e-30 3.1415926535895871</pose>
+    </frame>
+    <frame name='LH_HAA_link' attached_to='base_LH_HAA'>
+      <pose>0 0 0 0 0 0</pose>
+    </frame>
+    <frame name='LH_hip_fixed_LH_HFE' attached_to='LH_hip_fixed'>
+      <pose>-0.059900000000000002 0.083809999999999996 0 0 0 1.57079632679</pose>
+    </frame>
+    <frame name='LH_HFE_link' attached_to='LH_hip_fixed_LH_HFE'>
+      <pose>0 0 0 0 0 0</pose>
+    </frame>
+    <frame name='LH_thigh_fixed_LH_KFE' attached_to='LH_thigh_fixed'>
+      <pose>0 0.1003 -0.28499999999999998 0 0 1.57079632679</pose>
+    </frame>
+    <frame name='LH_KFE_link' attached_to='LH_thigh_fixed_LH_KFE'>
+      <pose>0 0 0 0 0 0</pose>
+    </frame>
+    <frame name='LH_shank_fixed_LH_FOOT' attached_to='LH_shank_fixed'>
+      <pose>-0.08795 0.013050000000000001 -0.33796999999999999 0 0 0</pose>
+    </frame>
+    <frame name='LH_FOOT' attached_to='LH_shank_fixed_LH_FOOT'>
+      <pose>0 0 0 0 0 0</pose>
+    </frame>
+    <frame name='LH_shank_LH_shank_fixed' attached_to='LH_SHANK'>
+      <pose>0 0 0 0 0 -1.57079632679</pose>
+    </frame>
+    <frame name='LH_shank_fixed' attached_to='LH_shank_LH_shank_fixed'>
+      <pose>0 0 0 0 0 0</pose>
+    </frame>
+    <frame name='LH_THIGH_LH_thigh_fixed' attached_to='LH_THIGH'>
+      <pose>0 0 0 0 0 -1.57079632679</pose>
+    </frame>
+    <frame name='LH_thigh_fixed' attached_to='LH_THIGH_LH_thigh_fixed'>
+      <pose>0 0 0 0 0 0</pose>
+    </frame>
+    <frame name='LH_HIP_LH_hip_fixed' attached_to='LH_HIP'>
+      <pose>0 0 0 -2.6179938779900001 -6.3108872417680944e-30 3.1415926535895871</pose>
+    </frame>
+    <frame name='LH_hip_fixed' attached_to='LH_HIP_LH_hip_fixed'>
+      <pose>0 0 0 0 0 0</pose>
+    </frame>
+    <frame name='base_RF_HAA' attached_to='base'>
+      <pose>0.2999 -0.104 0 -2.6179938779900001 0 0</pose>
+    </frame>
+    <frame name='RF_HAA_link' attached_to='base_RF_HAA'>
+      <pose>0 0 0 0 0 0</pose>
+    </frame>
+    <frame name='RF_hip_fixed_RF_HFE' attached_to='RF_hip_fixed'>
+      <pose>0.059900000000000002 -0.083809999999999996 0 0 0 -1.57079632679</pose>
+    </frame>
+    <frame name='RF_HFE_link' attached_to='RF_hip_fixed_RF_HFE'>
+      <pose>0 0 0 0 0 0</pose>
+    </frame>
+    <frame name='RF_thigh_fixed_RF_KFE' attached_to='RF_thigh_fixed'>
+      <pose>0 -0.1003 -0.28499999999999998 0 0 -1.57079632679</pose>
+    </frame>
+    <frame name='RF_KFE_link' attached_to='RF_thigh_fixed_RF_KFE'>
+      <pose>0 0 0 0 0 0</pose>
+    </frame>
+    <frame name='RF_shank_fixed_RF_FOOT' attached_to='RF_shank_fixed'>
+      <pose>0.08795 -0.013050000000000001 -0.33796999999999999 0 0 0</pose>
+    </frame>
+    <frame name='RF_FOOT' attached_to='RF_shank_fixed_RF_FOOT'>
+      <pose>0 0 0 0 0 0</pose>
+    </frame>
+    <frame name='RF_shank_RF_shank_fixed' attached_to='RF_SHANK'>
+      <pose>0 0 0 0 0 1.57079632679</pose>
+    </frame>
+    <frame name='RF_shank_fixed' attached_to='RF_shank_RF_shank_fixed'>
+      <pose>0 0 0 0 0 0</pose>
+    </frame>
+    <frame name='RF_THIGH_RF_thigh_fixed' attached_to='RF_THIGH'>
+      <pose>0 0 0 0 0 1.57079632679</pose>
+    </frame>
+    <frame name='RF_thigh_fixed' attached_to='RF_THIGH_RF_thigh_fixed'>
+      <pose>0 0 0 0 0 0</pose>
+    </frame>
+    <frame name='RF_HIP_RF_hip_fixed' attached_to='RF_HIP'>
+      <pose>0 0 0 2.6179938779900001 0 0</pose>
+    </frame>
+    <frame name='RF_hip_fixed' attached_to='RF_HIP_RF_hip_fixed'>
+      <pose>0 0 0 0 0 0</pose>
+    </frame>
+    <frame name='base_RH_HAA' attached_to='base'>
+      <pose>-0.2999 -0.104 0 2.6179938779900001 6.3108872417680944e-30 3.1415926535895871</pose>
+    </frame>
+    <frame name='RH_HAA_link' attached_to='base_RH_HAA'>
+      <pose>0 0 0 0 0 0</pose>
+    </frame>
+    <frame name='RH_hip_fixed_RH_HFE' attached_to='RH_hip_fixed'>
+      <pose>-0.059900000000000002 -0.083809999999999996 0 0 0 -1.57079632679</pose>
+    </frame>
+    <frame name='RH_HFE_link' attached_to='RH_hip_fixed_RH_HFE'>
+      <pose>0 0 0 0 0 0</pose>
+    </frame>
+    <frame name='RH_thigh_fixed_RH_KFE' attached_to='RH_thigh_fixed'>
+      <pose>0 -0.1003 -0.28499999999999998 0 0 -1.57079632679</pose>
+    </frame>
+    <frame name='RH_KFE_link' attached_to='RH_thigh_fixed_RH_KFE'>
+      <pose>0 0 0 0 0 0</pose>
+    </frame>
+    <frame name='RH_shank_fixed_RH_FOOT' attached_to='RH_shank_fixed'>
+      <pose>-0.08795 -0.013050000000000001 -0.33796999999999999 0 0 0</pose>
+    </frame>
+    <frame name='RH_FOOT' attached_to='RH_shank_fixed_RH_FOOT'>
+      <pose>0 0 0 0 0 0</pose>
+    </frame>
+    <frame name='RH_shank_RH_shank_fixed' attached_to='RH_SHANK'>
+      <pose>0 0 0 0 0 1.57079632679</pose>
+    </frame>
+    <frame name='RH_shank_fixed' attached_to='RH_shank_RH_shank_fixed'>
+      <pose>0 0 0 0 0 0</pose>
+    </frame>
+    <frame name='RH_THIGH_RH_thigh_fixed' attached_to='RH_THIGH'>
+      <pose>0 0 0 0 0 1.57079632679</pose>
+    </frame>
+    <frame name='RH_thigh_fixed' attached_to='RH_THIGH_RH_thigh_fixed'>
+      <pose>0 0 0 0 0 0</pose>
+    </frame>
+    <frame name='RH_HIP_RH_hip_fixed' attached_to='RH_HIP'>
+      <pose>0 0 0 2.6179938779900001 6.3108872417680944e-30 3.1415926535895871</pose>
+    </frame>
+    <frame name='RH_hip_fixed' attached_to='RH_HIP_RH_hip_fixed'>
+      <pose>0 0 0 0 0 0</pose>
+    </frame>
+    <frame name='base_battery' attached_to='base'>
+      <pose>0 0 0 0 0 0</pose>
+    </frame>
+    <frame name='battery' attached_to='base_battery'>
+      <pose>0 0 0 0 0 0</pose>
+    </frame>
+    <frame name='base_bottom_shell' attached_to='base'>
+      <pose>0 0 0 0 0 0</pose>
+    </frame>
+    <frame name='bottom_shell' attached_to='base_bottom_shell'>
+      <pose>0 0 0 0 0 0</pose>
+    </frame>
+    <frame name='depth_camera_front_color_frame_to_color_optical_frame' attached_to='depth_camera_front_color_frame'>
+      <pose>0 0 0 -1.57079632679 -5.5511151231257827e-17 -1.57079632679</pose>
+    </frame>
+    <frame name='depth_camera_front_color_optical_frame' attached_to='depth_camera_front_color_frame_to_color_optical_frame'>
+      <pose>0 0 0 0 0 0</pose>
+    </frame>
+    <frame name='depth_camera_front_camera_parent_to_color_frame' attached_to='depth_camera_front_camera_parent'>
+      <pose>0 0.014999999999999999 0 0 0 0</pose>
+    </frame>
+    <frame name='depth_camera_front_color_frame' attached_to='depth_camera_front_camera_parent_to_color_frame'>
+      <pose>0 0 0 0 0 0</pose>
+    </frame>
+    <frame name='depth_camera_front_camera_parent_to_depth_optical_frame' attached_to='depth_camera_front_camera_parent'>
+      <pose>0 0 0 -1.57079632679 -5.5511151231257827e-17 -1.57079632679</pose>
+    </frame>
+    <frame name='depth_camera_front_depth_optical_frame' attached_to='depth_camera_front_camera_parent_to_depth_optical_frame'>
+      <pose>0 0 0 0 0 0</pose>
+    </frame>
+    <frame name='depth_camera_front_camera_to_camera_parent' attached_to='depth_camera_front_camera'>
+      <pose>0.025499999999999998 0.017500000000000002 0 0 0 0</pose>
+    </frame>
+    <frame name='depth_camera_front_camera_parent' attached_to='depth_camera_front_camera_to_camera_parent'>
+      <pose>0 0 0 0 0 0</pose>
+    </frame>
+    <frame name='face_front_to_depth_camera_front_camera' attached_to='face_front'>
+      <pose>0.047149999999999997 0 -0.0292 0 0.52359877559800005 0</pose>
+    </frame>
+    <frame name='depth_camera_front_camera' attached_to='face_front_to_depth_camera_front_camera'>
+      <pose>0 0 0 0 0 0</pose>
+    </frame>
+    <frame name='wide_angle_camera_front_camera_to_camera_parent' attached_to='wide_angle_camera_front_camera'>
+      <pose>0 0 0 -1.57079632679 -5.5511151231257827e-17 -1.57079632679</pose>
+    </frame>
+    <frame name='wide_angle_camera_front_camera_parent' attached_to='wide_angle_camera_front_camera_to_camera_parent'>
+      <pose>0 0 0 0 0 0</pose>
+    </frame>
+    <frame name='face_front_to_wide_angle_camera_front_camera' attached_to='face_front'>
+      <pose>0.098500000000000004 0 0.014970000000000001 0 0 0</pose>
+    </frame>
+    <frame name='wide_angle_camera_front_camera' attached_to='face_front_to_wide_angle_camera_front_camera'>
+      <pose>0 0 0 0 0 0</pose>
+    </frame>
+    <frame name='base_face_front' attached_to='base'>
+      <pose>0.41449999999999998 0 0 0 0 0</pose>
+    </frame>
+    <frame name='face_front' attached_to='base_face_front'>
+      <pose>0 0 0 0 0 0</pose>
+    </frame>
+    <frame name='depth_camera_rear_color_frame_to_color_optical_frame' attached_to='depth_camera_rear_color_frame'>
+      <pose>0 0 0 -1.57079632679 -5.5511151231257827e-17 -1.57079632679</pose>
+    </frame>
+    <frame name='depth_camera_rear_color_optical_frame' attached_to='depth_camera_rear_color_frame_to_color_optical_frame'>
+      <pose>0 0 0 0 0 0</pose>
+    </frame>
+    <frame name='depth_camera_rear_camera_parent_to_color_frame' attached_to='depth_camera_rear_camera_parent'>
+      <pose>0 0.014999999999999999 0 0 0 0</pose>
+    </frame>
+    <frame name='depth_camera_rear_color_frame' attached_to='depth_camera_rear_camera_parent_to_color_frame'>
+      <pose>0 0 0 0 0 0</pose>
+    </frame>
+    <frame name='depth_camera_rear_camera_parent_to_depth_optical_frame' attached_to='depth_camera_rear_camera_parent'>
+      <pose>0 0 0 -1.57079632679 -5.5511151231257827e-17 -1.57079632679</pose>
+    </frame>
+    <frame name='depth_camera_rear_depth_optical_frame' attached_to='depth_camera_rear_camera_parent_to_depth_optical_frame'>
+      <pose>0 0 0 0 0 0</pose>
+    </frame>
+    <frame name='depth_camera_rear_camera_to_camera_parent' attached_to='depth_camera_rear_camera'>
+      <pose>0.025499999999999998 0.017500000000000002 0 0 0 0</pose>
+    </frame>
+    <frame name='depth_camera_rear_camera_parent' attached_to='depth_camera_rear_camera_to_camera_parent'>
+      <pose>0 0 0 0 0 0</pose>
+    </frame>
+    <frame name='face_rear_to_depth_camera_rear_camera' attached_to='face_rear'>
+      <pose>0.047149999999999997 0 -0.0292 0 0.52359877559800005 0</pose>
+    </frame>
+    <frame name='depth_camera_rear_camera' attached_to='face_rear_to_depth_camera_rear_camera'>
+      <pose>0 0 0 0 0 0</pose>
+    </frame>
+    <frame name='wide_angle_camera_rear_camera_to_camera_parent' attached_to='wide_angle_camera_rear_camera'>
+      <pose>0 0 0 -1.57079632679 -5.5511151231257827e-17 -1.57079632679</pose>
+    </frame>
+    <frame name='wide_angle_camera_rear_camera_parent' attached_to='wide_angle_camera_rear_camera_to_camera_parent'>
+      <pose>0 0 0 0 0 0</pose>
+    </frame>
+    <frame name='face_rear_to_wide_angle_camera_rear_camera' attached_to='face_rear'>
+      <pose>0.098500000000000004 0 0.014970000000000001 0 0 0</pose>
+    </frame>
+    <frame name='wide_angle_camera_rear_camera' attached_to='face_rear_to_wide_angle_camera_rear_camera'>
+      <pose>0 0 0 0 0 0</pose>
+    </frame>
+    <frame name='base_face_rear' attached_to='base'>
+      <pose>-0.41449999999999998 0 0 0 0 -3.1415926535895871</pose>
+    </frame>
+    <frame name='face_rear' attached_to='base_face_rear'>
+      <pose>0 0 0 0 0 0</pose>
+    </frame>
+    <frame name='base_handle' attached_to='base'>
+      <pose>0 0 0 0 0 0</pose>
+    </frame>
+    <frame name='handle' attached_to='base_handle'>
+      <pose>0 0 0 0 0 0</pose>
+    </frame>
+    <frame name='base_hatch' attached_to='base'>
+      <pose>0 0 0 0 0 0</pose>
+    </frame>
+    <frame name='hatch' attached_to='base_hatch'>
+      <pose>0 0 0 0 0 0</pose>
+    </frame>
+    <frame name='base_remote' attached_to='base'>
+      <pose>0 0 0 0 0 0</pose>
+    </frame>
+    <frame name='remote' attached_to='base_remote'>
+      <pose>0 0 0 0 0 0</pose>
+    </frame>
+    <frame name='base_to_base_inertia' attached_to='base'>
+      <pose>0 0 0 0 0 0</pose>
+    </frame>
+    <frame name='base_inertia' attached_to='base_to_base_inertia'>
+      <pose>0 0 0 0 0 0</pose>
+    </frame>
+    <frame name='depth_camera_left_color_frame_to_color_optical_frame' attached_to='depth_camera_left_color_frame'>
+      <pose>0 0 0 -1.57079632679 -5.5511151231257827e-17 -1.57079632679</pose>
+    </frame>
+    <frame name='depth_camera_left_color_optical_frame' attached_to='depth_camera_left_color_frame_to_color_optical_frame'>
+      <pose>0 0 0 0 0 0</pose>
+    </frame>
+    <frame name='depth_camera_left_camera_parent_to_color_frame' attached_to='depth_camera_left_camera_parent'>
+      <pose>0 0.014999999999999999 0 0 0 0</pose>
+    </frame>
+    <frame name='depth_camera_left_color_frame' attached_to='depth_camera_left_camera_parent_to_color_frame'>
+      <pose>0 0 0 0 0 0</pose>
+    </frame>
+    <frame name='depth_camera_left_camera_parent_to_depth_optical_frame' attached_to='depth_camera_left_camera_parent'>
+      <pose>0 0 0 -1.57079632679 -5.5511151231257827e-17 -1.57079632679</pose>
+    </frame>
+    <frame name='depth_camera_left_depth_optical_frame' attached_to='depth_camera_left_camera_parent_to_depth_optical_frame'>
+      <pose>0 0 0 0 0 0</pose>
+    </frame>
+    <frame name='depth_camera_left_camera_to_camera_parent' attached_to='depth_camera_left_camera'>
+      <pose>0.025499999999999998 0.017500000000000002 0 0 0 0</pose>
+    </frame>
+    <frame name='depth_camera_left_camera_parent' attached_to='depth_camera_left_camera_to_camera_parent'>
+      <pose>0 0 0 0 0 0</pose>
+    </frame>
+    <frame name='base_to_depth_camera_left_camera' attached_to='base'>
+      <pose>0 0.07646 0.029049999999999999 -1.2819751242554881e-16 0.52359877559800028 1.5707963267899998</pose>
+    </frame>
+    <frame name='depth_camera_left_camera' attached_to='base_to_depth_camera_left_camera'>
+      <pose>0 0 0 0 0 0</pose>
+    </frame>
+    <frame name='depth_camera_right_color_frame_to_color_optical_frame' attached_to='depth_camera_right_color_frame'>
+      <pose>0 0 0 -1.57079632679 -5.5511151231257827e-17 -1.57079632679</pose>
+    </frame>
+    <frame name='depth_camera_right_color_optical_frame' attached_to='depth_camera_right_color_frame_to_color_optical_frame'>
+      <pose>0 0 0 0 0 0</pose>
+    </frame>
+    <frame name='depth_camera_right_camera_parent_to_color_frame' attached_to='depth_camera_right_camera_parent'>
+      <pose>0 0.014999999999999999 0 0 0 0</pose>
+    </frame>
+    <frame name='depth_camera_right_color_frame' attached_to='depth_camera_right_camera_parent_to_color_frame'>
+      <pose>0 0 0 0 0 0</pose>
+    </frame>
+    <frame name='depth_camera_right_camera_parent_to_depth_optical_frame' attached_to='depth_camera_right_camera_parent'>
+      <pose>0 0 0 -1.57079632679 -5.5511151231257827e-17 -1.57079632679</pose>
+    </frame>
+    <frame name='depth_camera_right_depth_optical_frame' attached_to='depth_camera_right_camera_parent_to_depth_optical_frame'>
+      <pose>0 0 0 0 0 0</pose>
+    </frame>
+    <frame name='depth_camera_right_camera_to_camera_parent' attached_to='depth_camera_right_camera'>
+      <pose>0.025499999999999998 0.017500000000000002 0 0 0 0</pose>
+    </frame>
+    <frame name='depth_camera_right_camera_parent' attached_to='depth_camera_right_camera_to_camera_parent'>
+      <pose>0 0 0 0 0 0</pose>
+    </frame>
+    <frame name='base_to_depth_camera_right_camera' attached_to='base'>
+      <pose>0 -0.07646 0.029049999999999999 1.2819751242554881e-16 0.52359877559800028 -1.5707963267899998</pose>
+    </frame>
+    <frame name='depth_camera_right_camera' attached_to='base_to_depth_camera_right_camera'>
+      <pose>0 0 0 0 0 0</pose>
+    </frame>
+    <frame name='base_to_docking_hatch_cover' attached_to='base'>
+      <pose>0.34300000000000003 0 -0.070000000000000007 0 0 0</pose>
+    </frame>
+    <frame name='docking_hatch_cover' attached_to='base_to_docking_hatch_cover'>
+      <pose>0 0 0 0 0 0</pose>
+    </frame>
+    <frame name='lidar_cage_to_lidar' attached_to='lidar_cage'>
+      <pose>0 0 0.068699999999999997 0 0 -1.57079632679</pose>
+    </frame>
+    <frame name='lidar' attached_to='lidar_cage_to_lidar'>
+      <pose>0 0 0 0 0 0</pose>
+    </frame>
+    <frame name='base_to_lidar_cage' attached_to='base'>
+      <pose>-0.36399999999999999 0 0.073499999999999996 0 0 0</pose>
+    </frame>
+    <frame name='lidar_cage' attached_to='base_to_lidar_cage'>
+      <pose>0 0 0 0 0 0</pose>
+    </frame>
+    <frame name='base_top_shell' attached_to='base'>
+      <pose>0 0 0 0 0 0</pose>
+    </frame>
+    <frame name='top_shell' attached_to='base_top_shell'>
+      <pose>0 0 0 0 0 0</pose>
+    </frame>
+    <frame name='imu_joint' attached_to='base'>
+      <pose>0.24879999999999999 0.0083499999999999998 0.046280000000000002 0 0 1.57079632679</pose>
+    </frame>
+    <frame name='imu_link' attached_to='imu_joint'>
+      <pose>0 0 0 0 0 0</pose>
+    </frame>
+  </model>
+</sdf>

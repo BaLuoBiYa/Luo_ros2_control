@@ -12,6 +12,7 @@
 ## 构建
 ```bash
 colcon build --symlink-install
+export GZ_SIM_RESOURCE_PATH=path_to_ws/src/simulation
 ```
 
 ## 运行

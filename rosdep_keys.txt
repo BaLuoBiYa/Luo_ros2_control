@@ -1,4 +1,0 @@
-gtest
-libpcl-all-dev
-mpfr
-urdfdom
