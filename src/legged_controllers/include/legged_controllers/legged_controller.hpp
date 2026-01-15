@@ -66,6 +66,8 @@ namespace legged{
             controller_interface::CallbackReturn on_configure(const rclcpp_lifecycle::State &previous_state) override;
             controller_interface::CallbackReturn on_activate(const rclcpp_lifecycle::State &previous_state) override;
 
+            // controller_interface::CallbackReturn on_error(const rclcpp_lifecycle::State &previous_state) override;
+
             controller_interface::return_type update(const rclcpp::Time &time, const rclcpp::Duration &period) override;
     }; // class legged_mrt
 }// namespace legged

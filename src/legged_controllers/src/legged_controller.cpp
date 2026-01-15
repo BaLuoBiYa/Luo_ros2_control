@@ -67,10 +67,10 @@ namespace legged
         }
         // 申请关节速度状态接口
 
-        config.names.push_back("LF/effort");
-        config.names.push_back("LH/effort");
-        config.names.push_back("RF/effort");
-        config.names.push_back("RH/effort");
+        config.names.push_back("LF/contact");
+        config.names.push_back("LH/contact");
+        config.names.push_back("RF/contact");
+        config.names.push_back("RH/contact");
         // 申请足端接触力状态接口
 
         std::vector<std::string> imu_interfaces =
@@ -223,6 +223,19 @@ namespace legged
         return controller_interface::return_type::OK;
     }
 
+    // controller_interface::CallbackReturn legged_controller::on_error(const rclcpp_lifecycle::State &previous_state)
+    // {
+    //     bool writeSuccess = true;
+    //     for (size_t j = 0; j < 12; ++j)
+    //     {
+    //         writeSuccess = command_interfaces_[j].set_value(0);
+    //         writeSuccess =command_interfaces_[j + 12].set_value(0);
+    //         writeSuccess = command_interfaces_[j + 24].set_value(0);
+    //     }
+    //     return controller_interface::CallbackReturn::SUCCESS;
+    // }
+
+
     void legged_controller::updateEstimation(const rclcpp::Time &time, const rclcpp::Duration &period)
     {
         ocs2::vector_t jointPos(12), jointVel(12);
@@ -240,15 +253,7 @@ namespace legged
 
         for (size_t i = 0; i < contacts.size(); ++i)
         {
-            float contactForce = state_interfaces_[24 + i].get_optional().value();
-            if (contactForce > 1.0f)
-            {
-                contactFlag[i] = true;
-            }
-            else
-            {
-                contactFlag[i] = false;
-            }
+            contactFlag[i] = state_interfaces_[24 + i].get_optional<bool>().value();
         }
 
         for (size_t i = 0; i < 4; ++i)
@@ -282,5 +287,7 @@ namespace legged
         currentObservation_.state(9) = yawLast + angles::shortest_angular_distance(yawLast, currentObservation_.state(9));
         currentObservation_.mode = stateEstimate_->getMode();
     }
-
 }
+
+#include "pluginlib/class_list_macros.hpp"
+PLUGINLIB_EXPORT_CLASS(legged::legged_controller, controller_interface::ControllerInterface)

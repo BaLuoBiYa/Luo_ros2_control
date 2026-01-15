@@ -59,8 +59,8 @@ namespace legged
 		ocs2::legged_robot::vector3_t angularVelLocal_, linearAccelLocal_;
 		ocs2::legged_robot::matrix3_t orientationCovariance_, angularVelCovariance_, linearAccelCovariance_;
 
-		std::shared_ptr<realtime_tools::RealtimePublisher<nav_msgs::msg::Odometry>> odomPub_;
-		std::shared_ptr<realtime_tools::RealtimePublisher<geometry_msgs::msg::PoseWithCovarianceStamped>> posePub_;
+		realtime_tools::RealtimePublisher<nav_msgs::msg::Odometry>::SharedPtr odomPub_;
+		realtime_tools::RealtimePublisher<geometry_msgs::msg::PoseWithCovarianceStamped>::SharedPtr posePub_;
 		rclcpp::Time lastPub_;
 	};
 

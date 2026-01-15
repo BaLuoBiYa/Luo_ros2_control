@@ -81,11 +81,12 @@ namespace legged {
         const rclcpp_lifecycle::LifecycleNode::SharedPtr node_;
 
         // Publishers and subscribers
-        std::shared_ptr<realtime_tools::RealtimePublisher<ocs2_msgs::msg::MpcObservation>> mpcObservationPublisher_;
+        realtime_tools::RealtimePublisher<ocs2_msgs::msg::MpcObservation>::SharedPtr
+            mpcObservationPublisher_;
         // rclcpp::Publisher<ocs2_msgs::msg::MpcObservation>::SharedPtr
         // mpcObservationPublisher_;
         rclcpp::Subscription<ocs2_msgs::msg::MpcFlattenedController>::SharedPtr
-        mpcPolicySubscriber_;
+            mpcPolicySubscriber_;
         rclcpp::Client<ocs2_msgs::srv::Reset>::SharedPtr mpcResetServiceClient_;
 
         // ROS messages
