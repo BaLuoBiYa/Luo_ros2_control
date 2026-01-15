@@ -203,9 +203,9 @@ namespace legged
         bool writeSuccess = true;
         for (size_t j = 0; j < 12; ++j)
         {
-            writeSuccess = command_interfaces_[j].set_value(posDes(j));
-            writeSuccess =command_interfaces_[j + 12].set_value(velDes(j));
-            writeSuccess = command_interfaces_[j + 24].set_value(torque(j));
+            writeSuccess = command_interfaces_[j].set_value<double>(posDes(j));
+            writeSuccess =command_interfaces_[j + 12].set_value<double>(velDes(j));
+            writeSuccess = command_interfaces_[j + 24].set_value<double>(torque(j));
         }
         // Send commands to the robot
         if (!writeSuccess)
@@ -239,7 +239,7 @@ namespace legged
     void legged_controller::updateEstimation(const rclcpp::Time &time, const rclcpp::Duration &period)
     {
         ocs2::vector_t jointPos(12), jointVel(12);
-        ocs2::legged_robot::contact_flag_t contacts;
+        // ocs2::legged_robot::contact_flag_t contacts;
         Eigen::Quaternion<scalar_t> quat;
         ocs2::legged_robot::contact_flag_t contactFlag;
         ocs2::legged_robot::vector3_t angularVel, linearAccel;
@@ -247,14 +247,37 @@ namespace legged
 
         for (size_t i = 0; i < 12; ++i)
         {
-            jointPos(i) = state_interfaces_[i].get_optional().value();
-            jointVel(i) = state_interfaces_[i + 12].get_optional().value();
+            auto pos = state_interfaces_[i].get_optional<double>();
+            if (pos == std::nullopt)
+            {
+                RCLCPP_ERROR(get_node()->get_logger(), "Failed to read joint position interface");
+                continue ;
+            }
+            jointPos(i) = pos.value();
         }
 
-        for (size_t i = 0; i < contacts.size(); ++i)
+        for (size_t i = 0; i < 12; ++i)
         {
-            contactFlag[i] = state_interfaces_[24 + i].get_optional<bool>().value();
+            auto vel = state_interfaces_[12 + i].get_optional<double>();
+            if (vel == std::nullopt)
+            {
+                RCLCPP_ERROR(get_node()->get_logger(), "Failed to read joint velocity interface");
+                continue ;
+            }
+            jointVel(i) = vel.value();
         }
+
+        for (size_t i = 0; i < 4; ++i)
+        {
+            auto contact = state_interfaces_[24 + i].get_optional<bool>();
+            if (contact == std::nullopt)
+            {
+                RCLCPP_ERROR(get_node()->get_logger(), "Failed to read contact interface");
+                continue ;
+            }
+            contactFlag[i] = contact.value();
+        }
+        // 读取关节状态和接触状态,如果读取失败，跳过更新
 
         for (size_t i = 0; i < 4; ++i)
         {

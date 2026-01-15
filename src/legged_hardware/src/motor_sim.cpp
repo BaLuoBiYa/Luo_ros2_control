@@ -66,9 +66,9 @@ namespace legged
 
         for (size_t i = 0; i < 12; i++)
         {
-            current_position_[i] = msg.value().position[i];
-            current_velocity_[i] = msg.value().velocity[i];
-            current_effort_[i] = msg.value().effort[i];
+            set_state(joint_names_[i] + "/position", msg.value().position[i]);
+            set_state(joint_names_[i] + "/velocity", msg.value().velocity[i]);
+            set_state(joint_names_[i] + "/effort", msg.value().effort[i]);
         }
 
         return hardware_interface::return_type::OK;
@@ -79,6 +79,10 @@ namespace legged
         (void)time;
         for (size_t i = 0; i < 12; i++)
         {
+            command_position_[i] = get_command<double>(joint_names_[i] + "/position");
+            command_velocity_[i] = get_command<double>(joint_names_[i] + "/velocity");
+            command_effort_[i] = get_command<double>(joint_names_[i] + "/effort");
+
             joint_command_.points[0].positions[i] = command_position_[i];
             joint_command_.points[0].velocities[i] = command_velocity_[i];
             joint_command_.points[0].effort[i] = command_effort_[i];
@@ -95,38 +99,38 @@ namespace legged
         return hardware_interface::return_type::OK;
     }
 
-    std::vector<hardware_interface::StateInterface> MotorSim::export_state_interfaces()
-    {
-        std::vector<hardware_interface::StateInterface> state_interfaces;
-        for (size_t i = 0; i < 12; i++)
-        {
-            state_interfaces.emplace_back(
-                hardware_interface::StateInterface(joint_names_[i], "position", &current_position_[i]));
-            state_interfaces.emplace_back(
-                hardware_interface::StateInterface(joint_names_[i], "velocity", &current_velocity_[i]));
-            state_interfaces.emplace_back(
-                hardware_interface::StateInterface(joint_names_[i], "effort", &current_effort_[i]));
-        }
+    // std::vector<hardware_interface::StateInterface> MotorSim::export_state_interfaces()
+    // {
+    //     std::vector<hardware_interface::StateInterface> state_interfaces;
+    //     for (size_t i = 0; i < 12; i++)
+    //     {
+    //         state_interfaces.emplace_back(
+    //             hardware_interface::StateInterface(joint_names_[i], "position", &current_position_[i]));
+    //         state_interfaces.emplace_back(
+    //             hardware_interface::StateInterface(joint_names_[i], "velocity", &current_velocity_[i]));
+    //         state_interfaces.emplace_back(
+    //             hardware_interface::StateInterface(joint_names_[i], "effort", &current_effort_[i]));
+    //     }
 
-        return state_interfaces;
-    }
+    //     return state_interfaces;
+    // }
 
-    std::vector<hardware_interface::CommandInterface> MotorSim::export_command_interfaces()
-    {
-        std::vector<hardware_interface::CommandInterface> command_interfaces;
+    // std::vector<hardware_interface::CommandInterface> MotorSim::export_command_interfaces()
+    // {
+    //     std::vector<hardware_interface::CommandInterface> command_interfaces;
 
-        for (size_t i = 0; i < 12; i++)
-        {
-            command_interfaces.emplace_back(
-                hardware_interface::CommandInterface(joint_names_[i], "position", &command_position_[i]));
-            command_interfaces.emplace_back(
-                hardware_interface::CommandInterface(joint_names_[i], "velocity", &command_velocity_[i]));
-            command_interfaces.emplace_back(
-                hardware_interface::CommandInterface(joint_names_[i], "effort", &command_effort_[i]));
-        }
+    //     for (size_t i = 0; i < 12; i++)
+    //     {
+    //         command_interfaces.emplace_back(
+    //             hardware_interface::CommandInterface(joint_names_[i], "position", &command_position_[i]));
+    //         command_interfaces.emplace_back(
+    //             hardware_interface::CommandInterface(joint_names_[i], "velocity", &command_velocity_[i]));
+    //         command_interfaces.emplace_back(
+    //             hardware_interface::CommandInterface(joint_names_[i], "effort", &command_effort_[i]));
+    //     }
 
-        return command_interfaces;
-    }
+    //     return command_interfaces;
+    // }
 } // namespace legged
 
 #include "pluginlib/class_list_macros.hpp"

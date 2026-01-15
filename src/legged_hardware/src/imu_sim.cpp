@@ -52,51 +52,51 @@ namespace legged
             return hardware_interface::return_type::ERROR;
         }
 
-        orientation_[0] = imu_msg.value().orientation.x;
-        orientation_[1] = imu_msg.value().orientation.y;
-        orientation_[2] = imu_msg.value().orientation.z;
-        orientation_[3] = imu_msg.value().orientation.w;
+        set_state<double>("orientation.x", imu_msg.value().orientation.x);
+        set_state<double>("orientation.y", imu_msg.value().orientation.y);
+        set_state<double>("orientation.z", imu_msg.value().orientation.z);
+        set_state<double>("orientation.w", imu_msg.value().orientation.w);
 
-        angular_velocity_[0] = imu_msg.value().angular_velocity.x;
-        angular_velocity_[1] = imu_msg.value().angular_velocity.y;
-        angular_velocity_[2] = imu_msg.value().angular_velocity.z;
+        set_state<double>("angular_velocity.x", imu_msg.value().angular_velocity.x);
+        set_state<double>("angular_velocity.y", imu_msg.value().angular_velocity.y);
+        set_state<double>("angular_velocity.z", imu_msg.value().angular_velocity.z);
 
-        linear_acceleration_[0] = imu_msg.value().linear_acceleration.x;
-        linear_acceleration_[1] = imu_msg.value().linear_acceleration.y;
-        linear_acceleration_[2] = imu_msg.value().linear_acceleration.z;
+        set_state<double>("linear_acceleration.x", imu_msg.value().linear_acceleration.x);
+        set_state<double>("linear_acceleration.y", imu_msg.value().linear_acceleration.y);
+        set_state<double>("linear_acceleration.z", imu_msg.value().linear_acceleration.z);
 
         return hardware_interface::return_type::OK;
     }
 
-    std::vector<hardware_interface::StateInterface> ImuSim::export_state_interfaces()
-    {
-        std::vector<hardware_interface::StateInterface> state_interfaces;
+    // std::vector<hardware_interface::StateInterface> ImuSim::export_state_interfaces()
+    // {
+    //     std::vector<hardware_interface::StateInterface> state_interfaces;
 
-        state_interfaces.emplace_back(hardware_interface::StateInterface(
-            imu_name_, "orientation.x", &orientation_[0]));
-        state_interfaces.emplace_back(hardware_interface::StateInterface(
-            imu_name_, "orientation.y", &orientation_[1]));
-        state_interfaces.emplace_back(hardware_interface::StateInterface(
-            imu_name_, "orientation.z", &orientation_[2]));
-        state_interfaces.emplace_back(hardware_interface::StateInterface(
-            imu_name_, "orientation.w", &orientation_[3]));
+    //     state_interfaces.emplace_back(hardware_interface::StateInterface(
+    //         imu_name_, "orientation.x", &orientation_[0]));
+    //     state_interfaces.emplace_back(hardware_interface::StateInterface(
+    //         imu_name_, "orientation.y", &orientation_[1]));
+    //     state_interfaces.emplace_back(hardware_interface::StateInterface(
+    //         imu_name_, "orientation.z", &orientation_[2]));
+    //     state_interfaces.emplace_back(hardware_interface::StateInterface(
+    //         imu_name_, "orientation.w", &orientation_[3]));
 
-        state_interfaces.emplace_back(hardware_interface::StateInterface(
-            imu_name_, "angular_velocity.x", &angular_velocity_[0]));
-        state_interfaces.emplace_back(hardware_interface::StateInterface(
-            imu_name_, "angular_velocity.y", &angular_velocity_[1]));
-        state_interfaces.emplace_back(hardware_interface::StateInterface(
-            imu_name_, "angular_velocity.z", &angular_velocity_[2]));
+    //     state_interfaces.emplace_back(hardware_interface::StateInterface(
+    //         imu_name_, "angular_velocity.x", &angular_velocity_[0]));
+    //     state_interfaces.emplace_back(hardware_interface::StateInterface(
+    //         imu_name_, "angular_velocity.y", &angular_velocity_[1]));
+    //     state_interfaces.emplace_back(hardware_interface::StateInterface(
+    //         imu_name_, "angular_velocity.z", &angular_velocity_[2]));
 
-        state_interfaces.emplace_back(hardware_interface::StateInterface(
-            imu_name_, "linear_acceleration.x", &linear_acceleration_[0]));
-        state_interfaces.emplace_back(hardware_interface::StateInterface(
-            imu_name_, "linear_acceleration.y", &linear_acceleration_[1]));
-        state_interfaces.emplace_back(hardware_interface::StateInterface(
-            imu_name_, "linear_acceleration.z", &linear_acceleration_[2]));
+    //     state_interfaces.emplace_back(hardware_interface::StateInterface(
+    //         imu_name_, "linear_acceleration.x", &linear_acceleration_[0]));
+    //     state_interfaces.emplace_back(hardware_interface::StateInterface(
+    //         imu_name_, "linear_acceleration.y", &linear_acceleration_[1]));
+    //     state_interfaces.emplace_back(hardware_interface::StateInterface(
+    //         imu_name_, "linear_acceleration.z", &linear_acceleration_[2]));
 
-        return state_interfaces;
-    }
+    //     return state_interfaces;
+    // }
 }
 
 #include "pluginlib/class_list_macros.hpp"

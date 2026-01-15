@@ -61,28 +61,28 @@ namespace legged
             {
                 return hardware_interface::return_type::ERROR;
             }
-            contact_flag_[i] = msg.value().data;
+            set_state<bool>(tip_names_[i] + "/contact", msg.value().data);
         }
 
         return hardware_interface::return_type::OK;
     }
 
-    std::vector<hardware_interface::StateInterface> contactSim::export_state_interfaces()
-    {
-        std::vector<hardware_interface::StateInterface> state_interfaces;
+    // std::vector<hardware_interface::StateInterface> contactSim::export_state_interfaces()
+    // {
+    //     std::vector<hardware_interface::StateInterface> state_interfaces;
 
-        hardware_interface::InterfaceInfo info;
-        info.name = "contact";
-        info.data_type = "bool";
+    //     hardware_interface::InterfaceInfo info;
+    //     info.name = "contact";
+    //     info.data_type = "bool";
 
-        for (size_t i = 0; i < 4; i++)
-        {
-            hardware_interface::InterfaceDescription desc(tip_names_[i],info);
-            state_interfaces.emplace_back(hardware_interface::StateInterface(desc));
-        }
+    //     for (size_t i = 0; i < 4; i++)
+    //     {
+    //         hardware_interface::InterfaceDescription desc(tip_names_[i],info);
+    //         state_interfaces.emplace_back(hardware_interface::StateInterface(desc));
+    //     }
 
-        return state_interfaces;
-    }
+    //     return state_interfaces;
+    // }
 } // namespace legged
 
 #include "pluginlib/class_list_macros.hpp"

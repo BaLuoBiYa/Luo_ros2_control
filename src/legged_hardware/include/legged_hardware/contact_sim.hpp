@@ -18,7 +18,7 @@ namespace legged
 
         hardware_interface::return_type read(const rclcpp::Time &time, const rclcpp::Duration &period) override;
 
-        std::vector<hardware_interface::StateInterface> export_state_interfaces() override;
+        // std::vector<hardware_interface::StateInterface> export_state_interfaces() override;
 
     private:
         std::string contacts_topic_;
