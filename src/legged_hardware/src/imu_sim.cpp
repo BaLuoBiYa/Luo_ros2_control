@@ -32,6 +32,8 @@ namespace legged
     hardware_interface::CallbackReturn ImuSim::on_activate(const rclcpp_lifecycle::State &pre)
     {
         (void)pre;
+        sensor_msgs::msg::Imu empty_msg;
+        received_imu_msg_.set(empty_msg);
         return hardware_interface::CallbackReturn::SUCCESS;
     }
 

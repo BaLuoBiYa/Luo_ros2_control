@@ -45,6 +45,8 @@ namespace legged
     hardware_interface::CallbackReturn MotorSim::on_activate(const rclcpp_lifecycle::State &pre)
     {
         (void)pre;
+        sensor_msgs::msg::JointState empty_msg;
+        received_msg_.set(empty_msg);
         return hardware_interface::CallbackReturn::SUCCESS;
     }
 

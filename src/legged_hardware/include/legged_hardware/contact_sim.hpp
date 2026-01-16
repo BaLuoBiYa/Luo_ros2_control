@@ -2,7 +2,7 @@
 #include <rclcpp/rclcpp.hpp>
 #include <hardware_interface/sensor_interface.hpp>
 
-#include <std_msgs/msg/bool.hpp>
+#include <ros_gz_interfaces/msg/contacts.hpp>
 #include <realtime_tools/realtime_thread_safe_box.hpp>
 
 namespace legged
@@ -24,8 +24,8 @@ namespace legged
         std::string contacts_topic_;
         std::string tip_names_[4] = {"LF", "LH", "RF", "RH"};
 
-        realtime_tools::RealtimeThreadSafeBox<std_msgs::msg::Bool> received_contacts_msg_[4];
-        rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr contact_subscriber_[4];
+        realtime_tools::RealtimeThreadSafeBox<ros_gz_interfaces::msg::Contacts> received_contacts_msg_[4];
+        rclcpp::Subscription<ros_gz_interfaces::msg::Contacts>::SharedPtr contact_subscriber_[4];
 
         bool contact_flag_[4];
     };

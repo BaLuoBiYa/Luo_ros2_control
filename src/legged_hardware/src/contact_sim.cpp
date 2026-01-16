@@ -25,10 +25,10 @@ namespace legged
         for (size_t i = 0; i < 4; i++)
         {
             std::string topic = contacts_topic_ + tip_names_[i];
-            contact_subscriber_[i] = get_node()->create_subscription<std_msgs::msg::Bool>(
+            contact_subscriber_[i] = get_node()->create_subscription<ros_gz_interfaces::msg::Contacts>(
                 topic,
                 1,
-                [this, i](const std_msgs::msg::Bool::ConstSharedPtr &msg)
+                [this, i](const ros_gz_interfaces::msg::Contacts::ConstSharedPtr &msg)
                 {
                     this->received_contacts_msg_[i].set(*msg);
                 });
@@ -40,6 +40,11 @@ namespace legged
     hardware_interface::CallbackReturn contactSim::on_activate(const rclcpp_lifecycle::State &pre)
     {
         (void)pre;
+        ros_gz_interfaces::msg::Contacts empty_msg;
+        for (size_t i = 0; i < 4; i++)
+        {
+            received_contacts_msg_[i].set(empty_msg);
+        }
         return hardware_interface::CallbackReturn::SUCCESS;
     }
 
@@ -53,6 +58,7 @@ namespace legged
     {
         (void)time;
         (void)period;
+        const std::string kObstacle = "Obstacle::link::collision";
 
         for (size_t i = 0; i < 4; i++)
         {
@@ -61,7 +67,17 @@ namespace legged
             {
                 return hardware_interface::return_type::ERROR;
             }
-            set_state<bool>(tip_names_[i] + "/contact", msg.value().data);
+            bool hit = false;
+            for (const auto &c : msg.value().contacts)
+            {
+                // 只要任一碰撞体为障碍物即可判定接触
+                if (c.collision1.name == kObstacle || c.collision2.name == kObstacle)
+                {
+                    hit = true;
+                    break;
+                }
+            }
+            set_state<bool>(tip_names_[i] + "/contact", hit);
         }
 
         return hardware_interface::return_type::OK;

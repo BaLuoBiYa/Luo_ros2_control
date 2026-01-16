@@ -13,6 +13,7 @@ find_package(pluginlib REQUIRED)
 find_package(hardware_interface REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(trajectory_msgs REQUIRED)
+find_package(ros_gz_interfaces REQUIRED)
 
 include_directories(include)
 
@@ -29,6 +30,7 @@ ament_target_dependencies(${PROJECT_NAME}
   "hardware_interface"
   "sensor_msgs"
   "trajectory_msgs"
+  "ros_gz_interfaces"
 )
 
 pluginlib_export_plugin_description_file(hardware_interface sim_interface.xml)
@@ -52,6 +54,7 @@ ament_export_dependencies(
   hardware_interface
   sensor_msgs
   trajectory_msgs
+  ros_gz_interfaces
 )
 
 ament_package()
