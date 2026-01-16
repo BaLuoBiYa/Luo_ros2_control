@@ -336,7 +336,7 @@
 				<always_on>1</always_on>
 				<update_rate>1</update_rate>
 				<visualize>true</visualize>
-				<topic>imu</topic>
+				<topic>/anymal/imu</topic>
 			</sensor>
 		</link>
 		<joint name='LF_HAA' type='revolute'>
@@ -581,6 +581,14 @@
 					</mesh>
 				</geometry>
 			</visual>
+			<sensor name="lf_foot_contact" type="contact">
+				<always_on>1</always_on>
+				<update_rate>200</update_rate>
+				<topic>/anymal/LF/contact</topic>
+				<contact>
+					<collision>LF_SHANK_fixed_joint_lump__LF_FOOT_collision_3</collision>
+				</contact>
+			</sensor>
 		</link>
 		<joint name='LH_HAA' type='revolute'>
 			<pose relative_to='base'>-0.2999 0.104 0 -2.6179938779900001 -6.3108872417680944e-30
@@ -825,6 +833,14 @@
 					</mesh>
 				</geometry>
 			</visual>
+			<sensor name="lh_foot_contact" type="contact">
+				<always_on>1</always_on>
+				<update_rate>200</update_rate>
+				<topic>/anymal/LH/contact</topic>
+				<contact>
+					<collision>LH_SHANK_fixed_joint_lump__LH_FOOT_collision_3</collision>
+				</contact>
+			</sensor>
 		</link>
 		<joint name='RF_HAA' type='revolute'>
 			<pose relative_to='base'>0.2999 -0.104 0 -2.6179938779900001 0 0</pose>
@@ -1069,6 +1085,14 @@
 					</mesh>
 				</geometry>
 			</visual>
+			<sensor name="rf_foot_contact" type="contact">
+				<always_on>1</always_on>
+				<update_rate>200</update_rate>
+				<topic>/anymal/RF/contact</topic>
+				<contact>
+					<collision>RF_SHANK_fixed_joint_lump__RF_FOOT_collision_3</collision>
+				</contact>
+			</sensor>
 		</link>
 		<joint name='RH_HAA' type='revolute'>
 			<pose relative_to='base'>-0.2999 -0.104 0 2.6179938779900001 6.3108872417680944e-30
@@ -1314,6 +1338,14 @@
 					</mesh>
 				</geometry>
 			</visual>
+			<sensor name="rh_foot_contact" type="contact">
+				<always_on>1</always_on>
+				<update_rate>200</update_rate>
+				<topic>/anymal/RH/contact</topic>
+				<contact>
+					<collision>RH_SHANK_fixed_joint_lump__RH_FOOT_collision_3</collision>
+				</contact>
+			</sensor>
 		</link>
 		<frame name='base_LF_HAA' attached_to='base'>
 			<pose>0.2999 0.104 0 2.6179938779900001 0 0</pose>
@@ -1750,11 +1782,12 @@
 		<plugin
 			filename="gz-sim-joint-trajectory-controller-system"
 			name="gz::sim::systems::JointTrajectoryController">
+			<topic>/anymal/joint/cmd</topic>
 
 			<joint_name>LF_HAA</joint_name>
 			<initial_position>-0.25</initial_position>
 
-			<position_p_gain>0.00</position_p_gain>
+			<position_p_gain>10.00</position_p_gain>
 			<position_i_gain>0.00</position_i_gain>
 			<position_d_gain>0.00</position_d_gain>
 
@@ -1766,7 +1799,7 @@
 			<joint_name>LF_HFE</joint_name>
 			<initial_position>0.60</initial_position>
 
-			<position_p_gain>0.00</position_p_gain>
+			<position_p_gain>10.00</position_p_gain>
 			<position_i_gain>0.00</position_i_gain>
 			<position_d_gain>0.00</position_d_gain>
 
@@ -1778,7 +1811,7 @@
 			<joint_name>LF_KFE</joint_name>
 			<initial_position>-0.85</initial_position>
 
-			<position_p_gain>0.00</position_p_gain>
+			<position_p_gain>10.00</position_p_gain>
 			<position_i_gain>0.00</position_i_gain>
 			<position_d_gain>0.00</position_d_gain>
 
@@ -1790,7 +1823,7 @@
 			<joint_name>LH_HAA</joint_name>
 			<initial_position>-0.25</initial_position>
 
-			<position_p_gain>0.00</position_p_gain>
+			<position_p_gain>10.00</position_p_gain>
 			<position_i_gain>0.00</position_i_gain>
 			<position_d_gain>0.00</position_d_gain>
 
@@ -1802,7 +1835,7 @@
 			<joint_name>LH_HFE</joint_name>
 			<initial_position>-0.60</initial_position>
 
-			<position_p_gain>0.00</position_p_gain>
+			<position_p_gain>10.00</position_p_gain>
 			<position_i_gain>0.00</position_i_gain>
 			<position_d_gain>0.00</position_d_gain>
 
@@ -1814,7 +1847,7 @@
 			<joint_name>LH_KFE</joint_name>
 			<initial_position>0.85</initial_position>
 
-			<position_p_gain>0.00</position_p_gain>
+			<position_p_gain>10.00</position_p_gain>
 			<position_i_gain>0.00</position_i_gain>
 			<position_d_gain>0.00</position_d_gain>
 
@@ -1826,7 +1859,7 @@
 			<joint_name>RF_HAA</joint_name>
 			<initial_position>0.25</initial_position>
 
-			<position_p_gain>0.00</position_p_gain>
+			<position_p_gain>10.00</position_p_gain>
 			<position_i_gain>0.00</position_i_gain>
 			<position_d_gain>0.00</position_d_gain>
 
@@ -1838,7 +1871,7 @@
 			<joint_name>RF_HFE</joint_name>
 			<initial_position>0.60</initial_position>
 
-			<position_p_gain>0.00</position_p_gain>
+			<position_p_gain>10.00</position_p_gain>
 			<position_i_gain>0.00</position_i_gain>
 			<position_d_gain>0.00</position_d_gain>
 
@@ -1850,7 +1883,7 @@
 			<joint_name>RF_KFE</joint_name>
 			<initial_position>-0.85</initial_position>
 
-			<position_p_gain>0.00</position_p_gain>
+			<position_p_gain>10.00</position_p_gain>
 			<position_i_gain>0.00</position_i_gain>
 			<position_d_gain>0.00</position_d_gain>
 
@@ -1862,7 +1895,7 @@
 			<joint_name>RH_HAA</joint_name>
 			<initial_position>0.25</initial_position>
 
-			<position_p_gain>0.00</position_p_gain>
+			<position_p_gain>10.00</position_p_gain>
 			<position_i_gain>0.00</position_i_gain>
 			<position_d_gain>0.00</position_d_gain>
 
@@ -1874,7 +1907,7 @@
 			<joint_name>RH_HFE</joint_name>
 			<initial_position>-0.60</initial_position>
 
-			<position_p_gain>0.00</position_p_gain>
+			<position_p_gain>10.00</position_p_gain>
 			<position_i_gain>0.00</position_i_gain>
 			<position_d_gain>0.00</position_d_gain>
 
@@ -1886,7 +1919,7 @@
 			<joint_name>RH_KFE</joint_name>
 			<initial_position>0.85</initial_position>
 
-			<position_p_gain>0.00</position_p_gain>
+			<position_p_gain>10.00</position_p_gain>
 			<position_i_gain>0.00</position_i_gain>
 			<position_d_gain>0.00</position_d_gain>
 
@@ -1895,5 +1928,36 @@
 			<velocity_d_gain>0.00</velocity_d_gain>
 			<!-- 设置右后膝关节电机 -->
 		</plugin>
+		<!-- 关节驱动插件 -->
+
+		<plugin filename="gz-sim-joint-state-publisher-system"
+			name="gz::sim::systems::JointStatePublisher">
+			<topic>/anymal/joint/state</topic>
+			<joint_name>LF_HAA</joint_name>
+			<joint_name>LF_HFE</joint_name>
+			<joint_name>LF_KFE</joint_name>
+
+			<joint_name>LH_HAA</joint_name>
+			<joint_name>LH_HFE</joint_name>
+			<joint_name>LH_KFE</joint_name>
+
+			<joint_name>RF_HAA</joint_name>
+			<joint_name>RF_HFE</joint_name>
+			<joint_name>RF_KFE</joint_name>
+
+			<joint_name>RH_HAA</joint_name>
+			<joint_name>RH_HFE</joint_name>
+			<joint_name>RH_KFE</joint_name>
+		</plugin>
+		<!-- 关节状态插件 -->
+
+		<plugin filename="gz-sim-imu-system"
+			name="gz::sim::systems::Imu">
+		</plugin>
+		<!-- imu插件 -->
+
+		<!-- <plugin filename='gz-sim-contact-system'
+			name='gz::sim::systems::Contact'>
+		</plugin> -->
 	</model>
 </sdf>

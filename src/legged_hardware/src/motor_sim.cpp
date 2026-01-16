@@ -66,9 +66,9 @@ namespace legged
 
         for (size_t i = 0; i < 12; i++)
         {
-            set_state(joint_names_[i] + "/position", msg.value().position[i]);
-            set_state(joint_names_[i] + "/velocity", msg.value().velocity[i]);
-            set_state(joint_names_[i] + "/effort", msg.value().effort[i]);
+            set_state<double>(joint_names_[i] + "/position", msg.value().position[i]);
+            set_state<double>(joint_names_[i] + "/velocity", msg.value().velocity[i]);
+            set_state<double>(joint_names_[i] + "/effort", msg.value().effort[i]);
         }
 
         return hardware_interface::return_type::OK;
