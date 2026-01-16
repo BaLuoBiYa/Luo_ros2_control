@@ -9,8 +9,8 @@ namespace legged
             return hardware_interface::CallbackReturn::ERROR;
         }
 
-        imu_topic_ = info_.hardware_parameters["imu_topic"];
-        imu_name_ = info_.hardware_parameters["imu_name"];
+        imuTopic_ = info_.hardware_parameters["imu_topic"];
+        imuName_ = info_.hardware_parameters["imu_name"];
 
         return hardware_interface::CallbackReturn::SUCCESS;
     }
@@ -18,12 +18,12 @@ namespace legged
     hardware_interface::CallbackReturn ImuSim::on_configure(const rclcpp_lifecycle::State &pre)
     {
         (void)pre;
-        imu_subscriber_ = get_node()->create_subscription<sensor_msgs::msg::Imu>(
-            imu_topic_,
+        imuSubscriber_ = get_node()->create_subscription<sensor_msgs::msg::Imu>(
+            imuTopic_,
             1,
             [this](const sensor_msgs::msg::Imu::ConstSharedPtr &msg)
             {
-                received_imu_msg_.set(*msg);
+                receivedImuMsg_.set(*msg);
             });
 
         return hardware_interface::CallbackReturn::SUCCESS;
@@ -33,7 +33,7 @@ namespace legged
     {
         (void)pre;
         sensor_msgs::msg::Imu empty_msg;
-        received_imu_msg_.set(empty_msg);
+        receivedImuMsg_.set(empty_msg);
         return hardware_interface::CallbackReturn::SUCCESS;
     }
 
@@ -48,24 +48,24 @@ namespace legged
         (void)time;
         (void)period;
 
-        auto imu_msg = received_imu_msg_.try_get();
+        auto imu_msg = receivedImuMsg_.try_get();
         if (imu_msg == std::nullopt)
         {
             return hardware_interface::return_type::ERROR;
         }
 
-        set_state<double>("orientation.x", imu_msg.value().orientation.x);
-        set_state<double>("orientation.y", imu_msg.value().orientation.y);
-        set_state<double>("orientation.z", imu_msg.value().orientation.z);
-        set_state<double>("orientation.w", imu_msg.value().orientation.w);
+        set_state<double>("imu/orientation.x", imu_msg.value().orientation.x);
+        set_state<double>("imu/orientation.y", imu_msg.value().orientation.y);
+        set_state<double>("imu/orientation.z", imu_msg.value().orientation.z);
+        set_state<double>("imu/orientation.w", imu_msg.value().orientation.w);
 
-        set_state<double>("angular_velocity.x", imu_msg.value().angular_velocity.x);
-        set_state<double>("angular_velocity.y", imu_msg.value().angular_velocity.y);
-        set_state<double>("angular_velocity.z", imu_msg.value().angular_velocity.z);
+        set_state<double>("imu/angular_velocity.x", imu_msg.value().angular_velocity.x);
+        set_state<double>("imu/angular_velocity.y", imu_msg.value().angular_velocity.y);
+        set_state<double>("imu/angular_velocity.z", imu_msg.value().angular_velocity.z);
 
-        set_state<double>("linear_acceleration.x", imu_msg.value().linear_acceleration.x);
-        set_state<double>("linear_acceleration.y", imu_msg.value().linear_acceleration.y);
-        set_state<double>("linear_acceleration.z", imu_msg.value().linear_acceleration.z);
+        set_state<double>("imu/linear_acceleration.x", imu_msg.value().linear_acceleration.x);
+        set_state<double>("imu/linear_acceleration.y", imu_msg.value().linear_acceleration.y);
+        set_state<double>("imu/linear_acceleration.z", imu_msg.value().linear_acceleration.z);
 
         return hardware_interface::return_type::OK;
     }
@@ -75,27 +75,27 @@ namespace legged
     //     std::vector<hardware_interface::StateInterface> state_interfaces;
 
     //     state_interfaces.emplace_back(hardware_interface::StateInterface(
-    //         imu_name_, "orientation.x", &orientation_[0]));
+    //         imuName_, "orientation.x", &orientation_[0]));
     //     state_interfaces.emplace_back(hardware_interface::StateInterface(
-    //         imu_name_, "orientation.y", &orientation_[1]));
+    //         imuName_, "orientation.y", &orientation_[1]));
     //     state_interfaces.emplace_back(hardware_interface::StateInterface(
-    //         imu_name_, "orientation.z", &orientation_[2]));
+    //         imuName_, "orientation.z", &orientation_[2]));
     //     state_interfaces.emplace_back(hardware_interface::StateInterface(
-    //         imu_name_, "orientation.w", &orientation_[3]));
+    //         imuName_, "orientation.w", &orientation_[3]));
 
     //     state_interfaces.emplace_back(hardware_interface::StateInterface(
-    //         imu_name_, "angular_velocity.x", &angular_velocity_[0]));
+    //         imuName_, "angular_velocity.x", &angular_velocity_[0]));
     //     state_interfaces.emplace_back(hardware_interface::StateInterface(
-    //         imu_name_, "angular_velocity.y", &angular_velocity_[1]));
+    //         imuName_, "angular_velocity.y", &angular_velocity_[1]));
     //     state_interfaces.emplace_back(hardware_interface::StateInterface(
-    //         imu_name_, "angular_velocity.z", &angular_velocity_[2]));
+    //         imuName_, "angular_velocity.z", &angular_velocity_[2]));
 
     //     state_interfaces.emplace_back(hardware_interface::StateInterface(
-    //         imu_name_, "linear_acceleration.x", &linear_acceleration_[0]));
+    //         imuName_, "linear_acceleration.x", &linear_acceleration_[0]));
     //     state_interfaces.emplace_back(hardware_interface::StateInterface(
-    //         imu_name_, "linear_acceleration.y", &linear_acceleration_[1]));
+    //         imuName_, "linear_acceleration.y", &linear_acceleration_[1]));
     //     state_interfaces.emplace_back(hardware_interface::StateInterface(
-    //         imu_name_, "linear_acceleration.z", &linear_acceleration_[2]));
+    //         imuName_, "linear_acceleration.z", &linear_acceleration_[2]));
 
     //     return state_interfaces;
     // }

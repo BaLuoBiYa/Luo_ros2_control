@@ -10,19 +10,19 @@ namespace legged
         urdfFile = auto_declare<std::string>("urdfFile", "");
         referenceFile = auto_declare<std::string>("referenceFile", "");
 
-        joint_names_ = auto_declare<std::vector<std::string>>("joints", {});
-        if (joint_names_.size() != 12u)
+        jointNames_ = auto_declare<std::vector<std::string>>("joints", {});
+        if (jointNames_.size() != 12u)
         {
             RCLCPP_ERROR(
-                get_node()->get_logger(), "Expected 12 joint names, got %zu", joint_names_.size());
+                get_node()->get_logger(), "Expected 12 joint names, got %zu", jointNames_.size());
             return CallbackReturn::ERROR;
         }
 
-        imu_name_ = auto_declare<std::string>("imu_name", "");
+        imuName_ = auto_declare<std::string>("imuName", "");
         visualize_ = auto_declare<bool>("visualize", true);
         ocs2::loadData::loadCppDataType(taskFile, "legged_robot_interface.verbose", verbose_);
 
-        imuSensorHandle_ = std::make_shared<semantic_components::IMUSensor>(imu_name_);
+        imuSensorHandle_ = std::make_shared<semantic_components::IMUSensor>(imuName_);
 
         return controller_interface::CallbackReturn::SUCCESS;
     }
@@ -32,17 +32,17 @@ namespace legged
         controller_interface::InterfaceConfiguration config;
         config.type = controller_interface::interface_configuration_type::INDIVIDUAL;
         config.names.reserve(12 + 12 + 12);
-        for (const auto &joint_name : joint_names_)
+        for (const auto &joint_name : jointNames_)
         {
             config.names.push_back(joint_name + "/position");
         }
         // 申请关节位置命令接口
-        for (const auto &joint_name : joint_names_)
+        for (const auto &joint_name : jointNames_)
         {
             config.names.push_back(joint_name + "/velocity");
         }
         // 申请关节速度命令接口
-        for (const auto &joint_name : joint_names_)
+        for (const auto &joint_name : jointNames_)
         {
             config.names.push_back(joint_name + "/effort");
         }
@@ -56,21 +56,21 @@ namespace legged
         config.type = controller_interface::interface_configuration_type::INDIVIDUAL;
         config.names.reserve(12 + 12 + 12 + 4 + 10);
 
-        for (const auto &joint_name : joint_names_)
+        for (const auto &joint_name : jointNames_)
         {
             config.names.push_back(joint_name + "/position");
         }
         // 申请关节位置状态接口
-        for (const auto &joint_name : joint_names_)
+        for (const auto &joint_name : jointNames_)
         {
             config.names.push_back(joint_name + "/velocity");
         }
         // 申请关节速度状态接口
 
-        config.names.push_back("LF/contact");
-        config.names.push_back("LH/contact");
-        config.names.push_back("RF/contact");
-        config.names.push_back("RH/contact");
+        config.names.push_back("contact/LF");
+        config.names.push_back("contact/LH");
+        config.names.push_back("contact/RF");
+        config.names.push_back("contact/RH");
         // 申请足端接触力状态接口
 
         std::vector<std::string> imu_interfaces =

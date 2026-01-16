@@ -9,8 +9,8 @@ namespace legged
             return hardware_interface::CallbackReturn::ERROR;
         }
 
-        joint_state_topic_ = info_.hardware_parameters["joint_state_topic"];
-        joint_command_topic_ = info_.hardware_parameters["joint_command_topic"];
+        jointStateTopic_ = info_.hardware_parameters["joint_state_topic"];
+        jointCommandTopic_ = info_.hardware_parameters["joint_command_topic"];
 
         return hardware_interface::CallbackReturn::SUCCESS;
     }
@@ -18,26 +18,26 @@ namespace legged
     hardware_interface::CallbackReturn MotorSim::on_configure(const rclcpp_lifecycle::State &pre)
     {
         (void)pre;
-        auto cmd_pub = get_node()->create_publisher<trajectory_msgs::msg::JointTrajectory>(joint_command_topic_, 10);
-        joint_command_publisher_ = std::make_shared<realtime_tools::RealtimePublisher<trajectory_msgs::msg::JointTrajectory>>(cmd_pub);
+        auto cmd_pub = get_node()->create_publisher<trajectory_msgs::msg::JointTrajectory>(jointCommandTopic_, 10);
+        jointCommandPublisher_ = std::make_shared<realtime_tools::RealtimePublisher<trajectory_msgs::msg::JointTrajectory>>(cmd_pub);
 
-        joint_state_subscriber_ = get_node()->create_subscription<sensor_msgs::msg::JointState>(
-            joint_state_topic_,
+        jointStateSubscriber_ = get_node()->create_subscription<sensor_msgs::msg::JointState>(
+            jointStateTopic_,
             1,
             [this](const sensor_msgs::msg::JointState::ConstSharedPtr &msg)
             {
-                received_msg_.set(*msg);
+                receivedMsg_.set(*msg);
             });
 
-        joint_command_.joint_names.resize(12);
-        joint_command_.points.resize(1);
-        joint_command_.points[0].positions.resize(12);
-        joint_command_.points[0].velocities.resize(12);
-        joint_command_.points[0].effort.resize(12);
-        reach_time_sec_ = 0;
-        reach_time_nanosec_ = 0;
+        jointCommand_.joint_names.resize(12);
+        jointCommand_.points.resize(1);
+        jointCommand_.points[0].positions.resize(12);
+        jointCommand_.points[0].velocities.resize(12);
+        jointCommand_.points[0].effort.resize(12);
+        reachTimeSec_ = 0;
+        reachTimeNanosec_ = 0;
 
-        joint_command_.joint_names.insert(joint_command_.joint_names.begin(), joint_names_, joint_names_ + 12);
+        jointCommand_.joint_names.insert(jointCommand_.joint_names.begin(), jointNames_, jointNames_ + 12);
 
         return hardware_interface::CallbackReturn::SUCCESS;
     }
@@ -46,7 +46,7 @@ namespace legged
     {
         (void)pre;
         sensor_msgs::msg::JointState empty_msg;
-        received_msg_.set(empty_msg);
+        receivedMsg_.set(empty_msg);
         return hardware_interface::CallbackReturn::SUCCESS;
     }
 
@@ -60,7 +60,7 @@ namespace legged
     {
         (void)time;
         (void)period;
-        auto msg = received_msg_.try_get();
+        auto msg = receivedMsg_.try_get();
         if (msg == std::nullopt)
         {
             return hardware_interface::return_type::ERROR;
@@ -68,9 +68,9 @@ namespace legged
 
         for (size_t i = 0; i < 12; i++)
         {
-            set_state<double>(joint_names_[i] + "/position", msg.value().position[i]);
-            set_state<double>(joint_names_[i] + "/velocity", msg.value().velocity[i]);
-            set_state<double>(joint_names_[i] + "/effort", msg.value().effort[i]);
+            set_state<double>(jointNames_[i] + "/position", msg.value().position[i]);
+            set_state<double>(jointNames_[i] + "/velocity", msg.value().velocity[i]);
+            set_state<double>(jointNames_[i] + "/effort", msg.value().effort[i]);
         }
 
         return hardware_interface::return_type::OK;
@@ -81,21 +81,21 @@ namespace legged
         (void)time;
         for (size_t i = 0; i < 12; i++)
         {
-            command_position_[i] = get_command<double>(joint_names_[i] + "/position");
-            command_velocity_[i] = get_command<double>(joint_names_[i] + "/velocity");
-            command_effort_[i] = get_command<double>(joint_names_[i] + "/effort");
+            commandPosition_[i] = get_command<double>(jointNames_[i] + "/position");
+            commandVelocity_[i] = get_command<double>(jointNames_[i] + "/velocity");
+            commandEffort_[i] = get_command<double>(jointNames_[i] + "/effort");
 
-            joint_command_.points[0].positions[i] = command_position_[i];
-            joint_command_.points[0].velocities[i] = command_velocity_[i];
-            joint_command_.points[0].effort[i] = command_effort_[i];
+            jointCommand_.points[0].positions[i] = commandPosition_[i];
+            jointCommand_.points[0].velocities[i] = commandVelocity_[i];
+            jointCommand_.points[0].effort[i] = commandEffort_[i];
         }
-        joint_command_.points[0].time_from_start.sec = reach_time_sec_ + static_cast<int32_t>(period.seconds());
-        joint_command_.points[0].time_from_start.nanosec = reach_time_nanosec_ + period.nanoseconds();
+        jointCommand_.points[0].time_from_start.sec = reachTimeSec_ + static_cast<int32_t>(period.seconds());
+        jointCommand_.points[0].time_from_start.nanosec = reachTimeNanosec_ + period.nanoseconds();
 
-        if (joint_command_publisher_->trylock())
+        if (jointCommandPublisher_->trylock())
         {
-            joint_command_publisher_->msg_ = joint_command_;
-            joint_command_publisher_->unlockAndPublish();
+            jointCommandPublisher_->msg_ = jointCommand_;
+            jointCommandPublisher_->unlockAndPublish();
         }
 
         return hardware_interface::return_type::OK;
@@ -107,11 +107,11 @@ namespace legged
     //     for (size_t i = 0; i < 12; i++)
     //     {
     //         state_interfaces.emplace_back(
-    //             hardware_interface::StateInterface(joint_names_[i], "position", &current_position_[i]));
+    //             hardware_interface::StateInterface(jointNames_[i], "position", &current_position_[i]));
     //         state_interfaces.emplace_back(
-    //             hardware_interface::StateInterface(joint_names_[i], "velocity", &current_velocity_[i]));
+    //             hardware_interface::StateInterface(jointNames_[i], "velocity", &current_velocity_[i]));
     //         state_interfaces.emplace_back(
-    //             hardware_interface::StateInterface(joint_names_[i], "effort", &current_effort_[i]));
+    //             hardware_interface::StateInterface(jointNames_[i], "effort", &current_effort_[i]));
     //     }
 
     //     return state_interfaces;
@@ -124,11 +124,11 @@ namespace legged
     //     for (size_t i = 0; i < 12; i++)
     //     {
     //         command_interfaces.emplace_back(
-    //             hardware_interface::CommandInterface(joint_names_[i], "position", &command_position_[i]));
+    //             hardware_interface::CommandInterface(jointNames_[i], "position", &commandPosition_[i]));
     //         command_interfaces.emplace_back(
-    //             hardware_interface::CommandInterface(joint_names_[i], "velocity", &command_velocity_[i]));
+    //             hardware_interface::CommandInterface(jointNames_[i], "velocity", &command_velocity_[i]));
     //         command_interfaces.emplace_back(
-    //             hardware_interface::CommandInterface(joint_names_[i], "effort", &command_effort_[i]));
+    //             hardware_interface::CommandInterface(jointNames_[i], "effort", &command_effort_[i]));
     //     }
 
     //     return command_interfaces;

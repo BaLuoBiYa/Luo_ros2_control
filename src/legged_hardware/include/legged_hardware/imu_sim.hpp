@@ -21,12 +21,11 @@ namespace legged
         // std::vector<hardware_interface::StateInterface> export_state_interfaces() override;
 
     private:
-        std::string imu_topic_;
-        std::string imu_name_;
+        std::string imuTopic_;
+        std::string imuName_;
 
-        realtime_tools::RealtimeThreadSafeBox<sensor_msgs::msg::Imu> received_imu_msg_;
-        rclcpp::Subscription<sensor_msgs::msg::Imu>::SharedPtr imu_subscriber_;
-
+        realtime_tools::RealtimeThreadSafeBox<sensor_msgs::msg::Imu> receivedImuMsg_;
+        rclcpp::Subscription<sensor_msgs::msg::Imu>::SharedPtr imuSubscriber_;
         // double orientation_[4];
         // double angular_velocity_[3];
         // double linear_acceleration_[3];

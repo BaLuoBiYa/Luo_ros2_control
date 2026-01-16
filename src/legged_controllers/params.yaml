@@ -1,0 +1,12 @@
+legged_controller:
+  ros__parameters:
+    robotName: "your_robot_name"
+    taskFile: "your_path_to/config/mpc/task.info"
+    urdfFile: "your_path_to/urdf/your_robot.urdf"
+    referenceFile: "your_path_to/config/command/reference.info"
+    joints: ["LF_HAA", "LF_HFE", "LF_KFE", 
+             "LH_HAA", "LH_HFE", "LH_KFE",
+             "RF_HAA", "RF_HFE", "RF_KFE",
+             "RH_HAA", "RH_HFE", "RH_KFE"]
+    imuName: "imu"
+    visualize: false

@@ -21,12 +21,12 @@ namespace legged
         // std::vector<hardware_interface::StateInterface> export_state_interfaces() override;
 
     private:
-        std::string contacts_topic_;
-        std::string tip_names_[4] = {"LF", "LH", "RF", "RH"};
+        std::string contactsTopics_[4];
+        std::string tipNames_[4] = {"LF", "LH", "RF", "RH"};
 
-        realtime_tools::RealtimeThreadSafeBox<ros_gz_interfaces::msg::Contacts> received_contacts_msg_[4];
-        rclcpp::Subscription<ros_gz_interfaces::msg::Contacts>::SharedPtr contact_subscriber_[4];
+        realtime_tools::RealtimeThreadSafeBox<ros_gz_interfaces::msg::Contacts> receivedContactsMsg_[4];
+        rclcpp::Subscription<ros_gz_interfaces::msg::Contacts>::SharedPtr contactSubscriber_[4];
 
-        bool contact_flag_[4];
+        // bool contact_flag_[4];
     };
 } // namespace legged

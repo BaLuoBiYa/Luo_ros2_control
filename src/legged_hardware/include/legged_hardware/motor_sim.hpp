@@ -26,27 +26,26 @@ namespace legged
 
     private:
         
-        realtime_tools::RealtimePublisher<trajectory_msgs::msg::JointTrajectory>::SharedPtr joint_command_publisher_;
-        realtime_tools::RealtimeThreadSafeBox<sensor_msgs::msg::JointState> received_msg_;
+        realtime_tools::RealtimePublisher<trajectory_msgs::msg::JointTrajectory>::SharedPtr jointCommandPublisher_;
+        realtime_tools::RealtimeThreadSafeBox<sensor_msgs::msg::JointState> receivedMsg_;
 
-        rclcpp::Subscription<sensor_msgs::msg::JointState>::SharedPtr joint_state_subscriber_;
-        trajectory_msgs::msg::JointTrajectory joint_command_;
-
-        std::string joint_command_topic_, joint_state_topic_;
-        std::string joint_names_[12] = {"LF_HAA", "LF_HFE", "LF_KFE",
+        rclcpp::Subscription<sensor_msgs::msg::JointState>::SharedPtr jointStateSubscriber_;
+        trajectory_msgs::msg::JointTrajectory jointCommand_;
+        std::string jointCommandTopic_, jointStateTopic_;
+        std::string jointNames_[12] = {"LF_HAA", "LF_HFE", "LF_KFE",
                                        "LH_HAA", "LH_HFE", "LH_KFE",
                                        "RF_HAA", "RF_HFE", "RF_KFE",
                                        "RH_HAA", "RH_HFE", "RH_KFE"};
 
-        double current_position_[12];
-        double current_velocity_[12];
-        double current_effort_[12];
+        double currentPosition_[12];
+        double currentVelocity_[12];
+        double currentEffort_[12];
 
-        double command_position_[12];
-        double command_velocity_[12];
-        double command_effort_[12];
+        double commandPosition_[12];
+        double commandVelocity_[12];
+        double commandEffort_[12];
 
-        int32_t reach_time_sec_;
-        uint32_t reach_time_nanosec_;
+        int32_t reachTimeSec_;
+        uint32_t reachTimeNanosec_;
     };
 } // namespace legged

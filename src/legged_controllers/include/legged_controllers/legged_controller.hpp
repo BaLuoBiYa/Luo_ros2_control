@@ -45,8 +45,8 @@ namespace legged{
             std::shared_ptr<ocs2::legged_robot::LeggedRobotVisualizer> robotVisualizer_;
 
             // Parameters
-            std::vector<std::string> joint_names_;
-            std::string imu_name_;
+            std::vector<std::string> jointNames_;
+            std::string imuName_;
 
             std::string robotName;
             std::string taskFile;

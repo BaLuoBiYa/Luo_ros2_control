@@ -9,7 +9,10 @@ namespace legged
             return hardware_interface::CallbackReturn::ERROR;
         }
 
-        contacts_topic_ = info_.hardware_parameters["contacts_topic"];
+        contactsTopics_[0] = info_.hardware_parameters["contacts_topic_LF"];
+        contactsTopics_[1] = info_.hardware_parameters["contacts_topic_LH"];
+        contactsTopics_[2] = info_.hardware_parameters["contacts_topic_RF"];
+        contactsTopics_[3] = info_.hardware_parameters["contacts_topic_RH"];
 
         return hardware_interface::CallbackReturn::SUCCESS;
     }
@@ -17,20 +20,19 @@ namespace legged
     hardware_interface::CallbackReturn contactSim::on_configure(const rclcpp_lifecycle::State &pre)
     {
         (void)pre;
-        for (int i = 0; i < 4; i++)
-        {
-            contact_flag_[i] = false;
-        }
+        // for (int i = 0; i < 4; i++)
+        // {
+        //     contact_flag_[i] = false;
+        // }
 
         for (size_t i = 0; i < 4; i++)
         {
-            std::string topic = contacts_topic_ + tip_names_[i];
-            contact_subscriber_[i] = get_node()->create_subscription<ros_gz_interfaces::msg::Contacts>(
-                topic,
+            contactSubscriber_[i] = get_node()->create_subscription<ros_gz_interfaces::msg::Contacts>(
+                contactsTopics_[i],
                 1,
                 [this, i](const ros_gz_interfaces::msg::Contacts::ConstSharedPtr &msg)
                 {
-                    this->received_contacts_msg_[i].set(*msg);
+                    this->receivedContactsMsg_[i].set(*msg);
                 });
         }
 
@@ -43,7 +45,7 @@ namespace legged
         ros_gz_interfaces::msg::Contacts empty_msg;
         for (size_t i = 0; i < 4; i++)
         {
-            received_contacts_msg_[i].set(empty_msg);
+            receivedContactsMsg_[i].set(empty_msg);
         }
         return hardware_interface::CallbackReturn::SUCCESS;
     }
@@ -62,22 +64,34 @@ namespace legged
 
         for (size_t i = 0; i < 4; i++)
         {
-            auto msg = received_contacts_msg_[i].try_get();
+            auto msg = receivedContactsMsg_[i].try_get();
             if (msg == std::nullopt)
             {
                 return hardware_interface::return_type::ERROR;
             }
-            bool hit = false;
-            for (const auto &c : msg.value().contacts)
+
+            rclcpp::Time msg_time(msg.value().header.stamp, get_node()->get_clock()->get_clock_type());
+            rclcpp::Duration age = time - msg_time;
+
+            if (age > rclcpp::Duration::from_seconds(0.01))
             {
-                // 只要任一碰撞体为障碍物即可判定接触
-                if (c.collision1.name == kObstacle || c.collision2.name == kObstacle)
-                {
-                    hit = true;
-                    break;
-                }
+                set_state<bool>("contact/" + tipNames_[i], false);
             }
-            set_state<bool>(tip_names_[i] + "/contact", hit);
+            else
+            {
+                set_state<bool>("contact/" + tipNames_[i], true);
+            }
+            // bool hit = false;
+            // for (const auto &c : msg.value().contacts)
+            // {
+            //     // 只要任一碰撞体为障碍物即可判定接触
+            //     if (c.collision1.name == kObstacle || c.collision2.name == kObstacle)
+            //     {
+            //         hit = true;
+            //         break;
+            //     }
+            // }
+            // set_state<bool>(tipNames_[i] + "/contact", hit);
         }
 
         return hardware_interface::return_type::OK;
@@ -93,7 +107,7 @@ namespace legged
 
     //     for (size_t i = 0; i < 4; i++)
     //     {
-    //         hardware_interface::InterfaceDescription desc(tip_names_[i],info);
+    //         hardware_interface::InterfaceDescription desc(tipNames_[i],info);
     //         state_interfaces.emplace_back(hardware_interface::StateInterface(desc));
     //     }
 
