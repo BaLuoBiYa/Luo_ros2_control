@@ -46,6 +46,9 @@ namespace legged
     {
         (void)pre;
         sensor_msgs::msg::JointState empty_msg;
+        empty_msg.position.resize(12, 0.0);
+        empty_msg.velocity.resize(12, 0.0);
+        empty_msg.effort.resize(12, 0.0);
         receivedMsg_.set(empty_msg);
         return hardware_interface::CallbackReturn::SUCCESS;
     }
@@ -63,7 +66,7 @@ namespace legged
         auto msg = receivedMsg_.try_get();
         if (msg == std::nullopt)
         {
-            return hardware_interface::return_type::ERROR;
+            return hardware_interface::return_type::OK;
         }
 
         for (size_t i = 0; i < 12; i++)
@@ -81,13 +84,9 @@ namespace legged
         (void)time;
         for (size_t i = 0; i < 12; i++)
         {
-            commandPosition_[i] = get_command<double>(jointNames_[i] + "/position");
-            commandVelocity_[i] = get_command<double>(jointNames_[i] + "/velocity");
-            commandEffort_[i] = get_command<double>(jointNames_[i] + "/effort");
-
-            jointCommand_.points[0].positions[i] = commandPosition_[i];
-            jointCommand_.points[0].velocities[i] = commandVelocity_[i];
-            jointCommand_.points[0].effort[i] = commandEffort_[i];
+            jointCommand_.points[0].positions[i] = get_command<double>(jointNames_[i] + "/position");
+            jointCommand_.points[0].velocities[i] = get_command<double>(jointNames_[i] + "/velocity");
+            jointCommand_.points[0].effort[i] = get_command<double>(jointNames_[i] + "/effort");
         }
         jointCommand_.points[0].time_from_start.sec = reachTimeSec_ + static_cast<int32_t>(period.seconds());
         jointCommand_.points[0].time_from_start.nanosec = reachTimeNanosec_ + period.nanoseconds();

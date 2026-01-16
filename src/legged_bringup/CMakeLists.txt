@@ -24,7 +24,9 @@ if(BUILD_TESTING)
 endif()
 
 install(DIRECTORY
-  resource launch
+  resource 
+  launch 
+  rviz
   DESTINATION share/${PROJECT_NAME}/
 )
 

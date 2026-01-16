@@ -30,6 +30,8 @@ target_include_directories(${PROJECT_NAME}
 ament_target_dependencies(${PROJECT_NAME}
   "rclcpp"
   "ocs2_legged_robot"
+  "ocs2_centroidal_model"
+  "qpoases_colcon"
 )
 
 install(
@@ -52,6 +54,7 @@ ament_export_targets(export_${PROJECT_NAME} HAS_LIBRARY_TARGET)
 ament_export_dependencies(
   rclcpp
   ocs2_legged_robot
+  ocs2_centroidal_model
   qpoases_colcon
 )
 

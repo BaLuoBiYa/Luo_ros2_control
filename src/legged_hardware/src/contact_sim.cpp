@@ -71,9 +71,9 @@ namespace legged
             }
 
             rclcpp::Time msg_time(msg.value().header.stamp, get_node()->get_clock()->get_clock_type());
-            rclcpp::Duration age = time - msg_time;
+            double age = time.seconds() - msg_time.seconds();
 
-            if (age > rclcpp::Duration::from_seconds(0.01))
+            if (age > 0.01)
             {
                 set_state<bool>("contact/" + tipNames_[i], false);
             }

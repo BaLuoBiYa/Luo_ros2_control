@@ -143,27 +143,36 @@ namespace legged
         mrtInterface_->launchNodes();
 
         // Initial state
-        ocs2::SystemObservation initObservation;
-        initObservation.state = leggedInterface_->getInitialState();
-        initObservation.input =
-            ocs2::vector_t::Zero(leggedInterface_->getCentroidalModelInfo().inputDim);
-        initObservation.mode = ocs2::legged_robot::ModeNumber::STANCE;
+        currentObservation_.state.setZero(leggedInterface_->getCentroidalModelInfo().stateDim);
+        updateEstimation(get_node()->get_clock()->now(), rclcpp::Duration::from_seconds(1/get_update_rate()));
+        currentObservation_.input.setZero(leggedInterface_->getCentroidalModelInfo().inputDim);
+        currentObservation_.mode = ocs2::legged_robot::ModeNumber::STANCE;
 
         // Initial command
         ocs2::TargetTrajectories initTargetTrajectories(
             {0.0},
-            {initObservation.state},
-            {initObservation.input});
-        RCLCPP_INFO_STREAM(get_node()->get_logger(), "Waiting for the initial policy ...");
+            {currentObservation_.state},
+            {currentObservation_.input});
+
+        // Set the first observation and command and wait for optimization to finish
+        mrtInterface_->setCurrentObservation(currentObservation_);
 
         // Reset MPC node
         mrtInterface_->resetMpcNode(initTargetTrajectories);
-
+        
         // Wait for the initial policy
+        uint16_t timeout=0;
         while (!mrtInterface_->initialPolicyReceived() && rclcpp::ok())
         {
+            mrtInterface_->setCurrentObservation(currentObservation_);
             rclcpp::sleep_for(std::chrono::milliseconds(10));
-            mrtInterface_->setCurrentObservation(initObservation);
+            timeout++;
+            RCLCPP_INFO_STREAM(get_node()->get_logger(), "Waiting for the initial policy ...");
+            if(timeout>500)
+            {
+                RCLCPP_ERROR_STREAM(get_node()->get_logger(), "Waiting for initial policy timed out.");
+                return controller_interface::CallbackReturn::ERROR;
+            }
         }
         RCLCPP_INFO_STREAM(get_node()->get_logger(), "Initial policy has been received.");
 
@@ -204,7 +213,7 @@ namespace legged
         for (size_t j = 0; j < 12; ++j)
         {
             writeSuccess = command_interfaces_[j].set_value<double>(posDes(j));
-            writeSuccess =command_interfaces_[j + 12].set_value<double>(velDes(j));
+            writeSuccess = command_interfaces_[j + 12].set_value<double>(velDes(j));
             writeSuccess = command_interfaces_[j + 24].set_value<double>(torque(j));
         }
         // Send commands to the robot
@@ -250,7 +259,7 @@ namespace legged
             auto pos = state_interfaces_[i].get_optional<double>();
             if (pos == std::nullopt)
             {
-                RCLCPP_ERROR(get_node()->get_logger(), "Failed to read joint position interface");
+                RCLCPP_ERROR_STREAM(get_node()->get_logger(), "Failed to read joint position interface");
                 continue ;
             }
             jointPos(i) = pos.value();
@@ -261,7 +270,7 @@ namespace legged
             auto vel = state_interfaces_[12 + i].get_optional<double>();
             if (vel == std::nullopt)
             {
-                RCLCPP_ERROR(get_node()->get_logger(), "Failed to read joint velocity interface");
+                RCLCPP_ERROR_STREAM(get_node()->get_logger(), "Failed to read joint velocity interface");
                 continue ;
             }
             jointVel(i) = vel.value();
@@ -272,7 +281,7 @@ namespace legged
             auto contact = state_interfaces_[24 + i].get_optional<bool>();
             if (contact == std::nullopt)
             {
-                RCLCPP_ERROR(get_node()->get_logger(), "Failed to read contact interface");
+                RCLCPP_ERROR_STREAM(get_node()->get_logger(), "Failed to read contact interface");
                 continue ;
             }
             contactFlag[i] = contact.value();

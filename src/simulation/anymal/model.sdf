@@ -1932,7 +1932,7 @@
 
 		<plugin filename="gz-sim-joint-state-publisher-system"
 			name="gz::sim::systems::JointStatePublisher">
-			<topic>/anymal/joint/state</topic>
+			<topic>/anymal/joint/states</topic>
 			<joint_name>LF_HAA</joint_name>
 			<joint_name>LF_HFE</joint_name>
 			<joint_name>LF_KFE</joint_name>

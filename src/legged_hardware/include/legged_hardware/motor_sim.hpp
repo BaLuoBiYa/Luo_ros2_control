@@ -41,10 +41,6 @@ namespace legged
         double currentVelocity_[12];
         double currentEffort_[12];
 
-        double commandPosition_[12];
-        double commandVelocity_[12];
-        double commandEffort_[12];
-
         int32_t reachTimeSec_;
         uint32_t reachTimeNanosec_;
     };
