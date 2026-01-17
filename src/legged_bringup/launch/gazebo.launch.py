@@ -53,6 +53,13 @@ def generate_launch_description():
     referenceFile = LaunchConfiguration("referenceFile")
     urdfFile = LaunchConfiguration("urdfFile")
 
+
+    robot_description_content = ParameterValue(
+                Command(["xacro ", urdf_path]),
+                value_type=str
+    )
+    robot_description = {"robot_description": robot_description_content}
+
     bridge_node = Node(
         package="ros_gz_bridge",
         executable="parameter_bridge",
@@ -63,12 +70,8 @@ def generate_launch_description():
     statepub_node = Node(
         package="robot_state_publisher",
         executable="robot_state_publisher",
-        parameters=[{
-            "robot_description": ParameterValue(
-                Command(["xacro ", urdf_path]),
-                value_type=str
-            )
-        }],
+        parameters=[robot_description,
+                    {"use_sim_time": True},],
         remappings=[
             ("joint_states", "anymal/joint/states"),
         ],
@@ -86,10 +89,12 @@ def generate_launch_description():
         executable='legged_robot_ddp_mpc',
         name='legged_robot_ddp_mpc',
         output='screen',
+        prefix=prefix,
         parameters=[
             {'taskFile': taskFile},
             {'referenceFile': referenceFile},
-            {'urdfFile': urdfFile},]
+            {'urdfFile': urdfFile},
+            {'use_sim_time': True},]
         )
     
     manager_node = Node(
@@ -97,7 +102,7 @@ def generate_launch_description():
         executable="ros2_control_node",
         parameters=[controller_cfg],
         output="screen",
-        prefix=prefix,
+        # prefix=prefix,
         )
     
     controler_spawner = Node(
@@ -105,11 +110,21 @@ def generate_launch_description():
         executable="spawner",
         arguments=["legged_controller"],
     )
+
+    # controler_spawner = Node(
+    #     package="controller_manager",
+    #     executable="spawner",
+    #     arguments=["joint_state_broadcaster"],
+    # )
+
+    spawn_delay = TimerAction(
+        period=10.0,
+        actions=[controler_spawner],
+    )
     
     gz_sim = ExecuteProcess(
         cmd=["gz", "sim", "-r", world_file],
         output="screen",
-        prefix=prefix,
     )
     
     # 创建LaunchDescription对象launch_description,用于描述launch文件
@@ -127,7 +142,7 @@ def generate_launch_description():
                                             rviz_node,
                                             mpc_node,
                                             manager_node,
-                                            controler_spawner,
+                                            spawn_delay,
                                             ])
     # 返回让ROS2根据launch描述执行节点
     return launch_description

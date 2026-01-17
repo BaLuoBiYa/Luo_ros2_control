@@ -23,7 +23,7 @@ namespace legged
             1,
             [this](const sensor_msgs::msg::Imu::ConstSharedPtr &msg)
             {
-                receivedImuMsg_.set(*msg);
+                receivedImuMsg_.try_set(*msg);
             });
 
         return hardware_interface::CallbackReturn::SUCCESS;

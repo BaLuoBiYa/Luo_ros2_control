@@ -32,7 +32,7 @@ namespace legged
                 1,
                 [this, i](const ros_gz_interfaces::msg::Contacts::ConstSharedPtr &msg)
                 {
-                    this->receivedContactsMsg_[i].set(*msg);
+                    this->receivedContactsMsg_[i].try_set(*msg);
                 });
         }
 
@@ -43,9 +43,11 @@ namespace legged
     {
         (void)pre;
         ros_gz_interfaces::msg::Contacts empty_msg;
+        empty_msg.header.stamp.sec = 0;
+        empty_msg.header.stamp.nanosec = 0;
         for (size_t i = 0; i < 4; i++)
         {
-            receivedContactsMsg_[i].set(empty_msg);
+            receivedContactsMsg_[i].try_set(empty_msg);
         }
         return hardware_interface::CallbackReturn::SUCCESS;
     }
@@ -58,7 +60,6 @@ namespace legged
 
     hardware_interface::return_type contactSim::read(const rclcpp::Time &time, const rclcpp::Duration &period)
     {
-        (void)time;
         (void)period;
         const std::string kObstacle = "Obstacle::link::collision";
 
@@ -67,11 +68,12 @@ namespace legged
             auto msg = receivedContactsMsg_[i].try_get();
             if (msg == std::nullopt)
             {
-                return hardware_interface::return_type::ERROR;
+                set_state<bool>("contact/" + tipNames_[i], false);
+                continue;
             }
 
-            rclcpp::Time msg_time(msg.value().header.stamp, get_node()->get_clock()->get_clock_type());
-            double age = time.seconds() - msg_time.seconds();
+            double msg_time = msg.value().header.stamp.sec + msg.value().header.stamp.nanosec * 1e-9;
+            double age = time.seconds() - msg_time;
 
             if (age > 0.01)
             {
@@ -81,17 +83,6 @@ namespace legged
             {
                 set_state<bool>("contact/" + tipNames_[i], true);
             }
-            // bool hit = false;
-            // for (const auto &c : msg.value().contacts)
-            // {
-            //     // 只要任一碰撞体为障碍物即可判定接触
-            //     if (c.collision1.name == kObstacle || c.collision2.name == kObstacle)
-            //     {
-            //         hit = true;
-            //         break;
-            //     }
-            // }
-            // set_state<bool>(tipNames_[i] + "/contact", hit);
         }
 
         return hardware_interface::return_type::OK;

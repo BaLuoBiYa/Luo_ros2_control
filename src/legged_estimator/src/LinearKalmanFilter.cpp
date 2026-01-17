@@ -20,8 +20,8 @@ namespace legged
 		  numObserve_(2 * dimContacts_ + numContacts_),
 		  topicUpdated_(false)
 	{
-		tfBuffer_ = std::make_shared<tf2_ros::Buffer>(node->get_clock());
-		tfListener_ = std::make_shared<tf2_ros::TransformListener>(*tfBuffer_);
+		// tfBuffer_ = std::make_shared<tf2_ros::Buffer>(node->get_clock());
+		// tfListener_ = std::make_shared<tf2_ros::TransformListener>(*tfBuffer_,node,true);
 
 		xHat_.setZero(numState_);
 		ps_.setZero(dimContacts_);
@@ -55,9 +55,9 @@ namespace legged
 			std::bind(&KalmanFilterEstimate::callback, this, std::placeholders::_1));
 	}
 
-	ocs2::vector_t KalmanFilterEstimate::update(const rclcpp::Time &time, const rclcpp::Duration &period)
+	ocs2::vector_t KalmanFilterEstimate::update(const double &time, const double &period)
 	{
-		ocs2::scalar_t dt = period.seconds();
+		ocs2::scalar_t dt = period;
 		a_.block(0, 3, 3, 3) = dt * ocs2::legged_robot::matrix3_t::Identity();
 		b_.block(0, 0, 3, 3) = 0.5 * dt * dt * ocs2::legged_robot::matrix3_t::Identity();
 		b_.block(3, 0, 3, 3) = dt * ocs2::legged_robot::matrix3_t::Identity();
@@ -148,16 +148,17 @@ namespace legged
 		//    p_.block(0, 0, 2, 2) /= 10.;
 		//  }
 
-		if (topicUpdated_)
-		{
-			updateFromTopic();
-			topicUpdated_ = false;
-		}
+		// if (topicUpdated_)
+		// {
+		// 	updateFromTopic();
+		// 	topicUpdated_ = false;
+		// }
 
 		updateLinear(xHat_.segment<3>(0), xHat_.segment<3>(3));
 
 		auto odom = getOdomMsg();
-		odom.header.stamp = time;
+		odom.header.stamp.set__sec(static_cast<int32_t>(time));
+		odom.header.stamp.set__nanosec(static_cast<uint32_t>((time - odom.header.stamp.sec) * 1e9));
 		odom.header.frame_id = "odom";
 		odom.child_frame_id = "base";
 		publishMsgs(odom);
@@ -165,62 +166,62 @@ namespace legged
 		return rbdState_;
 	}
 
-	void KalmanFilterEstimate::updateFromTopic()
-	{
-		auto* msg = buffer_.readFromRT();
+	// void KalmanFilterEstimate::updateFromTopic()
+	// {
+	// 	auto* msg = buffer_.readFromRT();
 
-		tf2::Transform world2sensor;
-		world2sensor.setOrigin(tf2::Vector3(msg->pose.pose.position.x, msg->pose.pose.position.y, msg->pose.pose.position.z));
-		world2sensor.setRotation(tf2::Quaternion(msg->pose.pose.orientation.x, msg->pose.pose.orientation.y, msg->pose.pose.orientation.z,
-		                                        msg->pose.pose.orientation.w));
+	// 	tf2::Transform world2sensor;
+	// 	world2sensor.setOrigin(tf2::Vector3(msg->pose.pose.position.x, msg->pose.pose.position.y, msg->pose.pose.position.z));
+	// 	world2sensor.setRotation(tf2::Quaternion(msg->pose.pose.orientation.x, msg->pose.pose.orientation.y, msg->pose.pose.orientation.z,
+	// 	                                        msg->pose.pose.orientation.w));
 
-		if (world2odom_.getRotation() == tf2::Quaternion::getIdentity())  // First received
-		{
-		  tf2::Transform odom2sensor;
-		  try {
-		    geometry_msgs::msg::TransformStamped tf_msg = tfBuffer_->lookupTransform("odom", msg->child_frame_id, msg->header.stamp);
-		    tf2::fromMsg(tf_msg.transform, odom2sensor);
-		  } catch (tf2::TransformException& ex) {
-		    // RCLCPP_WARN(node_->get_logger(), "%s", ex.what());
-		    return;
-		  }
-		  world2odom_ = world2sensor * odom2sensor.inverse();
-		}
-		tf2::Transform base2sensor;
-		try {
-		  geometry_msgs::msg::TransformStamped tf_msg = tfBuffer_->lookupTransform("base", msg->child_frame_id, msg->header.stamp);
-		  tf2::fromMsg(tf_msg.transform, base2sensor);
-		} catch (tf2::TransformException& ex) {
-		//   RCLCPP_WARN(node_->get_logger(), "%s", ex.what());
-		  return;
-		}
-		tf2::Transform odom2base = world2odom_.inverse() * world2sensor * base2sensor.inverse();
-		ocs2::legged_robot::vector3_t newPos(odom2base.getOrigin().x(), odom2base.getOrigin().y(), odom2base.getOrigin().z());
+	// 	if (world2odom_.getRotation() == tf2::Quaternion::getIdentity())  // First received
+	// 	{
+	// 	  tf2::Transform odom2sensor;
+	// 	  try {
+	// 	    geometry_msgs::msg::TransformStamped tf_msg = tfBuffer_->lookupTransform("odom", msg->child_frame_id, msg->header.stamp);
+	// 	    tf2::fromMsg(tf_msg.transform, odom2sensor);
+	// 	  } catch (tf2::TransformException& ex) {
+	// 	    // RCLCPP_WARN(node_->get_logger(), "%s", ex.what());
+	// 	    return;
+	// 	  }
+	// 	  world2odom_ = world2sensor * odom2sensor.inverse();
+	// 	}
+	// 	tf2::Transform base2sensor;
+	// 	try {
+	// 	  geometry_msgs::msg::TransformStamped tf_msg = tfBuffer_->lookupTransform("base", msg->child_frame_id, msg->header.stamp);
+	// 	  tf2::fromMsg(tf_msg.transform, base2sensor);
+	// 	} catch (tf2::TransformException& ex) {
+	// 	//   RCLCPP_WARN(node_->get_logger(), "%s", ex.what());
+	// 	  return;
+	// 	}
+	// 	tf2::Transform odom2base = world2odom_.inverse() * world2sensor * base2sensor.inverse();
+	// 	ocs2::legged_robot::vector3_t newPos(odom2base.getOrigin().x(), odom2base.getOrigin().y(), odom2base.getOrigin().z());
 
-		const auto& model = pinocchioInterface_.getModel();
-		auto& data = pinocchioInterface_.getData();
+	// 	const auto& model = pinocchioInterface_.getModel();
+	// 	auto& data = pinocchioInterface_.getData();
 
-		ocs2::vector_t qPino(info_.generalizedCoordinatesNum);
-		qPino.head<3>() = newPos;
-		qPino.segment<3>(3) = rbdState_.head<3>();
-		qPino.tail(info_.actuatedDofNum) = rbdState_.segment(6, info_.actuatedDofNum);
-		pinocchio::forwardKinematics(model, data, qPino);
-		pinocchio::updateFramePlacements(model, data);
+	// 	ocs2::vector_t qPino(info_.generalizedCoordinatesNum);
+	// 	qPino.head<3>() = newPos;
+	// 	qPino.segment<3>(3) = rbdState_.head<3>();
+	// 	qPino.tail(info_.actuatedDofNum) = rbdState_.segment(6, info_.actuatedDofNum);
+	// 	pinocchio::forwardKinematics(model, data, qPino);
+	// 	pinocchio::updateFramePlacements(model, data);
 
-		xHat_.segment<3>(0) = newPos;
-		for (size_t i = 0; i < numContacts_; ++i) {
-		  xHat_.segment<3>(6 + i * 3) = eeKinematics_->getPosition(ocs2::vector_t())[i];
-		  xHat_(6 + i * 3 + 2) -= footRadius_;
-		  if (contactFlag_[i]) {
-		    feetHeights_[i] = xHat_(6 + i * 3 + 2);
-		  }
-		}
+	// 	xHat_.segment<3>(0) = newPos;
+	// 	for (size_t i = 0; i < numContacts_; ++i) {
+	// 	  xHat_.segment<3>(6 + i * 3) = eeKinematics_->getPosition(ocs2::vector_t())[i];
+	// 	  xHat_(6 + i * 3 + 2) -= footRadius_;
+	// 	  if (contactFlag_[i]) {
+	// 	    feetHeights_[i] = xHat_(6 + i * 3 + 2);
+	// 	  }
+	// 	}
 
-		auto odom = getOdomMsg();
-		odom.header = msg->header;
-		odom.child_frame_id = "base";
-		publishMsgs(odom);
-	}
+	// 	auto odom = getOdomMsg();
+	// 	odom.header = msg->header;
+	// 	odom.child_frame_id = "base";
+	// 	publishMsgs(odom);
+	// }
 
 	void KalmanFilterEstimate::callback(const nav_msgs::msg::Odometry::ConstSharedPtr &msg)
 	{

@@ -27,7 +27,7 @@ namespace legged
 							 const ocs2::PinocchioEndEffectorKinematics &eeKinematics,
 							 const rclcpp_lifecycle::LifecycleNode::SharedPtr& node);
 
-		ocs2::vector_t update(const rclcpp::Time &time, const rclcpp::Duration &period) override;
+		ocs2::vector_t update(const double &time, const double &period) override;
 
 		void loadSettings(const std::string &taskFile, bool verbose);
 

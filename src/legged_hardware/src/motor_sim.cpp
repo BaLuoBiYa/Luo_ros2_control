@@ -31,9 +31,9 @@ namespace legged
 
         jointCommand_.joint_names.resize(12);
         jointCommand_.points.resize(1);
-        jointCommand_.points[0].positions.resize(12);
-        jointCommand_.points[0].velocities.resize(12);
-        jointCommand_.points[0].effort.resize(12);
+        jointCommand_.points[0].positions.resize(12, 0.0);
+        jointCommand_.points[0].velocities.resize(12, 0.0);
+        jointCommand_.points[0].effort.resize(12, 0.0);
         reachTimeSec_ = 0;
         reachTimeNanosec_ = 0;
 
@@ -49,7 +49,23 @@ namespace legged
         empty_msg.position.resize(12, 0.0);
         empty_msg.velocity.resize(12, 0.0);
         empty_msg.effort.resize(12, 0.0);
-        receivedMsg_.set(empty_msg);
+        receivedMsg_.try_set(empty_msg);
+
+        for (size_t i = 0; i < 12; i++)
+        {
+            jointCommand_.points[0].positions[i] = 0.0;
+            jointCommand_.points[0].velocities[i] = 0.0;
+            jointCommand_.points[0].effort[i] = 0.0;
+        }
+        jointCommand_.points[0].time_from_start.sec = 0;
+        jointCommand_.points[0].time_from_start.nanosec = 0;
+
+        if (jointCommandPublisher_->trylock())
+        {
+            jointCommandPublisher_->msg_ = jointCommand_;
+            jointCommandPublisher_->unlockAndPublish();
+        }
+
         return hardware_interface::CallbackReturn::SUCCESS;
     }
 
@@ -73,7 +89,7 @@ namespace legged
         {
             set_state<double>(jointNames_[i] + "/position", msg.value().position[i]);
             set_state<double>(jointNames_[i] + "/velocity", msg.value().velocity[i]);
-            set_state<double>(jointNames_[i] + "/effort", msg.value().effort[i]);
+            // set_state<double>(jointNames_[i] + "/effort", msg.value().effort[i]);
         }
 
         return hardware_interface::return_type::OK;
@@ -84,12 +100,15 @@ namespace legged
         (void)time;
         for (size_t i = 0; i < 12; i++)
         {
-            jointCommand_.points[0].positions[i] = get_command<double>(jointNames_[i] + "/position");
-            jointCommand_.points[0].velocities[i] = get_command<double>(jointNames_[i] + "/velocity");
-            jointCommand_.points[0].effort[i] = get_command<double>(jointNames_[i] + "/effort");
+            // jointCommand_.points[0].positions[i] = get_command<double>(jointNames_[i] + "/position");
+            // jointCommand_.points[0].velocities[i] = get_command<double>(jointNames_[i] + "/velocity");
+            // jointCommand_.points[0].effort[i] = get_command<double>(jointNames_[i] + "/effort");
+
+            jointCommand_.points[0].positions[i] = 0.0;
+            jointCommand_.points[0].velocities[i] = 0.0;
+            jointCommand_.points[0].effort[i] = 0.0;
         }
-        jointCommand_.points[0].time_from_start.sec = reachTimeSec_ + static_cast<int32_t>(period.seconds());
-        jointCommand_.points[0].time_from_start.nanosec = reachTimeNanosec_ + period.nanoseconds();
+        jointCommand_.points[0].time_from_start.sec += static_cast<int32_t>(period.seconds());
 
         if (jointCommandPublisher_->trylock())
         {

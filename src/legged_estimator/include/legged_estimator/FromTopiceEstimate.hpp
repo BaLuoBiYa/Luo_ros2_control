@@ -22,7 +22,7 @@ namespace legged
 					const ocs2::legged_robot::matrix3_t &orientationCovariance, const ocs2::legged_robot::matrix3_t &angularVelCovariance,
 					const ocs2::legged_robot::matrix3_t &linearAccelCovariance) override {};
 
-		ocs2::vector_t update(const rclcpp::Time &time, const rclcpp::Duration &period) override;
+		ocs2::vector_t update(const double &time, const double &period) override;
 
 	private:
 		void callback(const nav_msgs::msg::Odometry::ConstSharedPtr &msg);

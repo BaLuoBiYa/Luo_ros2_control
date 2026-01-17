@@ -19,7 +19,7 @@ namespace legged
 		buffer_.writeFromNonRT(*msg);
 	}
 
-	ocs2::vector_t FromTopicStateEstimate::update(const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/)
+	ocs2::vector_t FromTopicStateEstimate::update(const double & /*time*/, const double & /*period*/)
 	{
 		nav_msgs::msg::Odometry odom = *buffer_.readFromRT();
 

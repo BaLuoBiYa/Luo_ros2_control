@@ -1,6 +1,6 @@
 controller_manager:
   ros__parameters:
-    update_rate: 100
+    update_rate: 200
     use_sim_time: true
 
     legged_controller:
@@ -8,14 +8,23 @@ controller_manager:
 
 legged_controller:
   ros__parameters:
-      robotName: "anymal_c"
-      taskFile: "/home/luo/Project/Horse/Luo_ros2_control/src/legged_bringup/resource/anymal_c/config/mpc/task.info"
-      urdfFile: "/home/luo/Project/Horse/Luo_ros2_control/src/legged_bringup/resource/anymal_c/urdf/anymal.urdf"
-      referenceFile: "/home/luo/Project/Horse/Luo_ros2_control/src/legged_bringup/resource/anymal_c/config/command/reference.info"
-      joints: ["LF_HAA", "LF_HFE", "LF_KFE", 
-             "LH_HAA", "LH_HFE", "LH_KFE",
-             "RF_HAA", "RF_HFE", "RF_KFE",
-             "RH_HAA", "RH_HFE", "RH_KFE"]
-      imuName: "imu"
-      visualize: true
-    
+    use_sim_time: true
+    robotName: "legged_robot"
+    taskFile: "/home/luo/Project/Horse/Luo_ros2_control/src/legged_bringup/resource/anymal_c/config/mpc/task.info"
+    urdfFile: "/home/luo/Project/Horse/Luo_ros2_control/src/legged_bringup/resource/anymal_c/urdf/anymal.urdf"
+    referenceFile: "/home/luo/Project/Horse/Luo_ros2_control/src/legged_bringup/resource/anymal_c/config/command/reference.info"
+    joints:
+      - LF_HAA
+      - LF_HFE
+      - LF_KFE
+      - LH_HAA
+      - LH_HFE
+      - LH_KFE
+      - RF_HAA
+      - RF_HFE
+      - RF_KFE
+      - RH_HAA
+      - RH_HFE
+      - RH_KFE
+    imuName: imu
+    visualize: true

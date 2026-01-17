@@ -23,9 +23,9 @@ find_package(ocs2_centroidal_model REQUIRED)
 find_package(legged_wbc REQUIRED)
 find_package(legged_estimator REQUIRED)
 
-# 控制器插件
 add_library(${PROJECT_NAME} SHARED
   src/legged_controller.cpp
+  src/legged_mrt.cpp
 )
 
 ament_target_dependencies(${PROJECT_NAME}

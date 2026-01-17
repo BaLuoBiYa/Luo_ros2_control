@@ -31,10 +31,10 @@
     <ros2_control name="simContact" type="sensor">
         <hardware>
             <plugin>legged/simContact</plugin>
-            <param name="contacts_topic_LF">/world/empty/model/anymal/link/LF_SHANK/sensor/lf_foot_contact/contact</param>
-            <param name="contacts_topic_LH">/world/empty/model/anymal/link/LH_SHANK/sensor/lh_foot_contact/contact</param>
-            <param name="contacts_topic_RF">/world/empty/model/anymal/link/RF_SHANK/sensor/rf_foot_contact/contact</param>
-            <param name="contacts_topic_RH">/world/empty/model/anymal/link/RH_SHANK/sensor/rh_foot_contact/contact</param>
+            <param name="contacts_topic_LF">/anymal/LF/contacts</param>
+            <param name="contacts_topic_LH">/anymal/LH/contacts</param>
+            <param name="contacts_topic_RF">/anymal/RF/contacts</param>
+            <param name="contacts_topic_RH">/anymal/RH/contacts</param>
         </hardware>
         <sensor name="contact">
             <state_interface name="LF" data_type="bool"/>
@@ -45,15 +45,14 @@
     </ros2_control>
     <!-- 加载接触传感器硬件 -->
 
-    <xacro:macro name="motor" params="name">
-        <joint name="${name}">
+    <xacro:macro name="motor" params="joint_name">
+        <joint name="${joint_name}">
             <command_interface name="position" />
             <command_interface name="velocity" />
             <command_interface name="effort" />
 
             <state_interface name="position" />
             <state_interface name="velocity" />
-            <state_interface name="effort" />
         </joint>
     </xacro:macro>
     <!-- 关节电机简化宏 -->
@@ -65,21 +64,21 @@
             <param name="joint_command_topic">/anymal/joint/cmd</param>
         </hardware>
 
-        <xacro:motor name="LF_HAA" />
-        <xacro:motor name="LF_HFE" />
-        <xacro:motor name="LF_KFE" />
+        <xacro:motor joint_name="LF_HAA" />
+        <xacro:motor joint_name="LF_HFE" />
+        <xacro:motor joint_name="LF_KFE" />
 
-        <xacro:motor name="LH_HAA" />
-        <xacro:motor name="LH_HFE" />
-        <xacro:motor name="LH_KFE" />
+        <xacro:motor joint_name="LH_HAA" />
+        <xacro:motor joint_name="LH_HFE" />
+        <xacro:motor joint_name="LH_KFE" />
 
-        <xacro:motor name="RF_HAA" />
-        <xacro:motor name="RF_HFE" />
-        <xacro:motor name="RF_KFE" />
+        <xacro:motor joint_name="RF_HAA" />
+        <xacro:motor joint_name="RF_HFE" />
+        <xacro:motor joint_name="RF_KFE" />
 
-        <xacro:motor name="RH_HAA" />
-        <xacro:motor name="RH_HFE" />
-        <xacro:motor name="RH_KFE" />
+        <xacro:motor joint_name="RH_HAA" />
+        <xacro:motor joint_name="RH_HFE" />
+        <xacro:motor joint_name="RH_KFE" />
     </ros2_control>
     <!-- 加载电机硬件 -->
 
