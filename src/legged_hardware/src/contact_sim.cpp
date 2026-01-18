@@ -75,7 +75,7 @@ namespace legged
             double msg_time = msg.value().header.stamp.sec + msg.value().header.stamp.nanosec * 1e-9;
             double age = time.seconds() - msg_time;
 
-            if (age > 0.01)
+            if (age > 0.1)
             {
                 set_state<bool>("contact/" + tipNames_[i], false);
             }

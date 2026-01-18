@@ -4,7 +4,7 @@
 
 #include "legged_estimator/StateEstimateBase.hpp"
 
-#include <realtime_tools/realtime_buffer.hpp>
+#include <realtime_tools/realtime_thread_safe_box.hpp>
 
 #pragma once
 namespace legged
@@ -22,13 +22,13 @@ namespace legged
 					const ocs2::legged_robot::matrix3_t &orientationCovariance, const ocs2::legged_robot::matrix3_t &angularVelCovariance,
 					const ocs2::legged_robot::matrix3_t &linearAccelCovariance) override {};
 
-		ocs2::vector_t update(const double &time, const double &period) override;
+		ocs2::vector_t update(const rclcpp::Time &time, const rclcpp::Duration &period) override;
 
 	private:
 		void callback(const nav_msgs::msg::Odometry::ConstSharedPtr &msg);
 
 		rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr sub_;
-		realtime_tools::RealtimeBuffer<nav_msgs::msg::Odometry> buffer_;
+		realtime_tools::RealtimeThreadSafeBox<nav_msgs::msg::Odometry> buffer_;
 	};
 
 } // namespace legged

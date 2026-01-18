@@ -31,10 +31,10 @@
     <ros2_control name="simContact" type="sensor">
         <hardware>
             <plugin>legged/simContact</plugin>
-            <param name="contacts_topic_LF">/anymal/LF/contacts</param>
-            <param name="contacts_topic_LH">/anymal/LH/contacts</param>
-            <param name="contacts_topic_RF">/anymal/RF/contacts</param>
-            <param name="contacts_topic_RH">/anymal/RH/contacts</param>
+            <param name="contacts_topic_LF">/anymal/contacts/LF</param>
+            <param name="contacts_topic_LH">/anymal/contacts/LH</param>
+            <param name="contacts_topic_RF">/anymal/contacts/RF</param>
+            <param name="contacts_topic_RH">/anymal/contacts/RH</param>
         </hardware>
         <sensor name="contact">
             <state_interface name="LF" data_type="bool"/>
@@ -53,6 +53,7 @@
 
             <state_interface name="position" />
             <state_interface name="velocity" />
+            <state_interface name="effort" />
         </joint>
     </xacro:macro>
     <!-- 关节电机简化宏 -->

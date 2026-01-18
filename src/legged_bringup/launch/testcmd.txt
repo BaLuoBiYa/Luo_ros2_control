@@ -1,0 +1,13 @@
+ros2 topic pub --once /anymal/joint/cmd trajectory_msgs/msg/JointTrajectory "{
+  header: {stamp: {sec: 0, nanosec: 0}, frame_id: 'base'},
+  joint_names: [ 'LF_HAA', 'LF_HFE', 'LF_KFE', 'LH_HAA', 'LH_HFE', 'LH_KFE', 'RF_HAA', 'RF_HFE', 'RF_KFE', 'RH_HAA', 'RH_HFE', 'RH_KFE' ],
+  points: [
+    {
+      positions:      [0.8, 0.5, 5.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5],
+      velocities:     [10.0, 0.0, 3.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+      accelerations:  [10.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+      effort:         [10.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+      time_from_start: {sec: 1000, nanosec: 0}
+    }
+  ]
+}"

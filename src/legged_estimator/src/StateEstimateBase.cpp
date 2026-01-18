@@ -76,22 +76,16 @@ namespace legged
 
 	void StateEstimateBase::publishMsgs(const nav_msgs::msg::Odometry &odom)
 	{
-		rclcpp::Time time = odom.header.stamp;
-		ocs2::scalar_t publishRate = 200;
-		if (lastPub_ + rclcpp::Duration::from_seconds(1. / publishRate) < time)
+		if (odomPub_->trylock())
 		{
-			lastPub_ = time;
-			if (odomPub_->trylock())
-			{
-				odomPub_->msg_ = odom;
-				odomPub_->unlockAndPublish();
-			}
-			if (posePub_->trylock())
-			{
-				posePub_->msg_.header = odom.header;
-				posePub_->msg_.pose = odom.pose;
-				posePub_->unlockAndPublish();
-			}
+			odomPub_->msg_ = odom;
+			odomPub_->unlockAndPublish();
+		}
+		if (posePub_->trylock())
+		{
+			posePub_->msg_.header = odom.header;
+			posePub_->msg_.pose = odom.pose;
+			posePub_->unlockAndPublish();
 		}
 	}
 

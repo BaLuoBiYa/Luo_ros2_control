@@ -1,7 +1,23 @@
 <library path="legged_controllers">
-    <class name="legged/LeggedController" type="legged::legged_controller" base_class_type="controller_interface::ControllerInterface">
+    <class name="legged/LeggedController" type="legged::legged_controller"
+        base_class_type="controller_interface::ControllerInterface">
         <description>
-            LeggedController is a controller that can be used as the main controller of ocs2 in legged robot.
+            LeggedController is a controller that can be used as the main controller of ocs2 in
+            legged robot.
+        </description>
+    </class>
+
+    <class name="test_tools/MotorTester" type="test_tools::motor_tester"
+        base_class_type="controller_interface::ControllerInterface">
+        <description>
+            MotorTester is a controller that can be used to test motor commands
+        </description>
+    </class>
+
+    <class name="test_tools/ContactTester" type="test_tools::contact_tester"
+        base_class_type="controller_interface::ControllerInterface">
+        <description>
+            ContactTester is a controller that can be used to test contact states
         </description>
     </class>
 </library>

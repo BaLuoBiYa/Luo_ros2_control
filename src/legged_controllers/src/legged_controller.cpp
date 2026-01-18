@@ -184,7 +184,7 @@ namespace legged
 
     controller_interface::return_type legged_controller::update(const rclcpp::Time &time, const rclcpp::Duration &period)
     {
-        this->updateEstimation(time.seconds(), period.seconds());
+        this->updateEstimation(time, period);
         // Update the current state of the system
 
         mrtInterface_->setCurrentObservation(currentObservation_);
@@ -248,7 +248,7 @@ namespace legged
     // }
 
 
-    void legged_controller::updateEstimation(const double &time, const double &period)
+    void legged_controller::updateEstimation(const rclcpp::Time &time, const rclcpp::Duration &period)
     {
         ocs2::vector_t jointPos(12), jointVel(12);
         // ocs2::legged_robot::contact_flag_t contacts;
@@ -328,7 +328,7 @@ namespace legged
             linearAccel);
         measuredRbdState_ = stateEstimate_->update(time, period);
 
-        currentObservation_.time = time;
+        currentObservation_.time = time.seconds();
         scalar_t yawLast = currentObservation_.state(9);
         currentObservation_.state = rbdConversions_->computeCentroidalStateFromRbdModel(measuredRbdState_);
         currentObservation_.state(9) = yawLast + angles::shortest_angular_distance(yawLast, currentObservation_.state(9));

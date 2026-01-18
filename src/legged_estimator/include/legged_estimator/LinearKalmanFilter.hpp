@@ -10,7 +10,7 @@
 #include <ocs2_pinocchio_interface/PinocchioEndEffectorKinematics.h>
 #include <ocs2_core/misc/LoadData.h>
 
-#include <realtime_tools/realtime_buffer.hpp>
+#include <realtime_tools/realtime_thread_safe_box.hpp>
 #include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
 #include <tf2_ros/transform_broadcaster.h>
 #include <tf2_ros/transform_listener.h>
@@ -27,7 +27,7 @@ namespace legged
 							 const ocs2::PinocchioEndEffectorKinematics &eeKinematics,
 							 const rclcpp_lifecycle::LifecycleNode::SharedPtr& node);
 
-		ocs2::vector_t update(const double &time, const double &period) override;
+		ocs2::vector_t update(const rclcpp::Time &time, const rclcpp::Duration &period) override;
 
 		void loadSettings(const std::string &taskFile, bool verbose);
 
@@ -56,7 +56,7 @@ namespace legged
 
 		// Topic
 		rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr sub_;
-		realtime_tools::RealtimeBuffer<nav_msgs::msg::Odometry> buffer_;
+		realtime_tools::RealtimeThreadSafeBox<nav_msgs::msg::Odometry> buffer_;
 		std::shared_ptr<tf2_ros::Buffer> tfBuffer_;
 		std::shared_ptr<tf2_ros::TransformListener> tfListener_;
 		tf2::Transform world2odom_;

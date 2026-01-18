@@ -9,6 +9,7 @@ endif()
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(angles REQUIRED)
+find_package(std_msgs REQUIRED)
 
 find_package(controller_interface REQUIRED)
 find_package(pluginlib REQUIRED)
@@ -26,6 +27,8 @@ find_package(legged_estimator REQUIRED)
 add_library(${PROJECT_NAME} SHARED
   src/legged_controller.cpp
   src/legged_mrt.cpp
+  src/test_tools/motorTester.cpp
+  src/test_tools/contactTester.cpp
 )
 
 ament_target_dependencies(${PROJECT_NAME}
@@ -33,6 +36,7 @@ ament_target_dependencies(${PROJECT_NAME}
   angles
   controller_interface
   pluginlib
+  std_msgs
   hardware_interface
   ocs2_legged_robot
   ocs2_legged_robot_ros
@@ -65,6 +69,7 @@ ament_export_dependencies(
   angles
   controller_interface
   pluginlib
+  std_msgs
   hardware_interface
   ocs2_legged_robot
   ocs2_legged_robot_ros

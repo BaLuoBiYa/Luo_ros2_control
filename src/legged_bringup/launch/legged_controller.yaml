@@ -3,8 +3,26 @@ controller_manager:
     update_rate: 200
     use_sim_time: true
 
-    legged_controller:
-      type: legged/LeggedController
+    # legged_controller:
+    #   type: legged/LeggedController
+
+    motor_tester:
+      type: test_tools/MotorTester
+
+    imu_sensor_broadcaster:
+      type: imu_sensor_broadcaster/IMUSensorBroadcaster
+
+    contact_tester:
+      type: test_tools/ContactTester
+
+imu_sensor_broadcaster:
+  ros__parameters:
+    remappings:
+    - from: /imu_sensor_broadcaster/imu
+      to: test_tools/imu_tester/imu
+    use_sim_time: true
+    sensor_name: imu
+    frame_id: imu_link
 
 legged_controller:
   ros__parameters:
@@ -28,3 +46,29 @@ legged_controller:
       - RH_KFE
     imuName: imu
     visualize: true
+
+motor_tester:
+  ros__parameters:
+    use_sim_time: true
+    joints:
+      - LF_HAA
+      - LF_HFE
+      - LF_KFE
+      - LH_HAA
+      - LH_HFE
+      - LH_KFE
+      - RF_HAA
+      - RF_HFE
+      - RF_KFE
+      - RH_HAA
+      - RH_HFE
+      - RH_KFE
+
+contact_tester:
+  ros__parameters:
+    use_sim_time: true
+    contactNames:
+      - LF
+      - LH
+      - RF
+      - RH

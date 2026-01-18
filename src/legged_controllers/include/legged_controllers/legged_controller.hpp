@@ -54,7 +54,7 @@ namespace legged{
             bool visualize_;
             bool verbose_ ;
 
-            void updateEstimation(const double &time, const double &period);
+            void updateEstimation(const rclcpp::Time &time, const rclcpp::Duration &period);
 
         public:
             controller_interface::InterfaceConfiguration command_interface_configuration() const override;

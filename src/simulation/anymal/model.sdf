@@ -1,5 +1,11 @@
 <sdf version='1.11'>
 	<model name='anymal'>
+		<!-- <joint name='anchor_to_world' type='fixed'>
+			<parent>world</parent>
+			<child>base</child>
+			<pose>0 0 0.8 0 0 0</pose>
+		</joint> -->
+		<!-- 悬挂模型，用于调试 -->
 		<link name='base'>
 			<inertial>
 				<pose>-0.017793943143734711 -0.00017816961328741469 0.0085043390156462131 0 0 0</pose>
@@ -352,7 +358,7 @@
 					<velocity>7.5</velocity>
 				</limit>
 				<dynamics>
-					<damping>0</damping>
+					<damping>0.01</damping>
 					<friction>0</friction>
 					<spring_reference>0</spring_reference>
 					<spring_stiffness>0</spring_stiffness>
@@ -420,7 +426,7 @@
 					<velocity>7.5</velocity>
 				</limit>
 				<dynamics>
-					<damping>0</damping>
+					<damping>0.01</damping>
 					<friction>0</friction>
 					<spring_reference>0</spring_reference>
 					<spring_stiffness>0</spring_stiffness>
@@ -503,7 +509,7 @@
 					<velocity>7.5</velocity>
 				</limit>
 				<dynamics>
-					<damping>0</damping>
+					<damping>0.01</damping>
 					<friction>0</friction>
 					<spring_reference>0</spring_reference>
 					<spring_stiffness>0</spring_stiffness>
@@ -604,7 +610,7 @@
 					<velocity>7.5</velocity>
 				</limit>
 				<dynamics>
-					<damping>0</damping>
+					<damping>0.01</damping>
 					<friction>0</friction>
 					<spring_reference>0</spring_reference>
 					<spring_stiffness>0</spring_stiffness>
@@ -672,7 +678,7 @@
 					<velocity>7.5</velocity>
 				</limit>
 				<dynamics>
-					<damping>0</damping>
+					<damping>0.01</damping>
 					<friction>0</friction>
 					<spring_reference>0</spring_reference>
 					<spring_stiffness>0</spring_stiffness>
@@ -755,7 +761,7 @@
 					<velocity>7.5</velocity>
 				</limit>
 				<dynamics>
-					<damping>0</damping>
+					<damping>0.01</damping>
 					<friction>0</friction>
 					<spring_reference>0</spring_reference>
 					<spring_stiffness>0</spring_stiffness>
@@ -855,7 +861,7 @@
 					<velocity>7.5</velocity>
 				</limit>
 				<dynamics>
-					<damping>0</damping>
+					<damping>0.01</damping>
 					<friction>0</friction>
 					<spring_reference>0</spring_reference>
 					<spring_stiffness>0</spring_stiffness>
@@ -923,7 +929,7 @@
 					<velocity>7.5</velocity>
 				</limit>
 				<dynamics>
-					<damping>0</damping>
+					<damping>0.01</damping>
 					<friction>0</friction>
 					<spring_reference>0</spring_reference>
 					<spring_stiffness>0</spring_stiffness>
@@ -1007,7 +1013,7 @@
 					<velocity>7.5</velocity>
 				</limit>
 				<dynamics>
-					<damping>0</damping>
+					<damping>0.01</damping>
 					<friction>0</friction>
 					<spring_reference>0</spring_reference>
 					<spring_stiffness>0</spring_stiffness>
@@ -1108,7 +1114,7 @@
 					<velocity>7.5</velocity>
 				</limit>
 				<dynamics>
-					<damping>0</damping>
+					<damping>0.01</damping>
 					<friction>0</friction>
 					<spring_reference>0</spring_reference>
 					<spring_stiffness>0</spring_stiffness>
@@ -1176,7 +1182,7 @@
 					<velocity>7.5</velocity>
 				</limit>
 				<dynamics>
-					<damping>0</damping>
+					<damping>0.01</damping>
 					<friction>0</friction>
 					<spring_reference>0</spring_reference>
 					<spring_stiffness>0</spring_stiffness>
@@ -1260,7 +1266,7 @@
 					<velocity>7.5</velocity>
 				</limit>
 				<dynamics>
-					<damping>0</damping>
+					<damping>0.01</damping>
 					<friction>0</friction>
 					<spring_reference>0</spring_reference>
 					<spring_stiffness>0</spring_stiffness>
@@ -1787,11 +1793,11 @@
 			<joint_name>LF_HAA</joint_name>
 			<initial_position>-0.25</initial_position>
 
-			<position_p_gain>10.00</position_p_gain>
+			<position_p_gain>1.00</position_p_gain>
 			<position_i_gain>0.00</position_i_gain>
 			<position_d_gain>0.00</position_d_gain>
 
-			<velocity_p_gain>0.00</velocity_p_gain>
+			<velocity_p_gain>1.00</velocity_p_gain>
 			<velocity_i_gain>0.00</velocity_i_gain>
 			<velocity_d_gain>0.00</velocity_d_gain>
 			<!-- 设置左前髋关节侧向电机 -->
@@ -1799,11 +1805,11 @@
 			<joint_name>LF_HFE</joint_name>
 			<initial_position>0.60</initial_position>
 
-			<position_p_gain>10.00</position_p_gain>
+			<position_p_gain>1.00</position_p_gain>
 			<position_i_gain>0.00</position_i_gain>
 			<position_d_gain>0.00</position_d_gain>
 
-			<velocity_p_gain>0.00</velocity_p_gain>
+			<velocity_p_gain>1.00</velocity_p_gain>
 			<velocity_i_gain>0.00</velocity_i_gain>
 			<velocity_d_gain>0.00</velocity_d_gain>
 			<!-- 设置左前髋关节前后电机 -->
@@ -1811,11 +1817,11 @@
 			<joint_name>LF_KFE</joint_name>
 			<initial_position>-0.85</initial_position>
 
-			<position_p_gain>10.00</position_p_gain>
+			<position_p_gain>1.00</position_p_gain>
 			<position_i_gain>0.00</position_i_gain>
 			<position_d_gain>0.00</position_d_gain>
 
-			<velocity_p_gain>0.00</velocity_p_gain>
+			<velocity_p_gain>1.00</velocity_p_gain>
 			<velocity_i_gain>0.00</velocity_i_gain>
 			<velocity_d_gain>0.00</velocity_d_gain>
 			<!-- 设置左前膝关节电机 -->
@@ -1823,11 +1829,11 @@
 			<joint_name>LH_HAA</joint_name>
 			<initial_position>-0.25</initial_position>
 
-			<position_p_gain>10.00</position_p_gain>
+			<position_p_gain>1.00</position_p_gain>
 			<position_i_gain>0.00</position_i_gain>
 			<position_d_gain>0.00</position_d_gain>
 
-			<velocity_p_gain>0.00</velocity_p_gain>
+			<velocity_p_gain>1.00</velocity_p_gain>
 			<velocity_i_gain>0.00</velocity_i_gain>
 			<velocity_d_gain>0.00</velocity_d_gain>
 			<!-- 设置左后髋关节侧向电机 -->
@@ -1835,11 +1841,11 @@
 			<joint_name>LH_HFE</joint_name>
 			<initial_position>-0.60</initial_position>
 
-			<position_p_gain>10.00</position_p_gain>
+			<position_p_gain>1.00</position_p_gain>
 			<position_i_gain>0.00</position_i_gain>
 			<position_d_gain>0.00</position_d_gain>
 
-			<velocity_p_gain>0.00</velocity_p_gain>
+			<velocity_p_gain>1.00</velocity_p_gain>
 			<velocity_i_gain>0.00</velocity_i_gain>
 			<velocity_d_gain>0.00</velocity_d_gain>
 			<!-- 设置左后髋关节前后电机 -->
@@ -1847,11 +1853,11 @@
 			<joint_name>LH_KFE</joint_name>
 			<initial_position>0.85</initial_position>
 
-			<position_p_gain>10.00</position_p_gain>
+			<position_p_gain>1.00</position_p_gain>
 			<position_i_gain>0.00</position_i_gain>
 			<position_d_gain>0.00</position_d_gain>
 
-			<velocity_p_gain>0.00</velocity_p_gain>
+			<velocity_p_gain>1.00</velocity_p_gain>
 			<velocity_i_gain>0.00</velocity_i_gain>
 			<velocity_d_gain>0.00</velocity_d_gain>
 			<!-- 设置左后膝关节电机 -->
@@ -1859,11 +1865,11 @@
 			<joint_name>RF_HAA</joint_name>
 			<initial_position>0.25</initial_position>
 
-			<position_p_gain>10.00</position_p_gain>
+			<position_p_gain>1.00</position_p_gain>
 			<position_i_gain>0.00</position_i_gain>
 			<position_d_gain>0.00</position_d_gain>
 
-			<velocity_p_gain>0.00</velocity_p_gain>
+			<velocity_p_gain>1.00</velocity_p_gain>
 			<velocity_i_gain>0.00</velocity_i_gain>
 			<velocity_d_gain>0.00</velocity_d_gain>
 			<!-- 设置右前髋关节侧向电机 -->
@@ -1871,11 +1877,11 @@
 			<joint_name>RF_HFE</joint_name>
 			<initial_position>0.60</initial_position>
 
-			<position_p_gain>10.00</position_p_gain>
+			<position_p_gain>1.00</position_p_gain>
 			<position_i_gain>0.00</position_i_gain>
 			<position_d_gain>0.00</position_d_gain>
 
-			<velocity_p_gain>0.00</velocity_p_gain>
+			<velocity_p_gain>1.00</velocity_p_gain>
 			<velocity_i_gain>0.00</velocity_i_gain>
 			<velocity_d_gain>0.00</velocity_d_gain>
 			<!-- 设置右前髋关节前后电机 -->
@@ -1883,11 +1889,11 @@
 			<joint_name>RF_KFE</joint_name>
 			<initial_position>-0.85</initial_position>
 
-			<position_p_gain>10.00</position_p_gain>
+			<position_p_gain>1.00</position_p_gain>
 			<position_i_gain>0.00</position_i_gain>
 			<position_d_gain>0.00</position_d_gain>
 
-			<velocity_p_gain>0.00</velocity_p_gain>
+			<velocity_p_gain>1.00</velocity_p_gain>
 			<velocity_i_gain>0.00</velocity_i_gain>
 			<velocity_d_gain>0.00</velocity_d_gain>
 			<!-- 设置右前膝关节电机 -->
@@ -1895,11 +1901,11 @@
 			<joint_name>RH_HAA</joint_name>
 			<initial_position>0.25</initial_position>
 
-			<position_p_gain>10.00</position_p_gain>
+			<position_p_gain>1.00</position_p_gain>
 			<position_i_gain>0.00</position_i_gain>
 			<position_d_gain>0.00</position_d_gain>
 
-			<velocity_p_gain>0.00</velocity_p_gain>
+			<velocity_p_gain>1.00</velocity_p_gain>
 			<velocity_i_gain>0.00</velocity_i_gain>
 			<velocity_d_gain>0.00</velocity_d_gain>
 			<!-- 设置右后髋关节侧向电机 -->
@@ -1907,11 +1913,11 @@
 			<joint_name>RH_HFE</joint_name>
 			<initial_position>-0.60</initial_position>
 
-			<position_p_gain>10.00</position_p_gain>
+			<position_p_gain>1.00</position_p_gain>
 			<position_i_gain>0.00</position_i_gain>
 			<position_d_gain>0.00</position_d_gain>
 
-			<velocity_p_gain>0.00</velocity_p_gain>
+			<velocity_p_gain>1.00</velocity_p_gain>
 			<velocity_i_gain>0.00</velocity_i_gain>
 			<velocity_d_gain>0.00</velocity_d_gain>
 			<!-- 设置右后髋关节前后电机 -->
@@ -1919,11 +1925,11 @@
 			<joint_name>RH_KFE</joint_name>
 			<initial_position>0.85</initial_position>
 
-			<position_p_gain>10.00</position_p_gain>
+			<position_p_gain>1.00</position_p_gain>
 			<position_i_gain>0.00</position_i_gain>
 			<position_d_gain>0.00</position_d_gain>
 
-			<velocity_p_gain>0.00</velocity_p_gain>
+			<velocity_p_gain>1.00</velocity_p_gain>
 			<velocity_i_gain>0.00</velocity_i_gain>
 			<velocity_d_gain>0.00</velocity_d_gain>
 			<!-- 设置右后膝关节电机 -->

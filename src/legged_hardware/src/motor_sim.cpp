@@ -34,10 +34,17 @@ namespace legged
         jointCommand_.points[0].positions.resize(12, 0.0);
         jointCommand_.points[0].velocities.resize(12, 0.0);
         jointCommand_.points[0].effort.resize(12, 0.0);
+        jointCommand_.points[0].accelerations.resize(12, 0.0);
         reachTimeSec_ = 0;
         reachTimeNanosec_ = 0;
-
-        jointCommand_.joint_names.insert(jointCommand_.joint_names.begin(), jointNames_, jointNames_ + 12);
+        
+        for (size_t i = 0; i < 12; i++)
+        {
+            currentPosition_[i] = 0.0;
+            currentVelocity_[i] = 0.0;
+            currentEffort_[i] = 0.0;
+            jointCommand_.joint_names[i] = jointNames_[i];
+        }
 
         return hardware_interface::CallbackReturn::SUCCESS;
     }
@@ -100,13 +107,18 @@ namespace legged
         (void)time;
         for (size_t i = 0; i < 12; i++)
         {
-            // jointCommand_.points[0].positions[i] = get_command<double>(jointNames_[i] + "/position");
-            // jointCommand_.points[0].velocities[i] = get_command<double>(jointNames_[i] + "/velocity");
-            // jointCommand_.points[0].effort[i] = get_command<double>(jointNames_[i] + "/effort");
-
-            jointCommand_.points[0].positions[i] = 0.0;
-            jointCommand_.points[0].velocities[i] = 0.0;
-            jointCommand_.points[0].effort[i] = 0.0;
+            for (size_t i = 0; i < 12; i++)
+        {
+            double pos = get_command<double>(jointNames_[i] + "/position");
+            double vel = get_command<double>(jointNames_[i] + "/velocity");
+            double eff = get_command<double>(jointNames_[i] + "/effort");
+            if (!std::isfinite(pos)) pos = 0.0;
+            if (!std::isfinite(vel)) vel = 0.0;
+            if (!std::isfinite(eff)) eff = 0.0;
+            jointCommand_.points[0].positions[i] = pos;
+            jointCommand_.points[0].velocities[i] = vel;
+            jointCommand_.points[0].effort[i] = eff;
+        }
         }
         jointCommand_.points[0].time_from_start.sec += static_cast<int32_t>(period.seconds());
 

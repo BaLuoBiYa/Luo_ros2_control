@@ -16,12 +16,17 @@ namespace legged
 
 	void FromTopicStateEstimate::callback(const nav_msgs::msg::Odometry::ConstSharedPtr &msg)
 	{
-		buffer_.writeFromNonRT(*msg);
+		buffer_.try_set(*msg);
 	}
 
-	ocs2::vector_t FromTopicStateEstimate::update(const double & /*time*/, const double & /*period*/)
+	ocs2::vector_t FromTopicStateEstimate::update(const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/)
 	{
-		nav_msgs::msg::Odometry odom = *buffer_.readFromRT();
+		auto msg = buffer_.try_get();
+		if (msg == std::nullopt)
+		{
+			return rbdState_;
+		}
+		nav_msgs::msg::Odometry odom = msg.value();
 
 		updateAngular(quatToZyx(Eigen::Quaternion<ocs2::scalar_t>(odom.pose.pose.orientation.w, odom.pose.pose.orientation.x,
 																  odom.pose.pose.orientation.y, odom.pose.pose.orientation.z)),

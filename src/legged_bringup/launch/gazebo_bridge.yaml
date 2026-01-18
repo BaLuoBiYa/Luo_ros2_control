@@ -16,25 +16,25 @@
   gz_type_name: "gz.msgs.IMU"
   direction: GZ_TO_ROS
 
-- ros_topic_name: "/anymal/LF/contacts"
+- ros_topic_name: "/anymal/contacts/LF"
   gz_topic_name: "/world/empty/model/anymal/link/LF_SHANK/sensor/lf_foot_contact/contact"
   ros_type_name: "ros_gz_interfaces/msg/Contacts"
   gz_type_name: "gz.msgs.Contacts"
   direction: GZ_TO_ROS
 
-- ros_topic_name: "/anymal/LH/contacts"
+- ros_topic_name: "/anymal/contacts/LH"
   gz_topic_name: "/world/empty/model/anymal/link/LH_SHANK/sensor/lh_foot_contact/contact"
   ros_type_name: "ros_gz_interfaces/msg/Contacts"
   gz_type_name: "gz.msgs.Contacts"
   direction: GZ_TO_ROS
 
-- ros_topic_name: "/anymal/RF/contacts"
+- ros_topic_name: "/anymal/contacts/RF"
   gz_topic_name: "/world/empty/model/anymal/link/RF_SHANK/sensor/rf_foot_contact/contact"
   ros_type_name: "ros_gz_interfaces/msg/Contacts"
   gz_type_name: "gz.msgs.Contacts"
   direction: GZ_TO_ROS
 
-- ros_topic_name: "/anymal/RH/contacts"
+- ros_topic_name: "/anymal/contacts/RH"
   gz_topic_name: "/world/empty/model/anymal/link/RH_SHANK/sensor/rh_foot_contact/contact"
   ros_type_name: "ros_gz_interfaces/msg/Contacts"
   gz_type_name: "gz.msgs.Contacts"

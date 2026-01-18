@@ -39,7 +39,7 @@ namespace legged
 									  const ocs2::legged_robot::vector3_t &angularVelLocal,
 									  const ocs2::legged_robot::vector3_t &linearAccelLocal);
 
-		virtual ocs2::vector_t update(const double &time, const double &period) = 0;
+		virtual ocs2::vector_t update(const rclcpp::Time &time, const rclcpp::Duration &period) = 0;
 
 		size_t getMode() { return ocs2::legged_robot::stanceLeg2ModeNumber(contactFlag_); }
 
