@@ -6,19 +6,28 @@
 
 ## 依赖
 - ROS 2 Control (Jazzy)
-- Eigen (v3.4)
-- Boost C++ (v1.74)
+- libdrogon-dev
+
+## 克隆
+```bash
+apt update
+apt install libdrogon-dev
+git clone --recurse-submodules https://github.com/BaLuoBiYa/Luo_ros2_control.git
+rosdep install --from-paths src --ignore-src -r -y
+```
 
 ## 构建
 ```bash
-colcon build --symlink-install
+colcon build --packages-up-to legged_controllers legged_hardware legged_bringup --symlink-install
 export GZ_SIM_RESOURCE_PATH=path_to_ws/src/simulation
 ```
 
 ## 运行
-- 启动指令示例
 ```bash
-ros2 launch <package> <launch_file>.launch.py
+ros2 launch legged_bringup gazebo.launch.py
+启动gazebo仿真
+ros2 launch legged_bringup test.launch.py
+启动基于话题的关节控制器
 ```
 
 ## 目录结构
@@ -30,7 +39,7 @@ ros2 launch <package> <launch_file>.launch.py
 - `src/ocs2_legged_robot_ros`：ocs2到ros的接口
 - `src/ocs2_ros2`：ocs2的核心实现
 - `src/qpoases_colcon`：qpOASES的ros装饰（依赖）
-- `src/RosGo2Estimator`：机器人状态预测实现（依赖）
+- `src/simulation`: Gazebo仿真描述文件
 
 ## 许可证
 - 许可证类型与说明

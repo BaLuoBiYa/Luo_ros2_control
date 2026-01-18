@@ -11,10 +11,6 @@ from ament_index_python.packages import get_package_share_directory
 def generate_launch_description():
     prefix = "gnome-terminal --"
 
-    declare_rviz = DeclareLaunchArgument(
-        name = 'rviz_config',
-        default_value=get_package_share_directory("legged_bringup") + "/rviz/legged_robot.rviz"
-    )
     declare_xacro = DeclareLaunchArgument(
         name = 'xacro_path',
         default_value=get_package_share_directory("legged_bringup") + "/resource/anymal_c/urdf/gazebo.xacro"
@@ -32,7 +28,6 @@ def generate_launch_description():
         default_value=get_package_share_directory("legged_bringup") + "/launch/legged_controller.yaml"
     )
 
-    rviz_cfg = LaunchConfiguration("rviz_config")
     xacro_path = LaunchConfiguration("xacro_path") 
     bridge_cfg = LaunchConfiguration("bridge_config_file")
     world_file = LaunchConfiguration("world_file")
@@ -60,12 +55,6 @@ def generate_launch_description():
             ("joint_states", "anymal/joint/states"),
         ],
         output="screen"
-        )
-    
-    rviz_node = Node(
-        package="rviz2",
-        executable="rviz2",
-        arguments=["-d", rviz_cfg],
         )
     
     manager_node = Node(
@@ -104,15 +93,13 @@ def generate_launch_description():
     )
     
     # 创建LaunchDescription对象launch_description,用于描述launch文件
-    launch_description = LaunchDescription([declare_rviz, 
-                                            declare_xacro, 
+    launch_description = LaunchDescription([declare_xacro, 
                                             declare_bridge_cfg,
                                             declare_world,
                                             declare_controller,
                                             gz_sim,
                                             bridge_node,
                                             statepub_node,
-                                            rviz_node,
                                             manager_node,
                                             motor_tester_spawner,
                                             imu_sensor_broadcaster_spawner,

@@ -58,10 +58,6 @@ install(
   DESTINATION lib
 )
 
-install(
-  DIRECTORY include/
-  DESTINATION include
-)
 ament_export_libraries(${PROJECT_NAME})
 
 ament_export_dependencies(

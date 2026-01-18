@@ -1793,11 +1793,11 @@
 			<joint_name>LF_HAA</joint_name>
 			<initial_position>-0.25</initial_position>
 
-			<position_p_gain>1.00</position_p_gain>
+			<position_p_gain>10.00</position_p_gain>
 			<position_i_gain>0.00</position_i_gain>
 			<position_d_gain>0.00</position_d_gain>
 
-			<velocity_p_gain>1.00</velocity_p_gain>
+			<velocity_p_gain>10.00</velocity_p_gain>
 			<velocity_i_gain>0.00</velocity_i_gain>
 			<velocity_d_gain>0.00</velocity_d_gain>
 			<!-- 设置左前髋关节侧向电机 -->
