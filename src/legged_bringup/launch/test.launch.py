@@ -31,33 +31,12 @@ def generate_launch_description():
         name = 'controller_config',
         default_value=get_package_share_directory("legged_bringup") + "/launch/legged_controller.yaml"
     )
-    declare_taskFile = DeclareLaunchArgument(
-        name = 'taskFile',
-        default_value=get_package_share_directory("legged_bringup") + "/resource/anymal_c/config/mpc/task.info"
-    )
-    declare_referenceFile = DeclareLaunchArgument(
-        name = 'referenceFile',
-        default_value=get_package_share_directory("legged_bringup") + "/resource/anymal_c/config/command/reference.info"
-    )
-    declare_urdfFile = DeclareLaunchArgument(
-        name = 'urdfFile',
-        default_value=get_package_share_directory("legged_bringup") + "/resource/anymal_c/urdf/anymal.urdf"
-    )
-    declare_gait_config = DeclareLaunchArgument(
-        name = 'gait_config',
-        default_value=get_package_share_directory("legged_bringup") + "/resource/anymal_c/config/command/gait.info"
-    )
 
     rviz_cfg = LaunchConfiguration("rviz_config")
     xacro_path = LaunchConfiguration("xacro_path") 
     bridge_cfg = LaunchConfiguration("bridge_config_file")
     world_file = LaunchConfiguration("world_file")
     controller_cfg = LaunchConfiguration("controller_config")
-    taskFile = LaunchConfiguration("taskFile")
-    referenceFile = LaunchConfiguration("referenceFile")
-    urdfFile = LaunchConfiguration("urdfFile")
-    gait_command_cfg = LaunchConfiguration("gait_config")
-
 
     robot_description_content = ParameterValue(
                 Command(["xacro ", xacro_path]),
@@ -89,19 +68,6 @@ def generate_launch_description():
         arguments=["-d", rviz_cfg],
         )
     
-    mpc_node = Node(
-        package='ocs2_legged_robot_ros',
-        executable='legged_robot_ddp_mpc',
-        name='legged_robot_ddp_mpc',
-        output='screen',
-        prefix=prefix,
-        parameters=[
-            {'taskFile': taskFile},
-            {'referenceFile': referenceFile},
-            {'urdfFile': urdfFile},
-            {'use_sim_time': True},]
-        )
-    
     manager_node = Node(
         package="controller_manager",
         executable="ros2_control_node",
@@ -109,12 +75,6 @@ def generate_launch_description():
         output="screen",
         prefix=prefix,
         )
-    
-    controler_spawner = Node(
-        package="controller_manager",
-        executable="spawner",
-        arguments=["legged_controller"],
-    )
 
     motor_tester_spawner = Node(
         package="controller_manager",
@@ -136,26 +96,12 @@ def generate_launch_description():
         executable="spawner",
         arguments=["contact_tester"],
     )
-
-    spawn_delay = TimerAction(
-        period=5.0,
-        actions=[controler_spawner],
-    )
     
     gz_sim = ExecuteProcess(
         cmd=["gz", "sim", "-r", world_file],
         output="screen",
         # prefix=prefix,
     )
-
-    gait_node = Node(
-            package='ocs2_legged_robot_ros',
-            executable='legged_robot_gait_command',
-            name='legged_robot_gait_command',
-            output='screen',
-            prefix=prefix,
-            parameters=[{'gaitCommandFile': gait_command_cfg}],
-        )
     
     # 创建LaunchDescription对象launch_description,用于描述launch文件
     launch_description = LaunchDescription([declare_rviz, 
@@ -163,21 +109,14 @@ def generate_launch_description():
                                             declare_bridge_cfg,
                                             declare_world,
                                             declare_controller,
-                                            declare_taskFile,
-                                            declare_referenceFile,
-                                            declare_urdfFile,
-                                            declare_gait_config,
-                                            gait_node,
                                             gz_sim,
                                             bridge_node,
                                             statepub_node,
                                             rviz_node,
-                                            mpc_node,
                                             manager_node,
-                                            spawn_delay,
-                                            # motor_tester_spawner,
-                                            # imu_sensor_broadcaster_spawner,
-                                            # contact_tester_spawner,
+                                            motor_tester_spawner,
+                                            imu_sensor_broadcaster_spawner,
+                                            contact_tester_spawner,
                                             ])
     # 返回让ROS2根据launch描述执行节点
     return launch_description

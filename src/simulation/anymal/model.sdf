@@ -1,10 +1,10 @@
 <sdf version='1.11'>
 	<model name='anymal'>
-		<!-- <joint name='anchor_to_world' type='fixed'>
+		<joint name='anchor_to_world' type='fixed'>
 			<parent>world</parent>
 			<child>base</child>
 			<pose>0 0 0.8 0 0 0</pose>
-		</joint> -->
+		</joint>
 		<!-- 悬挂模型，用于调试 -->
 		<link name='base'>
 			<inertial>
@@ -359,7 +359,7 @@
 				</limit>
 				<dynamics>
 					<damping>0.01</damping>
-					<friction>0</friction>
+					<friction>0.01</friction>
 					<spring_reference>0</spring_reference>
 					<spring_stiffness>0</spring_stiffness>
 				</dynamics>
@@ -427,7 +427,7 @@
 				</limit>
 				<dynamics>
 					<damping>0.01</damping>
-					<friction>0</friction>
+					<friction>0.01</friction>
 					<spring_reference>0</spring_reference>
 					<spring_stiffness>0</spring_stiffness>
 				</dynamics>
@@ -510,7 +510,7 @@
 				</limit>
 				<dynamics>
 					<damping>0.01</damping>
-					<friction>0</friction>
+					<friction>0.01</friction>
 					<spring_reference>0</spring_reference>
 					<spring_stiffness>0</spring_stiffness>
 				</dynamics>
@@ -611,7 +611,7 @@
 				</limit>
 				<dynamics>
 					<damping>0.01</damping>
-					<friction>0</friction>
+					<friction>0.01</friction>
 					<spring_reference>0</spring_reference>
 					<spring_stiffness>0</spring_stiffness>
 				</dynamics>
@@ -679,7 +679,7 @@
 				</limit>
 				<dynamics>
 					<damping>0.01</damping>
-					<friction>0</friction>
+					<friction>0.01</friction>
 					<spring_reference>0</spring_reference>
 					<spring_stiffness>0</spring_stiffness>
 				</dynamics>
@@ -762,7 +762,7 @@
 				</limit>
 				<dynamics>
 					<damping>0.01</damping>
-					<friction>0</friction>
+					<friction>0.01</friction>
 					<spring_reference>0</spring_reference>
 					<spring_stiffness>0</spring_stiffness>
 				</dynamics>
@@ -862,7 +862,7 @@
 				</limit>
 				<dynamics>
 					<damping>0.01</damping>
-					<friction>0</friction>
+					<friction>0.01</friction>
 					<spring_reference>0</spring_reference>
 					<spring_stiffness>0</spring_stiffness>
 				</dynamics>
@@ -930,7 +930,7 @@
 				</limit>
 				<dynamics>
 					<damping>0.01</damping>
-					<friction>0</friction>
+					<friction>0.01</friction>
 					<spring_reference>0</spring_reference>
 					<spring_stiffness>0</spring_stiffness>
 				</dynamics>
@@ -1014,7 +1014,7 @@
 				</limit>
 				<dynamics>
 					<damping>0.01</damping>
-					<friction>0</friction>
+					<friction>0.01</friction>
 					<spring_reference>0</spring_reference>
 					<spring_stiffness>0</spring_stiffness>
 				</dynamics>
@@ -1115,7 +1115,7 @@
 				</limit>
 				<dynamics>
 					<damping>0.01</damping>
-					<friction>0</friction>
+					<friction>0.01</friction>
 					<spring_reference>0</spring_reference>
 					<spring_stiffness>0</spring_stiffness>
 				</dynamics>
@@ -1183,7 +1183,7 @@
 				</limit>
 				<dynamics>
 					<damping>0.01</damping>
-					<friction>0</friction>
+					<friction>0.01</friction>
 					<spring_reference>0</spring_reference>
 					<spring_stiffness>0</spring_stiffness>
 				</dynamics>
@@ -1267,7 +1267,7 @@
 				</limit>
 				<dynamics>
 					<damping>0.01</damping>
-					<friction>0</friction>
+					<friction>0.01</friction>
 					<spring_reference>0</spring_reference>
 					<spring_stiffness>0</spring_stiffness>
 				</dynamics>
