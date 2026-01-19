@@ -7,6 +7,7 @@ endif()
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
+
 find_package(rclcpp REQUIRED)
 find_package(angles REQUIRED)
 find_package(std_msgs REQUIRED)
@@ -23,6 +24,10 @@ find_package(ocs2_centroidal_model REQUIRED)
 
 find_package(legged_wbc REQUIRED)
 find_package(legged_estimator REQUIRED)
+
+find_package(pinocchio REQUIRED)
+find_package(Eigen3 3.3 REQUIRED NO_MODULE)
+find_package(Boost REQUIRED COMPONENTS system filesystem log_setup log)
 
 add_library(${PROJECT_NAME} SHARED
   src/legged_controller.cpp
@@ -41,6 +46,8 @@ ament_target_dependencies(${PROJECT_NAME}
   ocs2_legged_robot
   ocs2_legged_robot_ros
   ocs2_ros_interfaces
+  ocs2_pinocchio_interface
+  ocs2_centroidal_model
   legged_wbc
   legged_estimator
 )
@@ -70,8 +77,13 @@ ament_export_dependencies(
   ocs2_legged_robot
   ocs2_legged_robot_ros
   ocs2_ros_interfaces
+  ocs2_pinocchio_interface
+  ocs2_centroidal_model
   legged_wbc
   legged_estimator
+  pinocchio
+  Eigen3
+  Boost
 )
 
 ament_package()

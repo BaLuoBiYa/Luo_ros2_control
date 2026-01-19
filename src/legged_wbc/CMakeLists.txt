@@ -10,7 +10,12 @@ find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(ocs2_legged_robot REQUIRED)
 find_package(ocs2_centroidal_model REQUIRED)
+find_package(ocs2_pinocchio_interface REQUIRED)
 find_package(qpoases_colcon REQUIRED)
+
+find_package(pinocchio REQUIRED)
+find_package(Eigen3 3.3 REQUIRED NO_MODULE)
+find_package(Boost REQUIRED COMPONENTS system filesystem log_setup log)
 
 include_directories(include)
 
@@ -31,6 +36,7 @@ ament_target_dependencies(${PROJECT_NAME}
   "rclcpp"
   "ocs2_legged_robot"
   "ocs2_centroidal_model"
+  "ocs2_pinocchio_interface"
   "qpoases_colcon"
 )
 
@@ -55,7 +61,11 @@ ament_export_dependencies(
   rclcpp
   ocs2_legged_robot
   ocs2_centroidal_model
+  ocs2_pinocchio_interface
   qpoases_colcon
+  pinocchio
+  Eigen3
+  Boost
 )
 
 ament_package()
