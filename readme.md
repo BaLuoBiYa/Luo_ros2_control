@@ -6,12 +6,10 @@
 
 ## 依赖
 - ROS 2 Control (Jazzy)
-- libdrogon-dev
 
 ## 克隆
 ```bash
 apt update
-apt install libdrogon-dev
 git clone --recurse-submodules https://github.com/BaLuoBiYa/Luo_ros2_control.git
 rosdep install --from-paths src --ignore-src -r -y
 ```
@@ -43,3 +41,7 @@ ros2 launch legged_bringup test.launch.py
 
 ## 许可证
 - 许可证类型与说明
+
+
+
+sudo apt-get install libpcap-dev
