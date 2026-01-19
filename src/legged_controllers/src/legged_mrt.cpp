@@ -32,16 +32,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <ocs2_core/control/FeedforwardController.h>
 #include <ocs2_core/control/LinearController.h>
 
-namespace legged
-{
-    mrtInterface::mrtInterface(std::string topicPrefix,const rclcpp_lifecycle::LifecycleNode::SharedPtr& node)
-        : topicPrefix_(topicPrefix),
-          node_(node) {}
+namespace legged {
+    mrtInterface::mrtInterface(std::string topicPrefix, const rclcpp_lifecycle::LifecycleNode::SharedPtr &node)
+        : topicPrefix_(topicPrefix), node_(node) {}
 
     mrtInterface::~mrtInterface() {}
 
-    void mrtInterface::resetMpcNode(const ocs2::TargetTrajectories &initTargetTrajectories)
-    {
+    void mrtInterface::resetMpcNode(const ocs2::TargetTrajectories &initTargetTrajectories) {
         this->reset();
 
         const auto resetSrvRequest = std::make_shared<ocs2_msgs::srv::Reset::Request>();
@@ -49,54 +46,39 @@ namespace legged
         resetSrvRequest->target_trajectories =
             ocs2::ros_msg_conversions::createTargetTrajectoriesMsg(initTargetTrajectories);
 
-        while (!mpcResetServiceClient_->wait_for_service(std::chrono::seconds(5)) && rclcpp::ok())
-        {
-            RCLCPP_ERROR_STREAM(node_->get_logger(),"Failed to call service to reset MPC, retrying...");
+        while (!mpcResetServiceClient_->wait_for_service(std::chrono::seconds(5)) && rclcpp::ok()) {
+            RCLCPP_ERROR_STREAM(node_->get_logger(), "Failed to call service to reset MPC, retrying...");
         }
 
         mpcResetServiceClient_->async_send_request(resetSrvRequest);
         RCLCPP_INFO_STREAM(node_->get_logger(), "MPC node has been reset.");
     }
 
-    void mrtInterface::setCurrentObservation(const ocs2::SystemObservation &currentObservation)
-    {
+    void mrtInterface::setCurrentObservation(const ocs2::SystemObservation &currentObservation) {
         mpcObservationMsg_ = ocs2::ros_msg_conversions::createObservationMsg(currentObservation);
-        if (mpcObservationPublisher_->trylock())
-        {
+        if (mpcObservationPublisher_->trylock()) {
             mpcObservationPublisher_->msg_ = mpcObservationMsg_;
             mpcObservationPublisher_->unlockAndPublish();
         }
     }
 
-    void mrtInterface::readPolicyMsg(const ocs2_msgs::msg::MpcFlattenedController &msg, 
-                                          ocs2::CommandData &commandData,
-                                          ocs2::PrimalSolution &primalSolution, 
-                                          ocs2::PerformanceIndex &performanceIndices)
-    {
-        commandData.mpcInitObservation_ =
-            ocs2::ros_msg_conversions::readObservationMsg(msg.init_observation);
+    void mrtInterface::readPolicyMsg(const ocs2_msgs::msg::MpcFlattenedController &msg, ocs2::CommandData &commandData,
+                                     ocs2::PrimalSolution &primalSolution, ocs2::PerformanceIndex &performanceIndices) {
+        commandData.mpcInitObservation_ = ocs2::ros_msg_conversions::readObservationMsg(msg.init_observation);
         commandData.mpcTargetTrajectories_ =
-            ocs2::ros_msg_conversions::readTargetTrajectoriesMsg(
-                msg.plan_target_trajectories);
-        performanceIndices =
-            ocs2::ros_msg_conversions::readPerformanceIndicesMsg(msg.performance_indices);
+            ocs2::ros_msg_conversions::readTargetTrajectoriesMsg(msg.plan_target_trajectories);
+        performanceIndices = ocs2::ros_msg_conversions::readPerformanceIndicesMsg(msg.performance_indices);
 
         const size_t N = msg.time_trajectory.size();
-        if (N == 0)
-        {
-            throw std::runtime_error(
-                "[mrtInterface::readPolicyMsg] controller message is empty!");
+        if (N == 0) {
+            throw std::runtime_error("[mrtInterface::readPolicyMsg] controller message is empty!");
         }
-        if (msg.state_trajectory.size() != N && msg.input_trajectory.size() != N)
-        {
-            throw std::runtime_error(
-                "[mrtInterface::readPolicyMsg] state and input trajectories must "
-                "have same length!");
+        if (msg.state_trajectory.size() != N && msg.input_trajectory.size() != N) {
+            throw std::runtime_error("[mrtInterface::readPolicyMsg] state and input trajectories must "
+                                     "have same length!");
         }
-        if (msg.data.size() != N)
-        {
-            throw std::runtime_error(
-                "[mrtInterface::readPolicyMsg] Data has the wrong length!");
+        if (msg.data.size() != N) {
+            throw std::runtime_error("[mrtInterface::readPolicyMsg] Data has the wrong length!");
         }
 
         primalSolution.clear();
@@ -108,82 +90,67 @@ namespace legged
         primalSolution.timeTrajectory_.reserve(N);
         primalSolution.stateTrajectory_.reserve(N);
         primalSolution.inputTrajectory_.reserve(N);
-        for (size_t i = 0; i < N; i++)
-        {
+        for (size_t i = 0; i < N; i++) {
             stateDim[i] = msg.state_trajectory[i].value.size();
             inputDim[i] = msg.input_trajectory[i].value.size();
             primalSolution.timeTrajectory_.emplace_back(msg.time_trajectory[i]);
             primalSolution.stateTrajectory_.emplace_back(
-                Eigen::Map<const Eigen::VectorXf>(msg.state_trajectory[i].value.data(),
-                                                  stateDim[i])
+                Eigen::Map<const Eigen::VectorXf>(msg.state_trajectory[i].value.data(), stateDim[i])
                     .cast<ocs2::scalar_t>());
             primalSolution.inputTrajectory_.emplace_back(
-                Eigen::Map<const Eigen::VectorXf>(msg.input_trajectory[i].value.data(),
-                                                  inputDim[i])
+                Eigen::Map<const Eigen::VectorXf>(msg.input_trajectory[i].value.data(), inputDim[i])
                     .cast<ocs2::scalar_t>());
         }
 
         primalSolution.postEventIndices_.reserve(msg.post_event_indices.size());
-        for (auto ind : msg.post_event_indices)
-        {
+        for (auto ind : msg.post_event_indices) {
             primalSolution.postEventIndices_.emplace_back(static_cast<size_t>(ind));
         }
 
         std::vector<std::vector<float> const *> controllerDataPtrArray(N, nullptr);
-        for (size_t i = 0; i < N; i++)
-        {
+        for (size_t i = 0; i < N; i++) {
             controllerDataPtrArray[i] = &(msg.data[i].data);
         }
 
         // instantiate the correct controller
-        switch (msg.controller_type)
-        {
-        case ocs2_msgs::msg::MpcFlattenedController::CONTROLLER_FEEDFORWARD:
-        {
-            auto controller = ocs2::FeedforwardController::unFlatten(
-                primalSolution.timeTrajectory_, controllerDataPtrArray);
-            primalSolution.controllerPtr_.reset(
-                new ocs2::FeedforwardController(std::move(controller)));
+        switch (msg.controller_type) {
+        case ocs2_msgs::msg::MpcFlattenedController::CONTROLLER_FEEDFORWARD: {
+            auto controller =
+                ocs2::FeedforwardController::unFlatten(primalSolution.timeTrajectory_, controllerDataPtrArray);
+            primalSolution.controllerPtr_.reset(new ocs2::FeedforwardController(std::move(controller)));
             break;
         }
-        case ocs2_msgs::msg::MpcFlattenedController::CONTROLLER_LINEAR:
-        {
-            auto controller = ocs2::LinearController::unFlatten(
-                stateDim, inputDim, primalSolution.timeTrajectory_,
-                controllerDataPtrArray);
-            primalSolution.controllerPtr_.reset(
-                new ocs2::LinearController(std::move(controller)));
+        case ocs2_msgs::msg::MpcFlattenedController::CONTROLLER_LINEAR: {
+            auto controller = ocs2::LinearController::unFlatten(stateDim, inputDim, primalSolution.timeTrajectory_,
+                                                                controllerDataPtrArray);
+            primalSolution.controllerPtr_.reset(new ocs2::LinearController(std::move(controller)));
             break;
         }
         default:
-            throw std::runtime_error(
-                "[mrtInterface::readPolicyMsg] Unknown controllerType!");
+            throw std::runtime_error("[mrtInterface::readPolicyMsg] Unknown controllerType!");
         }
     }
 
-    void mrtInterface::mpcPolicyCallback(const ocs2_msgs::msg::MpcFlattenedController::ConstSharedPtr &msg)
-    {
+    void mrtInterface::mpcPolicyCallback(const ocs2_msgs::msg::MpcFlattenedController::ConstSharedPtr &msg) {
         // read new policy and command from msg
         auto commandPtr = std::make_unique<ocs2::CommandData>();
         auto primalSolutionPtr = std::make_unique<ocs2::PrimalSolution>();
         auto performanceIndicesPtr = std::make_unique<ocs2::PerformanceIndex>();
         readPolicyMsg(*msg, *commandPtr, *primalSolutionPtr, *performanceIndicesPtr);
 
-        this->moveToBuffer(std::move(commandPtr), std::move(primalSolutionPtr),
-                           std::move(performanceIndicesPtr));
+        this->moveToBuffer(std::move(commandPtr), std::move(primalSolutionPtr), std::move(performanceIndicesPtr));
     }
 
-    void mrtInterface::launchNodes()
-    {
+    void mrtInterface::launchNodes() {
         this->reset();
-        
+
         // display
         RCLCPP_INFO_STREAM(node_->get_logger(), "MRT node is setting up ...");
 
         // observation publisher
-        auto obs_pub = node_->create_publisher<ocs2_msgs::msg::MpcObservation>(
-            topicPrefix_ + "_mpc_observation", 1);
-        mpcObservationPublisher_ = std::make_shared<realtime_tools::RealtimePublisher<ocs2_msgs::msg::MpcObservation>>(obs_pub);
+        auto obs_pub = node_->create_publisher<ocs2_msgs::msg::MpcObservation>(topicPrefix_ + "_mpc_observation", 1);
+        mpcObservationPublisher_ =
+            std::make_shared<realtime_tools::RealtimePublisher<ocs2_msgs::msg::MpcObservation>>(obs_pub);
 
         // policy subscriber
         mpcPolicySubscriber_ = node_->create_subscription<ocs2_msgs::msg::MpcFlattenedController>(

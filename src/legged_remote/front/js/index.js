@@ -1,3 +1,4 @@
-var test = "this is a test file";
+"use strict";
+var test = "hello world";
 console.log(test);
 //# sourceMappingURL=index.js.map

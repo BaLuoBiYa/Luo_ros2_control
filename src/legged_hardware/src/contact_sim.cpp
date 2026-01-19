@@ -1,11 +1,9 @@
 #include "legged_hardware/contact_sim.hpp"
 
-namespace legged
-{
-    hardware_interface::CallbackReturn contactSim::on_init(const hardware_interface::HardwareComponentInterfaceParams &params)
-    {
-        if (hardware_interface::SensorInterface::on_init(params) != hardware_interface::CallbackReturn::SUCCESS)
-        {
+namespace legged {
+    hardware_interface::CallbackReturn
+    contactSim::on_init(const hardware_interface::HardwareComponentInterfaceParams &params) {
+        if (hardware_interface::SensorInterface::on_init(params) != hardware_interface::CallbackReturn::SUCCESS) {
             return hardware_interface::CallbackReturn::ERROR;
         }
 
@@ -17,21 +15,16 @@ namespace legged
         return hardware_interface::CallbackReturn::SUCCESS;
     }
 
-    hardware_interface::CallbackReturn contactSim::on_configure(const rclcpp_lifecycle::State &pre)
-    {
+    hardware_interface::CallbackReturn contactSim::on_configure(const rclcpp_lifecycle::State &pre) {
         (void)pre;
         // for (int i = 0; i < 4; i++)
         // {
         //     contact_flag_[i] = false;
         // }
 
-        for (size_t i = 0; i < 4; i++)
-        {
+        for (size_t i = 0; i < 4; i++) {
             contactSubscriber_[i] = get_node()->create_subscription<ros_gz_interfaces::msg::Contacts>(
-                contactsTopics_[i],
-                1,
-                [this, i](const ros_gz_interfaces::msg::Contacts::ConstSharedPtr &msg)
-                {
+                contactsTopics_[i], 1, [this, i](const ros_gz_interfaces::msg::Contacts::ConstSharedPtr &msg) {
                     this->receivedContactsMsg_[i].try_set(*msg);
                 });
         }
@@ -39,35 +32,29 @@ namespace legged
         return hardware_interface::CallbackReturn::SUCCESS;
     }
 
-    hardware_interface::CallbackReturn contactSim::on_activate(const rclcpp_lifecycle::State &pre)
-    {
+    hardware_interface::CallbackReturn contactSim::on_activate(const rclcpp_lifecycle::State &pre) {
         (void)pre;
         ros_gz_interfaces::msg::Contacts empty_msg;
         empty_msg.header.stamp.sec = 0;
         empty_msg.header.stamp.nanosec = 0;
-        for (size_t i = 0; i < 4; i++)
-        {
+        for (size_t i = 0; i < 4; i++) {
             receivedContactsMsg_[i].try_set(empty_msg);
         }
         return hardware_interface::CallbackReturn::SUCCESS;
     }
 
-    hardware_interface::CallbackReturn contactSim::on_deactivate(const rclcpp_lifecycle::State &pre)
-    {
+    hardware_interface::CallbackReturn contactSim::on_deactivate(const rclcpp_lifecycle::State &pre) {
         (void)pre;
         return hardware_interface::CallbackReturn::SUCCESS;
     }
 
-    hardware_interface::return_type contactSim::read(const rclcpp::Time &time, const rclcpp::Duration &period)
-    {
+    hardware_interface::return_type contactSim::read(const rclcpp::Time &time, const rclcpp::Duration &period) {
         (void)period;
         const std::string kObstacle = "Obstacle::link::collision";
 
-        for (size_t i = 0; i < 4; i++)
-        {
+        for (size_t i = 0; i < 4; i++) {
             auto msg = receivedContactsMsg_[i].try_get();
-            if (msg == std::nullopt)
-            {
+            if (msg == std::nullopt) {
                 set_state<bool>("contact/" + tipNames_[i], false);
                 continue;
             }
@@ -75,12 +62,9 @@ namespace legged
             double msg_time = msg.value().header.stamp.sec + msg.value().header.stamp.nanosec * 1e-9;
             double age = time.seconds() - msg_time;
 
-            if (age > 0.1)
-            {
+            if (age > 0.1) {
                 set_state<bool>("contact/" + tipNames_[i], false);
-            }
-            else
-            {
+            } else {
                 set_state<bool>("contact/" + tipNames_[i], true);
             }
         }

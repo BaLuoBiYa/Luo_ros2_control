@@ -1,11 +1,10 @@
 #include "legged_hardware/motor_sim.hpp"
 
-namespace legged
-{
-    hardware_interface::CallbackReturn MotorSim::on_init(const hardware_interface::HardwareComponentInterfaceParams &params)
-    {
-        if (hardware_interface::SystemInterface::on_init(hardware_interface::HardwareComponentInterfaceParams{params}) != hardware_interface::CallbackReturn::SUCCESS)
-        {
+namespace legged {
+    hardware_interface::CallbackReturn
+    MotorSim::on_init(const hardware_interface::HardwareComponentInterfaceParams &params) {
+        if (hardware_interface::SystemInterface::on_init(hardware_interface::HardwareComponentInterfaceParams{
+                params}) != hardware_interface::CallbackReturn::SUCCESS) {
             return hardware_interface::CallbackReturn::ERROR;
         }
 
@@ -15,19 +14,15 @@ namespace legged
         return hardware_interface::CallbackReturn::SUCCESS;
     }
 
-    hardware_interface::CallbackReturn MotorSim::on_configure(const rclcpp_lifecycle::State &pre)
-    {
+    hardware_interface::CallbackReturn MotorSim::on_configure(const rclcpp_lifecycle::State &pre) {
         (void)pre;
         auto cmd_pub = get_node()->create_publisher<trajectory_msgs::msg::JointTrajectory>(jointCommandTopic_, 10);
-        jointCommandPublisher_ = std::make_shared<realtime_tools::RealtimePublisher<trajectory_msgs::msg::JointTrajectory>>(cmd_pub);
+        jointCommandPublisher_ =
+            std::make_shared<realtime_tools::RealtimePublisher<trajectory_msgs::msg::JointTrajectory>>(cmd_pub);
 
         jointStateSubscriber_ = get_node()->create_subscription<sensor_msgs::msg::JointState>(
-            jointStateTopic_,
-            1,
-            [this](const sensor_msgs::msg::JointState::ConstSharedPtr &msg)
-            {
-                receivedMsg_.set(*msg);
-            });
+            jointStateTopic_, 1,
+            [this](const sensor_msgs::msg::JointState::ConstSharedPtr &msg) { receivedMsg_.set(*msg); });
 
         jointCommand_.joint_names.resize(12);
         jointCommand_.points.resize(1);
@@ -37,9 +32,8 @@ namespace legged
         jointCommand_.points[0].accelerations.resize(12, 0.0);
         reachTimeSec_ = 0;
         reachTimeNanosec_ = 0;
-        
-        for (size_t i = 0; i < 12; i++)
-        {
+
+        for (size_t i = 0; i < 12; i++) {
             currentPosition_[i] = 0.0;
             currentVelocity_[i] = 0.0;
             currentEffort_[i] = 0.0;
@@ -49,8 +43,7 @@ namespace legged
         return hardware_interface::CallbackReturn::SUCCESS;
     }
 
-    hardware_interface::CallbackReturn MotorSim::on_activate(const rclcpp_lifecycle::State &pre)
-    {
+    hardware_interface::CallbackReturn MotorSim::on_activate(const rclcpp_lifecycle::State &pre) {
         (void)pre;
         sensor_msgs::msg::JointState empty_msg;
         empty_msg.position.resize(12, 0.0);
@@ -58,8 +51,7 @@ namespace legged
         empty_msg.effort.resize(12, 0.0);
         receivedMsg_.try_set(empty_msg);
 
-        for (size_t i = 0; i < 12; i++)
-        {
+        for (size_t i = 0; i < 12; i++) {
             jointCommand_.points[0].positions[i] = 0.0;
             jointCommand_.points[0].velocities[i] = 0.0;
             jointCommand_.points[0].effort[i] = 0.0;
@@ -67,8 +59,7 @@ namespace legged
         jointCommand_.points[0].time_from_start.sec = 0;
         jointCommand_.points[0].time_from_start.nanosec = 0;
 
-        if (jointCommandPublisher_->trylock())
-        {
+        if (jointCommandPublisher_->trylock()) {
             jointCommandPublisher_->msg_ = jointCommand_;
             jointCommandPublisher_->unlockAndPublish();
         }
@@ -76,24 +67,20 @@ namespace legged
         return hardware_interface::CallbackReturn::SUCCESS;
     }
 
-    hardware_interface::CallbackReturn MotorSim::on_deactivate(const rclcpp_lifecycle::State &pre)
-    {
+    hardware_interface::CallbackReturn MotorSim::on_deactivate(const rclcpp_lifecycle::State &pre) {
         (void)pre;
         return hardware_interface::CallbackReturn::SUCCESS;
     }
 
-    hardware_interface::return_type MotorSim::read(const rclcpp::Time &time, const rclcpp::Duration &period)
-    {
+    hardware_interface::return_type MotorSim::read(const rclcpp::Time &time, const rclcpp::Duration &period) {
         (void)time;
         (void)period;
         auto msg = receivedMsg_.try_get();
-        if (msg == std::nullopt)
-        {
+        if (msg == std::nullopt) {
             return hardware_interface::return_type::OK;
         }
 
-        for (size_t i = 0; i < 12; i++)
-        {
+        for (size_t i = 0; i < 12; i++) {
             set_state<double>(jointNames_[i] + "/position", msg.value().position[i]);
             set_state<double>(jointNames_[i] + "/velocity", msg.value().velocity[i]);
             // set_state<double>(jointNames_[i] + "/effort", msg.value().effort[i]);
@@ -102,28 +89,27 @@ namespace legged
         return hardware_interface::return_type::OK;
     }
 
-    hardware_interface::return_type MotorSim::write(const rclcpp::Time &time, const rclcpp::Duration &period)
-    {
+    hardware_interface::return_type MotorSim::write(const rclcpp::Time &time, const rclcpp::Duration &period) {
         (void)time;
-        for (size_t i = 0; i < 12; i++)
-        {
-            for (size_t i = 0; i < 12; i++)
-        {
-            double pos = get_command<double>(jointNames_[i] + "/position");
-            double vel = get_command<double>(jointNames_[i] + "/velocity");
-            double eff = get_command<double>(jointNames_[i] + "/effort");
-            if (!std::isfinite(pos)) pos = 0.0;
-            if (!std::isfinite(vel)) vel = 0.0;
-            if (!std::isfinite(eff)) eff = 0.0;
-            jointCommand_.points[0].positions[i] = pos;
-            jointCommand_.points[0].velocities[i] = vel;
-            jointCommand_.points[0].effort[i] = eff;
-        }
+        for (size_t i = 0; i < 12; i++) {
+            for (size_t i = 0; i < 12; i++) {
+                double pos = get_command<double>(jointNames_[i] + "/position");
+                double vel = get_command<double>(jointNames_[i] + "/velocity");
+                double eff = get_command<double>(jointNames_[i] + "/effort");
+                if (!std::isfinite(pos))
+                    pos = 0.0;
+                if (!std::isfinite(vel))
+                    vel = 0.0;
+                if (!std::isfinite(eff))
+                    eff = 0.0;
+                jointCommand_.points[0].positions[i] = pos;
+                jointCommand_.points[0].velocities[i] = vel;
+                jointCommand_.points[0].effort[i] = eff;
+            }
         }
         jointCommand_.points[0].time_from_start.sec += static_cast<int32_t>(period.seconds());
 
-        if (jointCommandPublisher_->trylock())
-        {
+        if (jointCommandPublisher_->trylock()) {
             jointCommandPublisher_->msg_ = jointCommand_;
             jointCommandPublisher_->unlockAndPublish();
         }

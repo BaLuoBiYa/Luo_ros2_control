@@ -7,28 +7,28 @@
 #include <realtime_tools/realtime_thread_safe_box.hpp>
 
 #pragma once
-namespace legged
-{
+namespace legged {
 
-	class FromTopicStateEstimate : public StateEstimateBase
-	{
-	public:
-		FromTopicStateEstimate(ocs2::PinocchioInterface pinocchioInterface, 
-							   ocs2::CentroidalModelInfo info,
-							   const ocs2::PinocchioEndEffectorKinematics &eeKinematics,
-							   const rclcpp_lifecycle::LifecycleNode::SharedPtr& node);
+    class FromTopicStateEstimate : public StateEstimateBase {
+      public:
+        FromTopicStateEstimate(ocs2::PinocchioInterface pinocchioInterface, ocs2::CentroidalModelInfo info,
+                               const ocs2::PinocchioEndEffectorKinematics &eeKinematics,
+                               const rclcpp_lifecycle::LifecycleNode::SharedPtr &node);
 
-		void updateImu(const Eigen::Quaternion<ocs2::scalar_t> &quat, const ocs2::legged_robot::vector3_t &angularVelLocal, const ocs2::legged_robot::vector3_t &linearAccelLocal,
-					const ocs2::legged_robot::matrix3_t &orientationCovariance, const ocs2::legged_robot::matrix3_t &angularVelCovariance,
-					const ocs2::legged_robot::matrix3_t &linearAccelCovariance) override {};
+        void updateImu(const Eigen::Quaternion<ocs2::scalar_t> &quat,
+                       const ocs2::legged_robot::vector3_t &angularVelLocal,
+                       const ocs2::legged_robot::vector3_t &linearAccelLocal,
+                       const ocs2::legged_robot::matrix3_t &orientationCovariance,
+                       const ocs2::legged_robot::matrix3_t &angularVelCovariance,
+                       const ocs2::legged_robot::matrix3_t &linearAccelCovariance) override {};
 
-		ocs2::vector_t update(const rclcpp::Time &time, const rclcpp::Duration &period) override;
+        ocs2::vector_t update(const rclcpp::Time &time, const rclcpp::Duration &period) override;
 
-	private:
-		void callback(const nav_msgs::msg::Odometry::ConstSharedPtr &msg);
+      private:
+        void callback(const nav_msgs::msg::Odometry::ConstSharedPtr &msg);
 
-		rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr sub_;
-		realtime_tools::RealtimeThreadSafeBox<nav_msgs::msg::Odometry> buffer_;
-	};
+        rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr sub_;
+        realtime_tools::RealtimeThreadSafeBox<nav_msgs::msg::Odometry> buffer_;
+    };
 
 } // namespace legged

@@ -7,9 +7,9 @@ A rewrit version of ocs2::mrtInterface to fit legged robot controller
 #include <condition_variable>
 #include <string>
 // #include <thread>
+#include <rclcpp/logger.hpp>
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp_lifecycle/lifecycle_node.hpp>
-#include <rclcpp/logger.hpp>
 
 // MPC messages
 #include <ocs2_mpc/MRT_BASE.h>
@@ -25,7 +25,7 @@ namespace legged {
      * using ROS.
      */
     class mrtInterface : public ocs2::MRT_BASE {
-    public:
+      public:
         /**
          * Constructor
          *
@@ -34,7 +34,7 @@ namespace legged {
          * "topicPrefix_mpc_policy", and MPC reset service "topicPrefix_mpc_reset".
          * @param [in] mrtTransportHints: ROS transmission protocol.
          */
-        explicit mrtInterface(std::string topicPrefix ,const rclcpp_lifecycle::LifecycleNode::SharedPtr& node);
+        explicit mrtInterface(std::string topicPrefix, const rclcpp_lifecycle::LifecycleNode::SharedPtr &node);
 
         /**
          * Destructor
@@ -50,18 +50,16 @@ namespace legged {
          */
         void launchNodes();
 
-        void setCurrentObservation(
-            const ocs2::SystemObservation &currentObservation) override;
+        void setCurrentObservation(const ocs2::SystemObservation &currentObservation) override;
 
-    private:
+      private:
         /**
          * Callback method to receive the MPC policy as well as the mode sequence.
          * It only updates the policy variables with suffix (*Buffer_) variables.
          *
          * @param [in] msg: A constant pointer to the message
          */
-        void mpcPolicyCallback(
-            const ocs2_msgs::msg::MpcFlattenedController::ConstSharedPtr &msg);
+        void mpcPolicyCallback(const ocs2_msgs::msg::MpcFlattenedController::ConstSharedPtr &msg);
 
         /**
          * Helper function to read a MPC policy message.
@@ -71,22 +69,18 @@ namespace legged {
          * @param [out] primalSolution: The MPC policy data
          * @param [out] performanceIndices: The MPC performance indices data
          */
-        static void readPolicyMsg(const ocs2_msgs::msg::MpcFlattenedController &msg,
-                                  ocs2::CommandData &commandData,
-                                  ocs2::PrimalSolution &primalSolution,
-                                  ocs2::PerformanceIndex &performanceIndices);
+        static void readPolicyMsg(const ocs2_msgs::msg::MpcFlattenedController &msg, ocs2::CommandData &commandData,
+                                  ocs2::PrimalSolution &primalSolution, ocs2::PerformanceIndex &performanceIndices);
 
-    private:
+      private:
         std::string topicPrefix_;
         const rclcpp_lifecycle::LifecycleNode::SharedPtr node_;
 
         // Publishers and subscribers
-        realtime_tools::RealtimePublisher<ocs2_msgs::msg::MpcObservation>::SharedPtr
-            mpcObservationPublisher_;
+        realtime_tools::RealtimePublisher<ocs2_msgs::msg::MpcObservation>::SharedPtr mpcObservationPublisher_;
         // rclcpp::Publisher<ocs2_msgs::msg::MpcObservation>::SharedPtr
         // mpcObservationPublisher_;
-        rclcpp::Subscription<ocs2_msgs::msg::MpcFlattenedController>::SharedPtr
-            mpcPolicySubscriber_;
+        rclcpp::Subscription<ocs2_msgs::msg::MpcFlattenedController>::SharedPtr mpcPolicySubscriber_;
         rclcpp::Client<ocs2_msgs::srv::Reset>::SharedPtr mpcResetServiceClient_;
 
         // ROS messages

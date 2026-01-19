@@ -1,11 +1,10 @@
 #include "legged_hardware/imu_sim.hpp"
 
-namespace legged
-{
-    hardware_interface::CallbackReturn ImuSim::on_init(const hardware_interface::HardwareComponentInterfaceParams &params)
-    {
-        if (hardware_interface::SensorInterface::on_init(hardware_interface::HardwareComponentInterfaceParams{params}) != hardware_interface::CallbackReturn::SUCCESS)
-        {
+namespace legged {
+    hardware_interface::CallbackReturn
+    ImuSim::on_init(const hardware_interface::HardwareComponentInterfaceParams &params) {
+        if (hardware_interface::SensorInterface::on_init(hardware_interface::HardwareComponentInterfaceParams{
+                params}) != hardware_interface::CallbackReturn::SUCCESS) {
             return hardware_interface::CallbackReturn::ERROR;
         }
 
@@ -15,42 +14,32 @@ namespace legged
         return hardware_interface::CallbackReturn::SUCCESS;
     }
 
-    hardware_interface::CallbackReturn ImuSim::on_configure(const rclcpp_lifecycle::State &pre)
-    {
+    hardware_interface::CallbackReturn ImuSim::on_configure(const rclcpp_lifecycle::State &pre) {
         (void)pre;
         imuSubscriber_ = get_node()->create_subscription<sensor_msgs::msg::Imu>(
-            imuTopic_,
-            1,
-            [this](const sensor_msgs::msg::Imu::ConstSharedPtr &msg)
-            {
-                receivedImuMsg_.try_set(*msg);
-            });
+            imuTopic_, 1, [this](const sensor_msgs::msg::Imu::ConstSharedPtr &msg) { receivedImuMsg_.try_set(*msg); });
 
         return hardware_interface::CallbackReturn::SUCCESS;
     }
 
-    hardware_interface::CallbackReturn ImuSim::on_activate(const rclcpp_lifecycle::State &pre)
-    {
+    hardware_interface::CallbackReturn ImuSim::on_activate(const rclcpp_lifecycle::State &pre) {
         (void)pre;
         sensor_msgs::msg::Imu empty_msg;
         receivedImuMsg_.set(empty_msg);
         return hardware_interface::CallbackReturn::SUCCESS;
     }
 
-    hardware_interface::CallbackReturn ImuSim::on_deactivate(const rclcpp_lifecycle::State &pre)
-    {
+    hardware_interface::CallbackReturn ImuSim::on_deactivate(const rclcpp_lifecycle::State &pre) {
         (void)pre;
         return hardware_interface::CallbackReturn::SUCCESS;
     }
 
-    hardware_interface::return_type ImuSim::read(const rclcpp::Time &time, const rclcpp::Duration &period)
-    {
+    hardware_interface::return_type ImuSim::read(const rclcpp::Time &time, const rclcpp::Duration &period) {
         (void)time;
         (void)period;
 
         auto imu_msg = receivedImuMsg_.try_get();
-        if (imu_msg == std::nullopt)
-        {
+        if (imu_msg == std::nullopt) {
             return hardware_interface::return_type::ERROR;
         }
 
@@ -99,7 +88,7 @@ namespace legged
 
     //     return state_interfaces;
     // }
-}
+} // namespace legged
 
 #include "pluginlib/class_list_macros.hpp"
 PLUGINLIB_EXPORT_CLASS(legged::ImuSim, hardware_interface::SensorInterface)
