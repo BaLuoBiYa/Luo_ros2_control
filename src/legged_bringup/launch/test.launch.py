@@ -1,4 +1,5 @@
 # 导入库
+import os
 from launch import LaunchDescription
 from launch_ros.actions import Node
 from launch.actions import DeclareLaunchArgument,ExecuteProcess,TimerAction
@@ -10,6 +11,10 @@ from ament_index_python.packages import get_package_share_directory
 # 定义函数名称为：generate_launch_description
 def generate_launch_description():
     prefix = "gnome-terminal --"
+     # venv site-packages
+    venv_site = "/home/luo/Project/Horse/Luo_ros2_control/.venv/lib/python3.12/site-packages"
+    merged_env = os.environ.copy()
+    merged_env["PYTHONPATH"] = f"{venv_site}:{merged_env.get('PYTHONPATH','')}"
 
     declare_xacro = DeclareLaunchArgument(
         name = 'xacro_path',
@@ -108,6 +113,14 @@ def generate_launch_description():
         output="screen",
         # prefix=prefix,
     )
+
+    joint_tester = Node(
+        package="legged_tester",
+        executable="joint_tester",
+        output="screen",
+        # prefix=prefix,
+        env=merged_env,
+    )
     
     # 创建LaunchDescription对象launch_description,用于描述launch文件
     launch_description = LaunchDescription([declare_xacro, 
@@ -124,6 +137,7 @@ def generate_launch_description():
                                             motor_tester_spawner,
                                             imu_sensor_broadcaster_spawner,
                                             contact_tester_spawner,
+                                            joint_tester,
                                             ])
     # 返回让ROS2根据launch描述执行节点
     return launch_description
