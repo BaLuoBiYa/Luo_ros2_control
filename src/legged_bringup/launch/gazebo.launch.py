@@ -10,6 +10,7 @@ from ament_index_python.packages import get_package_share_directory
 # 定义函数名称为：generate_launch_description
 def generate_launch_description():
     prefix = "gnome-terminal --"
+    useSimTime = True
 
     declare_rviz = DeclareLaunchArgument(
         name = 'rviz_config',
@@ -76,7 +77,7 @@ def generate_launch_description():
         package="robot_state_publisher",
         executable="robot_state_publisher",
         parameters=[robot_description,
-                    {"use_sim_time": True},],
+                    {"use_sim_time": useSimTime},],
         remappings=[
             ("joint_states", "anymal/joint/states"),
         ],
@@ -87,27 +88,38 @@ def generate_launch_description():
         package="rviz2",
         executable="rviz2",
         arguments=["-d", rviz_cfg],
+        parameters=[{'use_sim_time':useSimTime}]
         )
     
     mpc_node = Node(
         package='ocs2_legged_robot_ros',
-        executable='legged_robot_ddp_mpc',
-        name='legged_robot_ddp_mpc',
+        executable='legged_robot_sqp_mpc',
+        name='legged_robot_sqp_mpc',
         output='screen',
         prefix=prefix,
         parameters=[
             {'taskFile': taskFile},
             {'referenceFile': referenceFile},
             {'urdfFile': urdfFile},
-            {'use_sim_time': True},]
+            {'use_sim_time': useSimTime},]
         )
+
+    target_node = Node(
+        package="ocs2_legged_robot_ros",
+        executable="legged_robot_target",
+        name='legged_robot_target',
+        output='screen',
+        prefix=prefix,
+        parameters=[{'referenceFile': referenceFile},
+                    {'use_sim_time':useSimTime}]
+    )
     
     manager_node = Node(
         package="controller_manager",
         executable="ros2_control_node",
         parameters=[controller_cfg],
         output="screen",
-        prefix=prefix,
+        # prefix=prefix,
         )
     
     controler_spawner = Node(
@@ -116,29 +128,29 @@ def generate_launch_description():
         arguments=["legged_controller"],
     )
 
-    motor_tester_spawner = Node(
-        package="controller_manager",
-        executable="spawner",
-        arguments=["motor_tester"],
-    )
+    # motor_tester_spawner = Node(
+    #     package="controller_manager",
+    #     executable="spawner",
+    #     arguments=["motor_tester"],
+    # )
 
-    imu_sensor_broadcaster_spawner = Node(
-        package="controller_manager",
-        executable="spawner",
-        arguments=["imu_sensor_broadcaster" ,
-                   "--controller-ros-args",
-                   "--ros-args -r /imu_sensor_broadcaster/imu:=test_tools/imu_tester/imu",
-                   ],
-    )
+    # imu_sensor_broadcaster_spawner = Node(
+    #     package="controller_manager",
+    #     executable="spawner",
+    #     arguments=["imu_sensor_broadcaster" ,
+    #                "--controller-ros-args",
+    #                "--ros-args -r /imu_sensor_broadcaster/imu:=test_tools/imu_tester/imu",
+    #                ],
+    # )
 
-    contact_tester_spawner = Node(
-        package="controller_manager",
-        executable="spawner",
-        arguments=["contact_tester"],
-    )
+    # contact_tester_spawner = Node(
+    #     package="controller_manager",
+    #     executable="spawner",
+    #     arguments=["contact_tester"],
+    # )
 
     spawn_delay = TimerAction(
-        period=5.0,
+        period=0.0,
         actions=[controler_spawner],
     )
     
@@ -172,9 +184,10 @@ def generate_launch_description():
                                             bridge_node,
                                             statepub_node,
                                             rviz_node,
-                                            mpc_node,
+                                            target_node,
                                             manager_node,
                                             spawn_delay,
+                                            mpc_node,
                                             # motor_tester_spawner,
                                             # imu_sensor_broadcaster_spawner,
                                             # contact_tester_spawner,

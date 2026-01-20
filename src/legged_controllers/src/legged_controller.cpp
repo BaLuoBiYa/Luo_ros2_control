@@ -3,10 +3,10 @@
 namespace legged {
     controller_interface::CallbackReturn legged_controller::on_init() {
         // Initialize parameters
-        robotName = auto_declare<std::string>("robotName", "legged_robot");
-        taskFile = auto_declare<std::string>("taskFile", "");
-        urdfFile = auto_declare<std::string>("urdfFile", "");
-        referenceFile = auto_declare<std::string>("referenceFile", "");
+        robotName_ = auto_declare<std::string>("robotName", "legged_robot");
+        taskFile_ = auto_declare<std::string>("taskFile", "");
+        urdfFile_ = auto_declare<std::string>("urdfFile", "");
+        referenceFile_ = auto_declare<std::string>("referenceFile", "");
 
         jointNames_ = auto_declare<std::vector<std::string>>("joints", {});
         if (jointNames_.size() != 12u) {
@@ -16,7 +16,7 @@ namespace legged {
 
         imuName_ = auto_declare<std::string>("imuName", "imu");
         visualize_ = auto_declare<bool>("visualize", true);
-        ocs2::loadData::loadCppDataType(taskFile, "legged_robot_interface.verbose", verbose_);
+        ocs2::loadData::loadCppDataType(taskFile_, "legged_robot_interface.verbose", verbose_);
 
         return controller_interface::CallbackReturn::SUCCESS;
     }
@@ -86,10 +86,24 @@ namespace legged {
         (void)previous_state;
 
         leggedInterface_ =
-            std::make_shared<ocs2::legged_robot::LeggedRobotInterface>(taskFile, urdfFile, referenceFile);
+            std::make_shared<ocs2::legged_robot::LeggedRobotInterface>(taskFile_, urdfFile_, referenceFile_);
         // 创建机器人接口
+       
+        bool use_sim_time = false;
+        if (!get_node()->has_parameter("use_sim_time")) {
+            get_node()->declare_parameter("use_sim_time", false);
+        }
+        get_node()->get_parameter("use_sim_time", use_sim_time);
+        // 从原节点读取 use_sim_time（若未声明则先声明为 false）
+        
+        rclcpp::NodeOptions node_opts;
+        node_opts.context(get_node()->get_node_base_interface()->get_context());
+        node_opts.start_parameter_services(false);
+        node_opts.start_parameter_event_publisher(false);
 
-        mrtInterface_ = std::make_shared<mrtInterface>(robotName, get_node()->shared_from_this());
+        mrtNode_ = std::make_shared<rclcpp::Node>(robotName_ + "_mrt", get_node()->get_namespace(), node_opts);
+        mrtNode_->set_parameter(rclcpp::Parameter("use_sim_time", use_sim_time));
+        mrtInterface_ = std::make_shared<ocs2::MRT_ROS_Interface>(robotName_);
         // 创建MRT接口
 
         CentroidalModelPinocchioMapping pinocchioMapping(leggedInterface_->getCentroidalModelInfo());
@@ -98,20 +112,27 @@ namespace legged {
             leggedInterface_->getPinocchioInterface(), pinocchioMapping,
             leggedInterface_->modelSettings().contactNames3DoF);
 
-        robotVisualizer_ = std::make_shared<ocs2::legged_robot::LeggedRobotVisualizer>(
-            leggedInterface_->getPinocchioInterface(), leggedInterface_->getCentroidalModelInfo(), *eeKinematicsPtr_,
-            get_node()->shared_from_this());
-        // visualization
+        if (visualize_) {
+            visualizeNode_ =
+                std::make_shared<rclcpp::Node>(robotName_ + "_viz", get_node()->get_namespace(), node_opts);
+            visualizeNode_->set_parameter(rclcpp::Parameter("use_sim_time", use_sim_time));
+            robotVisualizer_ = std::make_shared<ocs2::legged_robot::LeggedRobotVisualizer>(
+                leggedInterface_->getPinocchioInterface(), 
+                leggedInterface_->getCentroidalModelInfo(),
+                *eeKinematicsPtr_, 
+                visualizeNode_);
+            // visualization
+        }
 
         wbc_ = std::make_shared<WeightedWbc>(leggedInterface_->getPinocchioInterface(),
                                              leggedInterface_->getCentroidalModelInfo(), *eeKinematicsPtr_);
-        wbc_->loadTasksSetting(taskFile, verbose_);
+        wbc_->loadTasksSetting(taskFile_, verbose_);
         // Whole body control
 
         stateEstimate_ = std::make_shared<KalmanFilterEstimate>(leggedInterface_->getPinocchioInterface(),
                                                                 leggedInterface_->getCentroidalModelInfo(),
                                                                 *eeKinematicsPtr_, get_node()->shared_from_this());
-        dynamic_cast<KalmanFilterEstimate &>(*stateEstimate_).loadSettings(taskFile, verbose_);
+        dynamic_cast<KalmanFilterEstimate &>(*stateEstimate_).loadSettings(taskFile_, verbose_);
         currentObservation_.time = 0;
         rbdConversions_ = std::make_shared<CentroidalModelRbdConversions>(leggedInterface_->getPinocchioInterface(),
                                                                           leggedInterface_->getCentroidalModelInfo());
@@ -127,30 +148,47 @@ namespace legged {
     controller_interface::CallbackReturn legged_controller::on_activate(const rclcpp_lifecycle::State &previous_state) {
         (void)previous_state;
 
-        mrtInterface_->initRollout(&leggedInterface_->getRollout());
-        mrtInterface_->launchNodes();
+        // LaunchMrt Interface
+        mrtInterface_->initRollout(&(leggedInterface_->getRollout()));
+        mrtInterface_->launchNodes(mrtNode_);
+
+        currentObservation_.time = get_node()->now().seconds();  // 用当前时间
+        // Set current hardware state to init
+        jointPos_.setZero();
+        jointVel_.setZero();
+        quat_ = Eigen::Quaternion<scalar_t>::Identity();
+        contactFlag_ = {true, true, true, true};
+        angularVel_.setZero();
+        linearAccel_.setZero();
+        linearAccel_(2) = -9.8;
 
         // Initial state
-        currentObservation_.state.setZero(leggedInterface_->getCentroidalModelInfo().stateDim);
         currentObservation_.state = leggedInterface_->getInitialState();
-        currentObservation_.time = get_node()->now().seconds();
-        currentObservation_.input.setZero(leggedInterface_->getCentroidalModelInfo().inputDim);
+        updateEstimation(get_node()->now(),
+                         rclcpp::Duration(0, static_cast<uint32_t>((1.0 / get_update_rate()) * 1e9)));
+        currentObservation_.input =
+            vector_t::Zero(leggedInterface_->getCentroidalModelInfo().inputDim);
         currentObservation_.mode = ocs2::legged_robot::ModeNumber::STANCE;
 
-        // Initial command
-        ocs2::TargetTrajectories initTargetTrajectories({0.0}, {currentObservation_.state},
-                                                        {currentObservation_.input});
+        const double t0 = get_node()->now().seconds();
+        ocs2::TargetTrajectories initTargetTrajectories(
+        {t0},
+        {currentObservation_.state},
+        {currentObservation_.input});
+
+        // Reset MPC node
+        mrtInterface_->resetMpcNode(initTargetTrajectories);
 
         // Set the first observation and command and wait for optimization to finish
         mrtInterface_->setCurrentObservation(currentObservation_);
 
-        // Reset MPC node
-        mrtInterface_->resetMpcNode(initTargetTrajectories);
+        RCLCPP_INFO_STREAM(get_node()->get_logger(), "Waiting for the initial policy ...");
+
         // Wait for the initial policy
         while (!mrtInterface_->initialPolicyReceived() && rclcpp::ok()) {
+            mrtInterface_->spinMRT();
             mrtInterface_->setCurrentObservation(currentObservation_);
-            std::this_thread::sleep_for(std::chrono::milliseconds(10));
-            RCLCPP_INFO_STREAM(get_node()->get_logger(), "Waiting for the initial policy ...");
+            rclcpp::Rate(get_update_rate()).sleep();
         }
         RCLCPP_INFO_STREAM(get_node()->get_logger(), "Initial policy has been received.");
 
@@ -159,11 +197,15 @@ namespace legged {
 
     controller_interface::return_type legged_controller::update(const rclcpp::Time &time,
                                                                 const rclcpp::Duration &period) {
-        this->updateEstimation(time, period);
+        mrtInterface_->spinMRT();
+        updateEstimation(time, period);
         // Update the current state of the system
-
+        
         mrtInterface_->setCurrentObservation(currentObservation_);
-        mrtInterface_->updatePolicy();
+        if (mrtInterface_->updatePolicy()) {
+            std::cout << "<<< New MPC policy starting at " << mrtInterface_->getPolicy().timeTrajectory_.front()
+                      << "\n";
+        }
         // Load the latest MPC policy
 
         vector_t optimizedState, optimizedInput;
@@ -184,7 +226,8 @@ namespace legged {
         // Whole body control
 
         vector_t torque = x.tail(12);
-        vector_t posDes = centroidal_model::getJointAngles(optimizedState, leggedInterface_->getCentroidalModelInfo());
+        vector_t posDes = centroidal_model::getJointAngles(optimizedState,
+        leggedInterface_->getCentroidalModelInfo()); 
         vector_t velDes =
             centroidal_model::getJointVelocities(optimizedInput, leggedInterface_->getCentroidalModelInfo());
         // Extract commands
@@ -223,12 +266,6 @@ namespace legged {
     // }
 
     void legged_controller::updateEstimation(const rclcpp::Time &time, const rclcpp::Duration &period) {
-        ocs2::vector_t jointPos(12), jointVel(12);
-        // ocs2::legged_robot::contact_flag_t contacts;
-        Eigen::Quaternion<scalar_t> quat;
-        ocs2::legged_robot::contact_flag_t contactFlag;
-        ocs2::legged_robot::vector3_t angularVel, linearAccel;
-        // ocs2::legged_robot::matrix3_t orientationCovariance, angularVelCovariance, linearAccelCovariance;
 
         for (size_t i = 0; i < 12; ++i) {
             auto pos = state_interfaces_[i].get_optional<double>();
@@ -236,7 +273,7 @@ namespace legged {
                 RCLCPP_ERROR_STREAM(get_node()->get_logger(), "Failed to read joint position interface");
                 continue;
             }
-            jointPos(i) = pos.value();
+            jointPos_(i) = pos.value();
         }
 
         for (size_t i = 0; i < 12; ++i) {
@@ -245,7 +282,7 @@ namespace legged {
                 RCLCPP_ERROR_STREAM(get_node()->get_logger(), "Failed to read joint velocity interface");
                 continue;
             }
-            jointVel(i) = vel.value();
+            jointVel_(i) = vel.value();
         }
 
         for (size_t i = 0; i < 4; ++i) {
@@ -254,7 +291,7 @@ namespace legged {
                 RCLCPP_ERROR_STREAM(get_node()->get_logger(), "Failed to read contact interface");
                 continue;
             }
-            contactFlag[i] = contact.value();
+            contactFlag_[i] = contact.value();
         }
         // 读取关节状态和接触状态,如果读取失败，跳过更新
 
@@ -264,7 +301,7 @@ namespace legged {
                 RCLCPP_ERROR_STREAM(get_node()->get_logger(), "Failed to read IMU orientation interface");
                 continue;
             }
-            quat.coeffs()(i) = imu_orient.value();
+            quat_.coeffs()(i) = imu_orient.value();
         }
 
         for (size_t i = 0; i < 3; ++i) {
@@ -273,18 +310,18 @@ namespace legged {
                 RCLCPP_ERROR_STREAM(get_node()->get_logger(), "Failed to read IMU angular velocity interface");
                 continue;
             }
-            angularVel(i) = imu_angular_vel.value();
+            angularVel_(i) = imu_angular_vel.value();
             auto imu_linear_accel = state_interfaces_[35 + i].get_optional<double>();
             if (imu_linear_accel == std::nullopt) {
                 RCLCPP_ERROR_STREAM(get_node()->get_logger(), "Failed to read IMU linear acceleration interface");
                 continue;
             }
-            linearAccel(i) = imu_linear_accel.value();
+            linearAccel_(i) = imu_linear_accel.value();
         }
 
-        stateEstimate_->updateJointStates(jointPos, jointVel);
-        stateEstimate_->updateContact(contactFlag);
-        stateEstimate_->updateImu(quat, angularVel, linearAccel);
+        stateEstimate_->updateJointStates(jointPos_, jointVel_);
+        stateEstimate_->updateContact(contactFlag_);
+        stateEstimate_->updateImu(quat_, angularVel_, linearAccel_);
         measuredRbdState_ = stateEstimate_->update(time, period);
 
         currentObservation_.time = time.seconds();

@@ -220,7 +220,7 @@ namespace legged {
         auto odom = getOdomMsg();
         odom.header = msg.header;
         odom.child_frame_id = "base";
-        publishMsgs(odom);
+        // publishMsgs(odom);
     }
 
     void KalmanFilterEstimate::callback(const nav_msgs::msg::Odometry::ConstSharedPtr &msg) {

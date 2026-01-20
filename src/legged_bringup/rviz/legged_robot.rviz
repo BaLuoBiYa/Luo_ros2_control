@@ -4,6 +4,7 @@ Panels:
     Name: Displays
     Property Tree Widget:
       Expanded:
+        - /Global Options1
         - /TF1/Frames1
         - /Optimized State Trajectory1
         - /Target Trajectories1/Target Feet Trajectories1/Marker1
@@ -850,7 +851,7 @@ Visualization Manager:
   Enabled: true
   Global Options:
     Background Color: 238; 238; 238
-    Fixed Frame: odom
+    Fixed Frame: base
     Frame Rate: 30
   Name: root
   Tools:
@@ -927,5 +928,5 @@ Window Geometry:
   Views:
     collapsed: false
   Width: 2469
-  X: 734
+  X: 731
   Y: 242

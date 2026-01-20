@@ -27,7 +27,12 @@ def generate_launch_description():
         name = 'controller_config',
         default_value=get_package_share_directory("legged_bringup") + "/launch/legged_controller.yaml"
     )
+    declare_rviz = DeclareLaunchArgument(
+        name = 'rviz_config',
+        default_value=get_package_share_directory("legged_bringup") + "/rviz/legged_robot.rviz"
+    )
 
+    rviz_cfg = LaunchConfiguration("rviz_config")
     xacro_path = LaunchConfiguration("xacro_path") 
     bridge_cfg = LaunchConfiguration("bridge_config_file")
     world_file = LaunchConfiguration("world_file")
@@ -51,9 +56,9 @@ def generate_launch_description():
         executable="robot_state_publisher",
         parameters=[robot_description,
                     {"use_sim_time": True},],
-        remappings=[
-            ("joint_states", "anymal/joint/states"),
-        ],
+        # remappings=[
+        #     ("joint_states", "anymal/joint/states"),
+        # ],
         output="screen"
         )
     
@@ -80,6 +85,18 @@ def generate_launch_description():
                    ],
     )
 
+    # rviz_node = Node(
+    #     package="rviz2",
+    #     executable="rviz2",
+    #     arguments=["-d", rviz_cfg],
+    #     )
+
+    # joint_state_publisher = Node(
+    #     package="controller_manager",
+    #     executable="spawner",
+    #     arguments=["joint_state_broadcaster"],
+    # )
+
     contact_tester_spawner = Node(
         package="controller_manager",
         executable="spawner",
@@ -97,7 +114,10 @@ def generate_launch_description():
                                             declare_bridge_cfg,
                                             declare_world,
                                             declare_controller,
+                                            declare_rviz,
                                             gz_sim,
+                                            # rviz_node,
+                                            # joint_state_publisher,
                                             bridge_node,
                                             statepub_node,
                                             manager_node,

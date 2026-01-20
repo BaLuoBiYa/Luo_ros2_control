@@ -7,6 +7,7 @@
 #include <ocs2_centroidal_model/CentroidalModelRbdConversions.h>
 #include <ocs2_legged_robot/LeggedRobotInterface.h>
 #include <ocs2_pinocchio_interface/PinocchioEndEffectorKinematics.h>
+#include <ocs2_ros_interfaces/mrt/MRT_ROS_Interface.h>
 
 #include <ocs2_core/misc/LoadData.h>
 
@@ -26,7 +27,8 @@ namespace legged {
       protected:
         // Interface
         std::shared_ptr<ocs2::legged_robot::LeggedRobotInterface> leggedInterface_;
-        std::shared_ptr<mrtInterface> mrtInterface_;
+        rclcpp::Node::SharedPtr mrtNode_;
+        std::shared_ptr<ocs2::MRT_ROS_Interface> mrtInterface_;
         std::shared_ptr<ocs2::PinocchioEndEffectorKinematics> eeKinematicsPtr_;
 
         // State Estimation
@@ -35,21 +37,27 @@ namespace legged {
         ocs2::vector_t measuredRbdState_;
         std::shared_ptr<ocs2::CentroidalModelRbdConversions> rbdConversions_;
 
+        ocs2::vector_t jointPos_{12}, jointVel_{12};
+        Eigen::Quaternion<scalar_t> quat_;
+        ocs2::legged_robot::contact_flag_t contactFlag_;
+        ocs2::legged_robot::vector3_t angularVel_, linearAccel_;
+
         // Whole Body Control
         std::shared_ptr<WbcBase> wbc_;
         std::shared_ptr<SafetyChecker> safetyChecker_;
 
         // Visualization
+        rclcpp::Node::SharedPtr visualizeNode_;
         std::shared_ptr<ocs2::legged_robot::LeggedRobotVisualizer> robotVisualizer_;
 
         // Parameters
         std::vector<std::string> jointNames_;
         std::string imuName_;
 
-        std::string robotName;
-        std::string taskFile;
-        std::string urdfFile;
-        std::string referenceFile;
+        std::string robotName_;
+        std::string taskFile_;
+        std::string urdfFile_;
+        std::string referenceFile_;
 
         bool visualize_;
         bool verbose_;
