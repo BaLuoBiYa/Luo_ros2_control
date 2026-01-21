@@ -226,17 +226,17 @@ namespace legged {
         // Whole body control
 
         vector_t torque = x.tail(12);
-        vector_t posDes = centroidal_model::getJointAngles(optimizedState,
-        leggedInterface_->getCentroidalModelInfo()); 
+        vector_t posDes = 
+            centroidal_model::getJointAngles(optimizedState,leggedInterface_->getCentroidalModelInfo()); 
         vector_t velDes =
             centroidal_model::getJointVelocities(optimizedInput, leggedInterface_->getCentroidalModelInfo());
         // Extract commands
 
         bool writeSuccess = true;
         for (size_t j = 0; j < 12; ++j) {
-            writeSuccess &= command_interfaces_[j].set_value<double>(0);
-            writeSuccess &= command_interfaces_[j + 12].set_value<double>(0);
-            writeSuccess &= command_interfaces_[j + 24].set_value<double>(0);
+            writeSuccess &= command_interfaces_[j].set_value<double>(posDes(j));
+            writeSuccess &= command_interfaces_[j + 12].set_value<double>(velDes(j));
+            writeSuccess &= command_interfaces_[j + 24].set_value<double>(torque(j));
         }
         // Send commands to the robot
         if (!writeSuccess) {
