@@ -28,10 +28,6 @@ def generate_launch_description():
         name ="world_file",
         default_value="world.sdf"
     )
-    declare_controller = DeclareLaunchArgument(
-        name = 'controller_config',
-        default_value=get_package_share_directory("legged_bringup") + "/launch/legged_controller.yaml"
-    )
     declare_taskFile = DeclareLaunchArgument(
         name = 'taskFile',
         default_value=get_package_share_directory("legged_bringup") + "/resource/anymal_c/config/mpc/task.info"
@@ -53,7 +49,6 @@ def generate_launch_description():
     xacro_path = LaunchConfiguration("xacro_path") 
     bridge_cfg = LaunchConfiguration("bridge_config_file")
     world_file = LaunchConfiguration("world_file")
-    controller_cfg = LaunchConfiguration("controller_config")
     taskFile = LaunchConfiguration("taskFile")
     referenceFile = LaunchConfiguration("referenceFile")
     urdfFile = LaunchConfiguration("urdfFile")
@@ -114,46 +109,6 @@ def generate_launch_description():
                     {'use_sim_time':useSimTime}]
     )
     
-    manager_node = Node(
-        package="controller_manager",
-        executable="ros2_control_node",
-        parameters=[controller_cfg],
-        output="screen",
-        # prefix=prefix,
-        )
-    
-    controler_spawner = Node(
-        package="controller_manager",
-        executable="spawner",
-        arguments=["legged_controller"],
-    )
-
-    # motor_tester_spawner = Node(
-    #     package="controller_manager",
-    #     executable="spawner",
-    #     arguments=["motor_tester"],
-    # )
-
-    # imu_sensor_broadcaster_spawner = Node(
-    #     package="controller_manager",
-    #     executable="spawner",
-    #     arguments=["imu_sensor_broadcaster" ,
-    #                "--controller-ros-args",
-    #                "--ros-args -r /imu_sensor_broadcaster/imu:=test_tools/imu_tester/imu",
-    #                ],
-    # )
-
-    # contact_tester_spawner = Node(
-    #     package="controller_manager",
-    #     executable="spawner",
-    #     arguments=["contact_tester"],
-    # )
-
-    spawn_delay = TimerAction(
-        period=0.0,
-        actions=[controler_spawner],
-    )
-    
     gz_sim = ExecuteProcess(
         cmd=["gz", "sim", "-r", world_file],
         output="screen",
@@ -174,7 +129,6 @@ def generate_launch_description():
                                             declare_xacro, 
                                             declare_bridge_cfg,
                                             declare_world,
-                                            declare_controller,
                                             declare_taskFile,
                                             declare_referenceFile,
                                             declare_urdfFile,
@@ -185,12 +139,7 @@ def generate_launch_description():
                                             statepub_node,
                                             rviz_node,
                                             target_node,
-                                            manager_node,
-                                            spawn_delay,
                                             mpc_node,
-                                            # motor_tester_spawner,
-                                            # imu_sensor_broadcaster_spawner,
-                                            # contact_tester_spawner,
                                             ])
     # 返回让ROS2根据launch描述执行节点
     return launch_description
