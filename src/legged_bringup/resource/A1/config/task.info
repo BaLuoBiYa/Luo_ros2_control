@@ -13,7 +13,7 @@ model_settings
   phaseTransitionStanceTime     0.1
 
   verboseCppAd                  true
-  recompileLibrariesCppAd       true
+  recompileLibrariesCppAd       false
   modelFolderCppAd              /tmp/legged_A1
 }
 
@@ -21,7 +21,7 @@ swing_trajectory_config
 {
   liftOffVelocity               0.05
   touchDownVelocity            -0.1
-  swingHeight                   0.12
+  swingHeight                   0.08
   swingTimeScale                0.15
 }
 
@@ -269,10 +269,10 @@ selfCollision
     [1] "LH_calf, RH_calf"
     [2] "LF_calf, LH_calf"
     [3] "RF_calf, RH_calf"
-    [4] "LF_foot, RF_foot"
-    [5] "LH_foot, RH_foot"
-    [6] "LF_foot, LH_foot"
-    [7] "RF_foot, RH_foot"
+    [4] "LF_FOOT, RF_FOOT"
+    [5] "LH_FOOT, RH_FOOT"
+    [6] "LF_FOOT, LH_FOOT"
+    [7] "RF_FOOT, RH_FOOT"
   }
 
   minimumDistance  0.05

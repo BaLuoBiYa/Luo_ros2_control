@@ -59,6 +59,8 @@ namespace legged {
         std::string urdfFile_;
         std::string referenceFile_;
 
+        double kp_, kd_,kf_;
+
         bool visualize_;
         bool verbose_;
 

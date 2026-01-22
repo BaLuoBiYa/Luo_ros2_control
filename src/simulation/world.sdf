@@ -34,7 +34,7 @@
 
 		<include>
 			<name>A1</name>
-			<pose>1 0 0.8 0 0 0</pose>
+			<pose>0 0 0.32 0 0 0</pose>
 			<uri>model://A1</uri>
 		</include>
 		<!-- 包含机器人模型 -->

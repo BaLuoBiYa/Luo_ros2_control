@@ -103,7 +103,8 @@ def generate_launch_description():
             name='legged_robot_gait_command',
             output='screen',
             prefix=prefix,
-            parameters=[{'gaitCommandFile': gait_command_cfg}],
+            parameters=[{'gaitCommandFile': gait_command_cfg},
+                        {'use_sim_time':useSimTime}],
         )
     
     # 创建LaunchDescription对象launch_description,用于描述launch文件

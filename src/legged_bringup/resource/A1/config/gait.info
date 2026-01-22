@@ -12,7 +12,6 @@ list
   [9] lindyhop
   [10] skipping
   [11] pawup
-  [12] pawup_back
 }
 
 stance
@@ -247,19 +246,6 @@ pawup
    modeSequence
    {
      [0]     RF_LH_RH
-   }
-   switchingTimes
-   {
-     [0]     0.0
-     [1]     2.0
-   }
-}
-
-pawup_back
-{
-   modeSequence
-   {
-     [0]     LF_RF_RH
    }
    switchingTimes
    {

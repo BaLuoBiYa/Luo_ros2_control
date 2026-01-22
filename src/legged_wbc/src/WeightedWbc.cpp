@@ -24,7 +24,7 @@ namespace legged {
 
   lbA << constraints.b_,
          -qpOASES::INFTY * vector_t::Ones(constraints.f_.size());
-  ubA << constraints.b_,
+        ubA << constraints.b_,
          constraints.f_; // clang-format on
 
         // Cost

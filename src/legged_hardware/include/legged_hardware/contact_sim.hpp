@@ -1,5 +1,5 @@
 #pragma once
-#include <gz/msgs/contacts.pb.h>
+#include <gz/msgs/boolean.pb.h>
 #include <gz/transport/Node.hh>
 #include <gz_ros2_control/gz_system_interface.hpp>
 
@@ -25,15 +25,18 @@ namespace legged {
 
       private:
         std::string contactsTopics_[4];
+        std::string resetTopics_[4];
         std::string tipNames_[4] = {"LF", "LH", "RF", "RH"};
 
         gz::transport::Node node_;
-        realtime_tools::RealtimeThreadSafeBox<gz::msgs::Contacts> receivedContactsMsg_[4];
+        realtime_tools::RealtimeThreadSafeBox<bool> receivedContactsMsg_[4];
 
-        void LFcallBack(const gz::msgs::Contacts &msg);
-        void LHcallBack(const gz::msgs::Contacts &msg);
-        void RFcallBack(const gz::msgs::Contacts &msg);
-        void RHcallBack(const gz::msgs::Contacts &msg);
+        void LFcallBack(const gz::msgs::Boolean &msg);
+        void LHcallBack(const gz::msgs::Boolean &msg);
+        void RFcallBack(const gz::msgs::Boolean &msg);
+        void RHcallBack(const gz::msgs::Boolean &msg);
+
+        void resetSensor();
 
         // bool contact_flag_[4];
     };

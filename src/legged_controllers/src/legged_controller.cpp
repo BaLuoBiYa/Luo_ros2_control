@@ -1,5 +1,7 @@
 #include "legged_controllers/legged_controller.hpp"
 
+#include <pinocchio/multibody/model.hpp>
+
 namespace legged {
     controller_interface::CallbackReturn legged_controller::on_init() {
         // Initialize parameters
@@ -16,6 +18,10 @@ namespace legged {
 
         imuName_ = auto_declare<std::string>("imuName", "imu");
         visualize_ = auto_declare<bool>("visualize", true);
+
+        kp_ = auto_declare<double>("kp",0.0);
+        kd_ = auto_declare<double>("kd",0.0);
+        kf_ = auto_declare<double>("kf",0.0);
         ocs2::loadData::loadCppDataType(taskFile_, "legged_robot_interface.verbose", verbose_);
 
         return controller_interface::CallbackReturn::SUCCESS;
@@ -26,15 +32,15 @@ namespace legged {
         config.type = controller_interface::interface_configuration_type::NONE;
 
         config.type = controller_interface::interface_configuration_type::INDIVIDUAL;
-        config.names.reserve(12 + 12 + 12);
-        for (const auto &joint_name : jointNames_) {
-            config.names.push_back(joint_name + "/position");
-        }
-        // 申请关节位置命令接口
-        for (const auto &joint_name : jointNames_) {
-            config.names.push_back(joint_name + "/velocity");
-        }
-        // 申请关节速度命令接口
+        config.names.reserve(12);
+        // for (const auto &joint_name : jointNames_) {
+        //     config.names.push_back(joint_name + "/position");
+        // }
+        // // 申请关节位置命令接口
+        // for (const auto &joint_name : jointNames_) {
+        //     config.names.push_back(joint_name + "/velocity");
+        // }
+        // // 申请关节速度命令接口
         for (const auto &joint_name : jointNames_) {
             config.names.push_back(joint_name + "/effort");
         }
@@ -59,8 +65,8 @@ namespace legged {
         // 申请关节速度状态接口
 
         config.names.push_back("contact/LF");
-        config.names.push_back("contact/LH");
         config.names.push_back("contact/RF");
+        config.names.push_back("contact/LH");
         config.names.push_back("contact/RH");
         // 申请足端接触力状态接口
 
@@ -141,6 +147,18 @@ namespace legged {
 
         safetyChecker_ = std::make_shared<SafetyChecker>(leggedInterface_->getCentroidalModelInfo());
         // Safety Checker
+
+
+        // 调试：打印端效器顺序，确保 contactFlag_ 与之对应
+        // {
+        //     const auto& model = leggedInterface_->getPinocchioInterface().getModel();
+        //     const auto eeFrames = eeKinematicsPtr_->getIds();  // 可能是 Eigen 向量
+        //     for (Eigen::Index i = 0; i < eeFrames.size(); ++i) {
+        //         const auto& name = eeFrames[i];
+        //         RCLCPP_INFO_STREAM(get_node()->get_logger(), name);
+        //     }
+        //     return controller_interface::CallbackReturn::ERROR;
+        // }
 
         return controller_interface::CallbackReturn::SUCCESS;
     }
@@ -232,11 +250,15 @@ namespace legged {
             centroidal_model::getJointVelocities(optimizedInput, leggedInterface_->getCentroidalModelInfo());
         // Extract commands
 
+        double effort[12];
+        for (size_t i=0;i<12;i++)
+        {
+            effort[i] = torque(i)*kf_ + (posDes(i)-jointPos_[i])*kp_ + (velDes(i)-jointVel_[i])*kd_ ;
+        }
+
         bool writeSuccess = true;
         for (size_t j = 0; j < 12; ++j) {
-            writeSuccess &= command_interfaces_[j].set_value<double>(posDes(j));
-            writeSuccess &= command_interfaces_[j + 12].set_value<double>(velDes(j));
-            writeSuccess &= command_interfaces_[j + 24].set_value<double>(torque(j));
+            writeSuccess &= command_interfaces_[j].set_value<double>(effort[j]);
         }
         // Send commands to the robot
         if (!writeSuccess) {

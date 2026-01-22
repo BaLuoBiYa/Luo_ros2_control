@@ -9,7 +9,7 @@ from ament_index_python.packages import get_package_share_directory
 # 定义函数名称为：generate_launch_description
 def generate_launch_description():
     prefix = "gnome-terminal --"
-    useSimTime = False
+    useSimTime = True
     declare_controller = DeclareLaunchArgument(
         name = 'controller_config',
         default_value=get_package_share_directory("legged_bringup") + "/launch/legged_controller.yaml"
@@ -34,8 +34,8 @@ def generate_launch_description():
 
     mpc_node = Node(
         package='ocs2_legged_robot_ros',
-        executable='legged_robot_ddp_mpc',
-        name='legged_robot_ddp_mpc',
+        executable='legged_robot_sqp_mpc',
+        name='legged_robot_sqp_mpc',
         output='screen',
         # prefix=prefix,
         parameters=[
@@ -57,7 +57,8 @@ def generate_launch_description():
         package="controller_manager",
         executable="spawner",
         arguments=["legged_controller"],
-        prefix=prefix
+        parameters=[{"controller_manager_timeout": 500.0},
+                    {"inactive-timeout":500.0}],
     )
 
     spawn_delay = TimerAction(
@@ -71,7 +72,6 @@ def generate_launch_description():
                                             declare_referenceFile,
                                             declare_urdfFile,
                                             mpc_node,
-                                            # manager_node,
                                             spawn_delay,
                                             ])
     # 返回让ROS2根据launch描述执行节点

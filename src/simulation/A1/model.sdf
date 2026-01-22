@@ -1,5 +1,11 @@
 <sdf version='1.11'>
     <model name='robot'>
+        <!-- <joint name='anchor_to_world' type='fixed'>
+			<parent>world</parent>
+			<child>base</child>
+			<pose>0 0 0 0 0 0</pose>
+		</joint> -->
+        <!-- 悬挂模型，用于调试 -->
         <link name='base'>
             <inertial>
                 <pose>0 0.004093178036605658 -0.00049916805324459247 0 0 0</pose>
@@ -59,8 +65,8 @@
                     <velocity>21</velocity>
                 </limit>
                 <dynamics>
-                    <damping>0</damping>
-                    <friction>0</friction>
+                    <damping>0.01</damping>
+                    <friction>0.01</friction>
                     <spring_reference>0</spring_reference>
                     <spring_stiffness>0</spring_stiffness>
                 </dynamics>
@@ -132,8 +138,8 @@
                     <velocity>21</velocity>
                 </limit>
                 <dynamics>
-                    <damping>0</damping>
-                    <friction>0</friction>
+                    <damping>0.01</damping>
+                    <friction>0.01</friction>
                     <spring_reference>0</spring_reference>
                     <spring_stiffness>0</spring_stiffness>
                 </dynamics>
@@ -217,7 +223,7 @@
                     <ambient>1 0.529411793 0.0490196086 1</ambient>
                 </material>
             </visual>
-            <self_collide>false</self_collide>
+            <self_collide>true</self_collide>
         </link>
         <joint name='LF_KFE' type='revolute'>
             <pose relative_to='LF_thigh'>0 0 -0.20000000000000001 0 0 0</pose>
@@ -232,8 +238,8 @@
                     <velocity>21</velocity>
                 </limit>
                 <dynamics>
-                    <damping>0</damping>
-                    <friction>0</friction>
+                    <damping>0.01</damping>
+                    <friction>0.01</friction>
                     <spring_reference>0</spring_reference>
                     <spring_stiffness>0</spring_stiffness>
                 </dynamics>
@@ -298,8 +304,8 @@
                     <upper>0</upper>
                 </limit>
                 <dynamics>
-                    <damping>0</damping>
-                    <friction>0</friction>
+                    <damping>0.01</damping>
+                    <friction>0.01</friction>
                     <spring_reference>0</spring_reference>
                     <spring_stiffness>0</spring_stiffness>
                 </dynamics>
@@ -367,14 +373,6 @@
                 </material>
             </visual>
             <self_collide>true</self_collide>
-            <sensor name="LF" type="contact">
-                <always_on>1</always_on>
-                <update_rate>200</update_rate>
-                <topic>/A1/LF/contact</topic>
-                <contact>
-                    <collision>LF_FOOT_collision</collision>
-                </contact>
-            </sensor>
         </link>
         <joint name='LH_HAA' type='revolute'>
             <pose relative_to='base'>-0.18049999999999999 0.047 0 0 0 0</pose>
@@ -389,8 +387,8 @@
                     <velocity>21</velocity>
                 </limit>
                 <dynamics>
-                    <damping>0</damping>
-                    <friction>0</friction>
+                    <damping>0.01</damping>
+                    <friction>0.01</friction>
                     <spring_reference>0</spring_reference>
                     <spring_stiffness>0</spring_stiffness>
                 </dynamics>
@@ -462,8 +460,8 @@
                     <velocity>21</velocity>
                 </limit>
                 <dynamics>
-                    <damping>0</damping>
-                    <friction>0</friction>
+                    <damping>0.01</damping>
+                    <friction>0.01</friction>
                     <spring_reference>0</spring_reference>
                     <spring_stiffness>0</spring_stiffness>
                 </dynamics>
@@ -547,7 +545,7 @@
                     <ambient>1 0.529411793 0.0490196086 1</ambient>
                 </material>
             </visual>
-            <self_collide>false</self_collide>
+            <self_collide>true</self_collide>
         </link>
         <joint name='LH_KFE' type='revolute'>
             <pose relative_to='LH_thigh'>0 0 -0.20000000000000001 0 0 0</pose>
@@ -562,8 +560,8 @@
                     <velocity>21</velocity>
                 </limit>
                 <dynamics>
-                    <damping>0</damping>
-                    <friction>0</friction>
+                    <damping>0.01</damping>
+                    <friction>0.01</friction>
                     <spring_reference>0</spring_reference>
                     <spring_stiffness>0</spring_stiffness>
                 </dynamics>
@@ -628,8 +626,8 @@
                     <upper>0</upper>
                 </limit>
                 <dynamics>
-                    <damping>0</damping>
-                    <friction>0</friction>
+                    <damping>0.01</damping>
+                    <friction>0.01</friction>
                     <spring_reference>0</spring_reference>
                     <spring_stiffness>0</spring_stiffness>
                 </dynamics>
@@ -697,14 +695,6 @@
                 </material>
             </visual>
             <self_collide>true</self_collide>
-            <sensor name="LH" type="contact">
-                <always_on>1</always_on>
-                <update_rate>200</update_rate>
-                <topic>/A1/LH/contact</topic>
-                <contact>
-                    <collision>LH_FOOT_collision</collision>
-                </contact>
-            </sensor>
         </link>
         <joint name='RF_HAA' type='revolute'>
             <pose relative_to='base'>0.18049999999999999 -0.047 0 0 0 0</pose>
@@ -719,8 +709,8 @@
                     <velocity>21</velocity>
                 </limit>
                 <dynamics>
-                    <damping>0</damping>
-                    <friction>0</friction>
+                    <damping>0.01</damping>
+                    <friction>0.01</friction>
                     <spring_reference>0</spring_reference>
                     <spring_stiffness>0</spring_stiffness>
                 </dynamics>
@@ -792,8 +782,8 @@
                     <velocity>21</velocity>
                 </limit>
                 <dynamics>
-                    <damping>0</damping>
-                    <friction>0</friction>
+                    <damping>0.01</damping>
+                    <friction>0.01</friction>
                     <spring_reference>0</spring_reference>
                     <spring_stiffness>0</spring_stiffness>
                 </dynamics>
@@ -877,7 +867,7 @@
                     <ambient>1 0.529411793 0.0490196086 1</ambient>
                 </material>
             </visual>
-            <self_collide>false</self_collide>
+            <self_collide>true</self_collide>
         </link>
         <joint name='RF_KFE' type='revolute'>
             <pose relative_to='RF_thigh'>0 0 -0.20000000000000001 0 0 0</pose>
@@ -892,8 +882,8 @@
                     <velocity>21</velocity>
                 </limit>
                 <dynamics>
-                    <damping>0</damping>
-                    <friction>0</friction>
+                    <damping>0.01</damping>
+                    <friction>0.01</friction>
                     <spring_reference>0</spring_reference>
                     <spring_stiffness>0</spring_stiffness>
                 </dynamics>
@@ -958,8 +948,8 @@
                     <upper>0</upper>
                 </limit>
                 <dynamics>
-                    <damping>0</damping>
-                    <friction>0</friction>
+                    <damping>0.01</damping>
+                    <friction>0.01</friction>
                     <spring_reference>0</spring_reference>
                     <spring_stiffness>0</spring_stiffness>
                 </dynamics>
@@ -1027,14 +1017,6 @@
                 </material>
             </visual>
             <self_collide>true</self_collide>
-            <sensor name="RF" type="contact">
-                <always_on>1</always_on>
-                <update_rate>200</update_rate>
-                <topic>/A1/RF/contact</topic>
-                <contact>
-                    <collision>RF_FOOT_collision</collision>
-                </contact>
-            </sensor>
         </link>
         <joint name='RH_HAA' type='revolute'>
             <pose relative_to='base'>-0.18049999999999999 -0.047 0 0 0 0</pose>
@@ -1049,8 +1031,8 @@
                     <velocity>21</velocity>
                 </limit>
                 <dynamics>
-                    <damping>0</damping>
-                    <friction>0</friction>
+                    <damping>0.01</damping>
+                    <friction>0.01</friction>
                     <spring_reference>0</spring_reference>
                     <spring_stiffness>0</spring_stiffness>
                 </dynamics>
@@ -1122,8 +1104,8 @@
                     <velocity>21</velocity>
                 </limit>
                 <dynamics>
-                    <damping>0</damping>
-                    <friction>0</friction>
+                    <damping>0.01</damping>
+                    <friction>0.01</friction>
                     <spring_reference>0</spring_reference>
                     <spring_stiffness>0</spring_stiffness>
                 </dynamics>
@@ -1207,7 +1189,7 @@
                     <ambient>1 0.529411793 0.0490196086 1</ambient>
                 </material>
             </visual>
-            <self_collide>false</self_collide>
+            <self_collide>true</self_collide>
         </link>
         <joint name='RH_KFE' type='revolute'>
             <pose relative_to='RH_thigh'>0 0 -0.20000000000000001 0 0 0</pose>
@@ -1222,8 +1204,8 @@
                     <velocity>21</velocity>
                 </limit>
                 <dynamics>
-                    <damping>0</damping>
-                    <friction>0</friction>
+                    <damping>0.01</damping>
+                    <friction>0.01</friction>
                     <spring_reference>0</spring_reference>
                     <spring_stiffness>0</spring_stiffness>
                 </dynamics>
@@ -1288,8 +1270,8 @@
                     <upper>0</upper>
                 </limit>
                 <dynamics>
-                    <damping>0</damping>
-                    <friction>0</friction>
+                    <damping>0.01</damping>
+                    <friction>0.01</friction>
                     <spring_reference>0</spring_reference>
                     <spring_stiffness>0</spring_stiffness>
                 </dynamics>
@@ -1357,14 +1339,6 @@
                 </material>
             </visual>
             <self_collide>true</self_collide>
-            <sensor name="RH" type="contact">
-                <always_on>1</always_on>
-                <update_rate>200</update_rate>
-                <topic>/A1/RH/contact</topic>
-                <contact>
-                    <collision>RH_FOOT_collision</collision>
-                </contact>
-            </sensor>
         </link>
         <frame name='base_imu_joint' attached_to='base'>
             <pose>0 0 0 0 0 0</pose>
@@ -1377,6 +1351,7 @@
             name="gz_ros2_control::GazeboSimROS2ControlPlugin">
             <parameters>
                 /home/luo/Project/Horse/Luo_ros2_control/src/legged_bringup/launch/legged_controller.yaml</parameters>
+            <hold_joints>false</hold_joints>
         </plugin>
         <!-- 关节控制插件 -->
 
@@ -1384,10 +1359,5 @@
             name="gz::sim::systems::Imu">
         </plugin>
         <!-- imu插件 -->
-
-        <plugin filename='gz-sim-contact-system'
-            name='gz::sim::systems::Contact'>
-        </plugin>
-        <!-- 接触插件 -->
     </model>
 </sdf>

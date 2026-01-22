@@ -12,6 +12,11 @@ namespace legged {
         contactsTopics_[2] = info_.hardware_parameters["contacts_topic_RF"];
         contactsTopics_[3] = info_.hardware_parameters["contacts_topic_RH"];
 
+        resetTopics_[0] = info_.hardware_parameters["reset_topic_LF"];
+        resetTopics_[1] = info_.hardware_parameters["reset_topic_LH"];
+        resetTopics_[2] = info_.hardware_parameters["reset_topic_RF"];
+        resetTopics_[3] = info_.hardware_parameters["reset_topic_RH"];
+
         return hardware_interface::CallbackReturn::SUCCESS;
     }
 
@@ -38,13 +43,8 @@ namespace legged {
 
     hardware_interface::CallbackReturn contactSim::on_activate(const rclcpp_lifecycle::State &pre) {
         (void)pre;
-        gz::msgs::Contacts emptyMsg;
-        // 使用当前 ROS 时间填充 stamp
-        auto now = rclcpp::Clock().now();
-        emptyMsg.mutable_header()->mutable_stamp()->set_sec(static_cast<int32_t>(now.seconds()));
-        emptyMsg.mutable_header()->mutable_stamp()->set_nsec(static_cast<int32_t>(now.nanoseconds() % 1000000000LL));
         for (size_t i =0;i<4;i++){
-            receivedContactsMsg_[i].try_set(emptyMsg);
+            receivedContactsMsg_[i].try_set(false);
         } 
         return hardware_interface::CallbackReturn::SUCCESS;
     }
@@ -56,24 +56,11 @@ namespace legged {
 
     hardware_interface::return_type contactSim::read(const rclcpp::Time &time, const rclcpp::Duration &period) {
         (void)period;
-        const std::string kObstacle = "Obstacle::link::collision";
-
+        (void)time;
         for (size_t i = 0; i < 4; i++) {
-            auto msg = receivedContactsMsg_[i].try_get();
-            if (msg == std::nullopt) {
-                set_state<bool>("contact/" + tipNames_[i], false);
-                continue;
-            }
-
-            double msg_time = msg.value().header().stamp().sec() + msg.value().header().stamp().nsec() * 1e-9;
-            double age = time.seconds() - msg_time;
-
-            if (age > 0.1) {
-                set_state<bool>("contact/" + tipNames_[i], false);
-            } else {
-                set_state<bool>("contact/" + tipNames_[i], true);
-            }
+            set_state<bool>("contact/" + tipNames_[i], receivedContactsMsg_[i].try_get().value_or(false));
         }
+        resetSensor();
 
         return hardware_interface::return_type::OK;
     }
@@ -84,17 +71,27 @@ namespace legged {
         return hardware_interface::return_type::OK;
     }
 
-    void contactSim::LFcallBack(const gz::msgs::Contacts &msg) {
-        receivedContactsMsg_[0].try_set(msg);
+    void contactSim::LFcallBack(const gz::msgs::Boolean &msg) {
+        receivedContactsMsg_[0].try_set(msg.data());
     }
-    void contactSim::LHcallBack(const gz::msgs::Contacts &msg) {
-        receivedContactsMsg_[1].try_set(msg);
+    void contactSim::LHcallBack(const gz::msgs::Boolean &msg) {
+        receivedContactsMsg_[1].try_set(msg.data());
     }
-    void contactSim::RFcallBack(const gz::msgs::Contacts &msg) {
-        receivedContactsMsg_[2].try_set(msg);
+    void contactSim::RFcallBack(const gz::msgs::Boolean &msg) {
+        receivedContactsMsg_[2].try_set(msg.data());
     }
-    void contactSim::RHcallBack(const gz::msgs::Contacts &msg) {
-        receivedContactsMsg_[3].try_set(msg);
+    void contactSim::RHcallBack(const gz::msgs::Boolean &msg) {
+        receivedContactsMsg_[3].try_set(msg.data());
+    }
+
+    void contactSim::resetSensor()
+    {
+        gz::msgs::Boolean req;
+        req.set_data(true);
+        for (size_t i=0;i<4;i++){
+            receivedContactsMsg_[i].try_set(false);
+            node_.Request(resetTopics_[i],req);
+        }
     }
 } // namespace legged
 

@@ -32,10 +32,15 @@
     <ros2_control name="simContact" type="system">
         <hardware>
             <plugin>legged/simContact</plugin>
-            <param name="contacts_topic_LF">/world/2026RoboCon/model/A1/link/LF_calf/sensor/LF/contact</param>
-            <param name="contacts_topic_LH">/world/2026RoboCon/model/A1/link/LH_calf/sensor/LH/contact</param>
-            <param name="contacts_topic_RF">/world/2026RoboCon/model/A1/link/RF_calf/sensor/RF/contact</param>
-            <param name="contacts_topic_RH">/world/2026RoboCon/model/A1/link/RH_calf/sensor/RH/contact</param>
+            <param name="contacts_topic_LF">LF/touched</param>
+            <param name="contacts_topic_LH">LH/touched</param>
+            <param name="contacts_topic_RF">RF/touched</param>
+            <param name="contacts_topic_RH">RH/touched</param>
+
+            <param name="reset_topic_LF">/LF/enable</param>
+            <param name="reset_topic_LH">/LH/enable</param>
+            <param name="reset_topic_RF">/RF/enable</param>
+            <param name="reset_topic_RH">/RH/enable</param>
         </hardware>
         <sensor name="contact">
             <state_interface name="LF" data_type="bool" />
@@ -48,13 +53,13 @@
 
     <xacro:macro name="motor" params="joint_name">
         <joint name="${joint_name}">
-            <command_interface name="position" />
-            <command_interface name="velocity" />
+            <!-- <command_interface name="position" />
+            <command_interface name="velocity" /> -->
             <command_interface name="effort" />
 
             <state_interface name="position" />
             <state_interface name="velocity" />
-            <state_interface name="effort" />
+            <!-- <state_interface name="effort" /> -->
         </joint>
     </xacro:macro>
     <!-- 关节电机简化宏 -->

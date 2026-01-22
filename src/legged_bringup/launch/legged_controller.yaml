@@ -1,7 +1,9 @@
 controller_manager:
   ros__parameters:
-    update_rate: 200
+    update_rate: 1000
     use_sim_time: true
+    controller-manager-timeout: 30.0
+    inactive-timeout: 500
 
     legged_controller:
       type: legged/LeggedController
@@ -27,10 +29,12 @@ imu_sensor_broadcaster:
 legged_controller:
   ros__parameters:
     use_sim_time: true
+    controller-manager-timeout: 30.0
+    inactive-timeout: 500
     robotName: "legged_robot"
-    taskFile: "/home/luo/Project/Horse/Luo_ros2_control/src/legged_bringup/resource/anymal_c/config/mpc/task.info"
-    urdfFile: "/home/luo/Project/Horse/Luo_ros2_control/src/legged_bringup/resource/anymal_c/urdf/anymal.urdf"
-    referenceFile: "/home/luo/Project/Horse/Luo_ros2_control/src/legged_bringup/resource/anymal_c/config/command/reference.info"
+    taskFile: "/home/luo/Project/Horse/Luo_ros2_control/src/legged_bringup/resource/A1/config/task.info"
+    urdfFile: "/home/luo/Project/Horse/Luo_ros2_control/src/legged_bringup/resource/A1/urdf/A1.urdf"
+    referenceFile: "/home/luo/Project/Horse/Luo_ros2_control/src/legged_bringup/resource/A1/config/reference.info"
     joints:
       - LF_HAA
       - LF_HFE
@@ -46,6 +50,9 @@ legged_controller:
       - RH_KFE
     imuName: imu
     visualize: true
+    kp: 3.0
+    kd: 1.5
+    kf: 0.5
 
 motor_tester:
   ros__parameters:
