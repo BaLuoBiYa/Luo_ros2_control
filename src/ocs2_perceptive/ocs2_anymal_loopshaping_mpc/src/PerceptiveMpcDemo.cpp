@@ -89,7 +89,7 @@ int main(int argc, char* argv[]) {
   ocs2::scalar_t forwardVelocity =
       node->get_parameter("forward_velocity").as_double();
   ocs2::scalar_t gaitDuration{0.8};
-  ocs2::scalar_t forwardDistance{3.0};
+  ocs2::scalar_t forwardDistance{5.0};
 
   ocs2::scalar_t initTime = 0.0;
   ocs2::scalar_t stanceTime = 1.0;

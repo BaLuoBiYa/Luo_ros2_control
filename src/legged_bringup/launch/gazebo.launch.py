@@ -1,4 +1,5 @@
 # 导入库
+import os
 from launch import LaunchDescription
 from launch_ros.actions import Node
 from launch.actions import DeclareLaunchArgument,ExecuteProcess,TimerAction
@@ -10,6 +11,8 @@ from ament_index_python.packages import get_package_share_directory
 # 定义函数名称为：generate_launch_description
 def generate_launch_description():
     prefix = "gnome-terminal --"
+    env = os.environ.copy()
+    env["GZ_SIM_SYSTEM_PLUGIN_PATH"] = f"/opt/ros/jazzy/lib/"
     useSimTime = True
 
     declare_rviz = DeclareLaunchArgument(
@@ -18,7 +21,7 @@ def generate_launch_description():
     )
     declare_xacro = DeclareLaunchArgument(
         name = 'xacro_path',
-        default_value=get_package_share_directory("legged_bringup") + "/resource/anymal_c/urdf/gazebo.xacro"
+        default_value=get_package_share_directory("legged_bringup") + "/resource/A1/urdf/gazebo.xacro"
     )
     declare_bridge_cfg = DeclareLaunchArgument(
         name = "bridge_config_file",
@@ -28,30 +31,21 @@ def generate_launch_description():
         name ="world_file",
         default_value="world.sdf"
     )
-    declare_taskFile = DeclareLaunchArgument(
-        name = 'taskFile',
-        default_value=get_package_share_directory("legged_bringup") + "/resource/anymal_c/config/mpc/task.info"
-    )
     declare_referenceFile = DeclareLaunchArgument(
         name = 'referenceFile',
-        default_value=get_package_share_directory("legged_bringup") + "/resource/anymal_c/config/command/reference.info"
+        default_value=get_package_share_directory("legged_bringup") + "/resource/A1/config/reference.info"
     )
-    declare_urdfFile = DeclareLaunchArgument(
-        name = 'urdfFile',
-        default_value=get_package_share_directory("legged_bringup") + "/resource/anymal_c/urdf/anymal.urdf"
-    )
+
     declare_gait_config = DeclareLaunchArgument(
         name = 'gait_config',
-        default_value=get_package_share_directory("legged_bringup") + "/resource/anymal_c/config/command/gait.info"
+        default_value=get_package_share_directory("legged_bringup") + "/resource/A1/config/gait.info"
     )
 
     rviz_cfg = LaunchConfiguration("rviz_config")
     xacro_path = LaunchConfiguration("xacro_path") 
     bridge_cfg = LaunchConfiguration("bridge_config_file")
     world_file = LaunchConfiguration("world_file")
-    taskFile = LaunchConfiguration("taskFile")
     referenceFile = LaunchConfiguration("referenceFile")
-    urdfFile = LaunchConfiguration("urdfFile")
     gait_command_cfg = LaunchConfiguration("gait_config")
 
 
@@ -73,9 +67,9 @@ def generate_launch_description():
         executable="robot_state_publisher",
         parameters=[robot_description,
                     {"use_sim_time": useSimTime},],
-        remappings=[
-            ("joint_states", "anymal/joint/states"),
-        ],
+        # remappings=[
+        #     ("joint_states", "anymal/joint/states"),
+        # ],
         output="screen"
         )
     
@@ -86,19 +80,6 @@ def generate_launch_description():
         parameters=[{'use_sim_time':useSimTime}]
         )
     
-    mpc_node = Node(
-        package='ocs2_legged_robot_ros',
-        executable='legged_robot_sqp_mpc',
-        name='legged_robot_sqp_mpc',
-        output='screen',
-        prefix=prefix,
-        parameters=[
-            {'taskFile': taskFile},
-            {'referenceFile': referenceFile},
-            {'urdfFile': urdfFile},
-            {'use_sim_time': useSimTime},]
-        )
-
     target_node = Node(
         package="ocs2_legged_robot_ros",
         executable="legged_robot_target",
@@ -113,6 +94,7 @@ def generate_launch_description():
         cmd=["gz", "sim", "-r", world_file],
         output="screen",
         # prefix=prefix,
+        env=env,
     )
 
     gait_node = Node(
@@ -129,17 +111,14 @@ def generate_launch_description():
                                             declare_xacro, 
                                             declare_bridge_cfg,
                                             declare_world,
-                                            declare_taskFile,
-                                            declare_referenceFile,
-                                            declare_urdfFile,
                                             declare_gait_config,
-                                            gait_node,
+                                            declare_referenceFile,
                                             gz_sim,
+                                            gait_node,
                                             bridge_node,
                                             statepub_node,
                                             rviz_node,
                                             target_node,
-                                            mpc_node,
                                             ])
     # 返回让ROS2根据launch描述执行节点
     return launch_description

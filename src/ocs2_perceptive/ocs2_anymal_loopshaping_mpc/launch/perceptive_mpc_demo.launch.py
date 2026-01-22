@@ -70,7 +70,7 @@ def generate_launch_description():
                     'forward_velocity': 0.5
                 },
                 {
-                    'terrain_name': 'side_gap.png'
+                    'terrain_name': 'gaps.png'
                 },
                 {
                     'ocs2_anymal_description': urdf_model_path

@@ -1,12 +1,12 @@
 #pragma once
-#include <hardware_interface/sensor_interface.hpp>
-#include <rclcpp/rclcpp.hpp>
+#include <gz/msgs/contacts.pb.h>
+#include <gz/transport/Node.hh>
+#include <gz_ros2_control/gz_system_interface.hpp>
 
 #include <realtime_tools/realtime_thread_safe_box.hpp>
-#include <ros_gz_interfaces/msg/contacts.hpp>
 
 namespace legged {
-    class contactSim : public hardware_interface::SensorInterface {
+    class contactSim : public gz_ros2_control::GazeboSimSystemInterface {
       public:
         hardware_interface::CallbackReturn
         on_init(const hardware_interface::HardwareComponentInterfaceParams &params) override;
@@ -16,6 +16,10 @@ namespace legged {
         hardware_interface::CallbackReturn on_deactivate(const rclcpp_lifecycle::State &pre) override;
 
         hardware_interface::return_type read(const rclcpp::Time &time, const rclcpp::Duration &period) override;
+        hardware_interface::return_type write(const rclcpp::Time &time, const rclcpp::Duration &period) override;
+        bool initSim(rclcpp::Node::SharedPtr &model_nh, std::map<std::string, sim::Entity> &joints,
+                     const hardware_interface::HardwareInfo &hardware_info, sim::EntityComponentManager &_ecm,
+                     unsigned int update_rate) override;
 
         // std::vector<hardware_interface::StateInterface> export_state_interfaces() override;
 
@@ -23,8 +27,13 @@ namespace legged {
         std::string contactsTopics_[4];
         std::string tipNames_[4] = {"LF", "LH", "RF", "RH"};
 
-        realtime_tools::RealtimeThreadSafeBox<ros_gz_interfaces::msg::Contacts> receivedContactsMsg_[4];
-        rclcpp::Subscription<ros_gz_interfaces::msg::Contacts>::SharedPtr contactSubscriber_[4];
+        gz::transport::Node node_;
+        realtime_tools::RealtimeThreadSafeBox<gz::msgs::Contacts> receivedContactsMsg_[4];
+
+        void LFcallBack(const gz::msgs::Contacts &msg);
+        void LHcallBack(const gz::msgs::Contacts &msg);
+        void RFcallBack(const gz::msgs::Contacts &msg);
+        void RHcallBack(const gz::msgs::Contacts &msg);
 
         // bool contact_flag_[4];
     };

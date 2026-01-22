@@ -5,11 +5,12 @@
     <xacro:include filename="anymal.urdf" />
     <!-- 包括机器人URDF描述 -->
 
-    <ros2_control name="simIMU" type="sensor">
+    <ros2_control name="simIMU" type="system">
         <hardware>
             <plugin>legged/simImu</plugin>
             <param name="imu_topic">/anymal/imu</param>
             <param name="imu_name">imu</param>
+            <!-- <plugin>gz_ros2_control/GazeboSimSystem</plugin> -->
         </hardware>
         <sensor name="imu">
             <state_interface name="orientation.x" />
@@ -28,19 +29,19 @@
     </ros2_control>
     <!-- 加载imu硬件 -->
 
-    <ros2_control name="simContact" type="sensor">
+    <ros2_control name="simContact" type="system">
         <hardware>
             <plugin>legged/simContact</plugin>
-            <param name="contacts_topic_LF">/anymal/contacts/LF</param>
-            <param name="contacts_topic_LH">/anymal/contacts/LH</param>
-            <param name="contacts_topic_RF">/anymal/contacts/RF</param>
-            <param name="contacts_topic_RH">/anymal/contacts/RH</param>
+            <param name="contacts_topic_LF">/world/empty/model/anymal/link/LF_SHANK/sensor/lf_foot_contact/contact</param>
+            <param name="contacts_topic_LH">/world/empty/model/anymal/link/LH_SHANK/sensor/lh_foot_contact/contact</param>
+            <param name="contacts_topic_RF">/world/empty/model/anymal/link/RF_SHANK/sensor/rf_foot_contact/contact</param>
+            <param name="contacts_topic_RH">/world/empty/model/anymal/link/RH_SHANK/sensor/rh_foot_contact/contact</param>
         </hardware>
         <sensor name="contact">
-            <state_interface name="LF" data_type="bool"/>
-            <state_interface name="LH" data_type="bool"/>
-            <state_interface name="RF" data_type="bool"/>
-            <state_interface name="RH" data_type="bool"/>
+            <state_interface name="LF" data_type="bool" />
+            <state_interface name="LH" data_type="bool" />
+            <state_interface name="RF" data_type="bool" />
+            <state_interface name="RH" data_type="bool" />
         </sensor>
     </ros2_control>
     <!-- 加载接触传感器硬件 -->
@@ -60,9 +61,10 @@
 
     <ros2_control name="simMotor" type="system">
         <hardware>
-            <plugin>legged/simMotor</plugin>
+            <!-- <plugin>legged/simMotor</plugin>
             <param name="joint_state_topic">/anymal/joint/states</param>
-            <param name="joint_command_topic">/anymal/joint/cmd</param>
+            <param name="joint_command_topic">/anymal/joint/cmd</param> -->
+            <plugin>gz_ros2_control/GazeboSimSystem</plugin>
         </hardware>
 
         <xacro:motor joint_name="LF_HAA" />

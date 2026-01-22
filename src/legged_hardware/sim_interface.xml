@@ -1,13 +1,13 @@
 <library path="legged_hardware">
-    <class name="legged/simMotor" type="legged::MotorSim" base_class_type="hardware_interface::SystemInterface">
+    <!-- <class name="legged/simMotor" type="legged::MotorSim" base_class_type="hardware_interface::SystemInterface">
         <description>gazebo sim motors</description>
-    </class>
+    </class> -->
 
-    <class name="legged/simImu" type="legged::ImuSim" base_class_type="hardware_interface::SensorInterface">
+    <class name="legged/simImu" type="legged::ImuSim" base_class_type="gz_ros2_control::GazeboSimSystemInterface">
         <description>gazebo sim imu</description>
     </class>
 
-    <class name="legged/simContact" type="legged::contactSim" base_class_type="hardware_interface::SensorInterface">
+    <class name="legged/simContact" type="legged::contactSim" base_class_type="gz_ros2_control::GazeboSimSystemInterface">
         <description>gazebo sim contact sensors</description>
     </class>
 </library>

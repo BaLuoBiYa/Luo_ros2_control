@@ -33,6 +33,7 @@ sudo apt install -y \
   libpcl-dev \
   liburdfdom-dev \
   libpcap-dev \
+  libgz-sim8-dev \
   ros-jazzy-eigen3-cmake-module \
   ros-jazzy-hpp-fcl \
   ros-jazzy-grid-map \

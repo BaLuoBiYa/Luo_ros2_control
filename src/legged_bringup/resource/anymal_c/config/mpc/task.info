@@ -254,6 +254,18 @@ frictionConeSoftConstraint
   delta                  5.0
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
 selfCollision
 {
   ; Self Collision raw object pairs

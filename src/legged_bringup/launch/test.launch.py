@@ -15,10 +15,12 @@ def generate_launch_description():
     venv_site = "/home/luo/Project/Horse/Luo_ros2_control/.venv/lib/python3.12/site-packages"
     merged_env = os.environ.copy()
     merged_env["PYTHONPATH"] = f"{venv_site}:{merged_env.get('PYTHONPATH','')}"
+    gz_env = os.environ.copy()
+    gz_env["GZ_SIM_SYSTEM_PLUGIN_PATH"] = f"/opt/ros/jazzy/lib/"
 
     declare_xacro = DeclareLaunchArgument(
         name = 'xacro_path',
-        default_value=get_package_share_directory("legged_bringup") + "/resource/anymal_c/urdf/gazebo.xacro"
+        default_value=get_package_share_directory("legged_bringup") + "/resource/A1/urdf/gazebo.xacro"
     )
     declare_bridge_cfg = DeclareLaunchArgument(
         name = "bridge_config_file",
@@ -32,16 +34,10 @@ def generate_launch_description():
         name = 'controller_config',
         default_value=get_package_share_directory("legged_bringup") + "/launch/legged_controller.yaml"
     )
-    declare_rviz = DeclareLaunchArgument(
-        name = 'rviz_config',
-        default_value=get_package_share_directory("legged_bringup") + "/rviz/legged_robot.rviz"
-    )
 
-    rviz_cfg = LaunchConfiguration("rviz_config")
     xacro_path = LaunchConfiguration("xacro_path") 
     bridge_cfg = LaunchConfiguration("bridge_config_file")
     world_file = LaunchConfiguration("world_file")
-    controller_cfg = LaunchConfiguration("controller_config")
 
     robot_description_content = ParameterValue(
                 Command(["xacro ", xacro_path]),
@@ -61,18 +57,7 @@ def generate_launch_description():
         executable="robot_state_publisher",
         parameters=[robot_description,
                     {"use_sim_time": True},],
-        # remappings=[
-        #     ("joint_states", "anymal/joint/states"),
-        # ],
         output="screen"
-        )
-    
-    manager_node = Node(
-        package="controller_manager",
-        executable="ros2_control_node",
-        parameters=[controller_cfg],
-        output="screen",
-        prefix=prefix,
         )
 
     motor_tester_spawner = Node(
@@ -111,7 +96,7 @@ def generate_launch_description():
     gz_sim = ExecuteProcess(
         cmd=["gz", "sim", "-r", world_file],
         output="screen",
-        # prefix=prefix,
+        env=gz_env
     )
 
     joint_tester = Node(
@@ -127,13 +112,11 @@ def generate_launch_description():
                                             declare_bridge_cfg,
                                             declare_world,
                                             declare_controller,
-                                            declare_rviz,
                                             gz_sim,
                                             # rviz_node,
                                             # joint_state_publisher,
                                             bridge_node,
                                             statepub_node,
-                                            manager_node,
                                             motor_tester_spawner,
                                             imu_sensor_broadcaster_spawner,
                                             contact_tester_spawner,

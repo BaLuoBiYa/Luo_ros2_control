@@ -3,7 +3,7 @@
 namespace legged {
     hardware_interface::CallbackReturn
     ImuSim::on_init(const hardware_interface::HardwareComponentInterfaceParams &params) {
-        if (hardware_interface::SensorInterface::on_init(hardware_interface::HardwareComponentInterfaceParams{
+        if (hardware_interface::SystemInterface::on_init(hardware_interface::HardwareComponentInterfaceParams{
                 params}) != hardware_interface::CallbackReturn::SUCCESS) {
             return hardware_interface::CallbackReturn::ERROR;
         }
@@ -14,18 +14,27 @@ namespace legged {
         return hardware_interface::CallbackReturn::SUCCESS;
     }
 
+    bool ImuSim::initSim(rclcpp::Node::SharedPtr &model_nh, std::map<std::string, sim::Entity> &joints,
+                         const hardware_interface::HardwareInfo &hardware_info, sim::EntityComponentManager &_ecm,
+                         unsigned int update_rate) {
+        (void)model_nh;
+        (void)joints;
+        (void)hardware_info;
+        (void)_ecm;
+        (void)update_rate;
+        return true;
+    }
+
     hardware_interface::CallbackReturn ImuSim::on_configure(const rclcpp_lifecycle::State &pre) {
         (void)pre;
-        imuSubscriber_ = get_node()->create_subscription<sensor_msgs::msg::Imu>(
-            imuTopic_, 1, [this](const sensor_msgs::msg::Imu::ConstSharedPtr &msg) { receivedImuMsg_.try_set(*msg); });
-
+        node_.Subscribe(imuTopic_, &ImuSim::imuCallback, this);
         return hardware_interface::CallbackReturn::SUCCESS;
     }
 
     hardware_interface::CallbackReturn ImuSim::on_activate(const rclcpp_lifecycle::State &pre) {
         (void)pre;
-        sensor_msgs::msg::Imu empty_msg;
-        receivedImuMsg_.set(empty_msg);
+        gz::msgs::IMU emptyMsg;
+        receivedImuMsg_.try_set(emptyMsg);
         return hardware_interface::CallbackReturn::SUCCESS;
     }
 
@@ -40,55 +49,35 @@ namespace legged {
 
         auto imu_msg = receivedImuMsg_.try_get();
         if (imu_msg == std::nullopt) {
-            return hardware_interface::return_type::ERROR;
+            return hardware_interface::return_type::OK;
         }
 
-        set_state<double>("imu/orientation.x", imu_msg.value().orientation.x);
-        set_state<double>("imu/orientation.y", imu_msg.value().orientation.y);
-        set_state<double>("imu/orientation.z", imu_msg.value().orientation.z);
-        set_state<double>("imu/orientation.w", imu_msg.value().orientation.w);
+        set_state<double>(imuName_ + "/orientation.x", imu_msg.value().orientation().x());
+        set_state<double>(imuName_ + "/orientation.y", imu_msg.value().orientation().y());
+        set_state<double>(imuName_ + "/orientation.z", imu_msg.value().orientation().z());
+        set_state<double>(imuName_ + "/orientation.w", imu_msg.value().orientation().w());
 
-        set_state<double>("imu/angular_velocity.x", imu_msg.value().angular_velocity.x);
-        set_state<double>("imu/angular_velocity.y", imu_msg.value().angular_velocity.y);
-        set_state<double>("imu/angular_velocity.z", imu_msg.value().angular_velocity.z);
+        set_state<double>(imuName_ + "/angular_velocity.x", imu_msg.value().angular_velocity().x());
+        set_state<double>(imuName_ + "/angular_velocity.y", imu_msg.value().angular_velocity().y());
+        set_state<double>(imuName_ + "/angular_velocity.z", imu_msg.value().angular_velocity().z());
 
-        set_state<double>("imu/linear_acceleration.x", imu_msg.value().linear_acceleration.x);
-        set_state<double>("imu/linear_acceleration.y", imu_msg.value().linear_acceleration.y);
-        set_state<double>("imu/linear_acceleration.z", imu_msg.value().linear_acceleration.z);
+        set_state<double>(imuName_ + "/linear_acceleration.x", imu_msg.value().linear_acceleration().x());
+        set_state<double>(imuName_ + "/linear_acceleration.y", imu_msg.value().linear_acceleration().y());
+        set_state<double>(imuName_ + "/linear_acceleration.z", imu_msg.value().linear_acceleration().z());
 
         return hardware_interface::return_type::OK;
     }
 
-    // std::vector<hardware_interface::StateInterface> ImuSim::export_state_interfaces()
-    // {
-    //     std::vector<hardware_interface::StateInterface> state_interfaces;
+    hardware_interface::return_type ImuSim::write(const rclcpp::Time &time, const rclcpp::Duration &period) {
+        (void)time;
+        (void)period;
+        return hardware_interface::return_type::OK;
+    }
 
-    //     state_interfaces.emplace_back(hardware_interface::StateInterface(
-    //         imuName_, "orientation.x", &orientation_[0]));
-    //     state_interfaces.emplace_back(hardware_interface::StateInterface(
-    //         imuName_, "orientation.y", &orientation_[1]));
-    //     state_interfaces.emplace_back(hardware_interface::StateInterface(
-    //         imuName_, "orientation.z", &orientation_[2]));
-    //     state_interfaces.emplace_back(hardware_interface::StateInterface(
-    //         imuName_, "orientation.w", &orientation_[3]));
-
-    //     state_interfaces.emplace_back(hardware_interface::StateInterface(
-    //         imuName_, "angular_velocity.x", &angular_velocity_[0]));
-    //     state_interfaces.emplace_back(hardware_interface::StateInterface(
-    //         imuName_, "angular_velocity.y", &angular_velocity_[1]));
-    //     state_interfaces.emplace_back(hardware_interface::StateInterface(
-    //         imuName_, "angular_velocity.z", &angular_velocity_[2]));
-
-    //     state_interfaces.emplace_back(hardware_interface::StateInterface(
-    //         imuName_, "linear_acceleration.x", &linear_acceleration_[0]));
-    //     state_interfaces.emplace_back(hardware_interface::StateInterface(
-    //         imuName_, "linear_acceleration.y", &linear_acceleration_[1]));
-    //     state_interfaces.emplace_back(hardware_interface::StateInterface(
-    //         imuName_, "linear_acceleration.z", &linear_acceleration_[2]));
-
-    //     return state_interfaces;
-    // }
+    void ImuSim::imuCallback(const gz::msgs::IMU &msg) {
+        receivedImuMsg_.try_set(msg);
+    }
 } // namespace legged
 
 #include "pluginlib/class_list_macros.hpp"
-PLUGINLIB_EXPORT_CLASS(legged::ImuSim, hardware_interface::SensorInterface)
+PLUGINLIB_EXPORT_CLASS(legged::ImuSim, gz_ros2_control::GazeboSimSystemInterface)
