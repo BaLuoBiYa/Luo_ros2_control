@@ -11,8 +11,8 @@
 #include <ocs2_pinocchio_interface/PinocchioEndEffectorKinematics.h>
 
 namespace legged {
-    // using namespace ocs2;
-    // using namespace legged_robot;
+    using namespace ocs2;
+    using namespace legged_robot;
 
     // Decision Variables: x = [\dot u^T, F^T, \tau^T]^T
     class WbcBase {
@@ -53,7 +53,7 @@ namespace legged {
 
         vector_t qMeasured_, vMeasured_, inputLast_;
         matrix_t j_, dj_;
-        legged_robot::contact_flag_t contactFlag_{};
+        contact_flag_t contactFlag_{};
         size_t numContacts_{};
 
         // Task Parameters:

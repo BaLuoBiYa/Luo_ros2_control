@@ -4,9 +4,8 @@
 
 #include "legged_wbc/WeightedWbc.h"
 
-#include <boost/property_tree/info_parser.hpp>
-#include <ocs2_core/misc/LoadData.h>
 #include <qpOASES.hpp>
+
 namespace legged {
 
     vector_t WeightedWbc::update(const vector_t &stateDesired, const vector_t &inputDesired,
@@ -24,7 +23,7 @@ namespace legged {
 
   lbA << constraints.b_,
          -qpOASES::INFTY * vector_t::Ones(constraints.f_.size());
-        ubA << constraints.b_,
+  ubA << constraints.b_,
          constraints.f_; // clang-format on
 
         // Cost
@@ -71,9 +70,9 @@ namespace legged {
             std::cerr << "\n #### WBC weight:";
             std::cerr << "\n #### =============================================================================\n";
         }
-        ocs2::loadData::loadPtreeValue(pt, weightSwingLeg_, prefix + "swingLeg", verbose);
-        ocs2::loadData::loadPtreeValue(pt, weightBaseAccel_, prefix + "baseAccel", verbose);
-        ocs2::loadData::loadPtreeValue(pt, weightContactForce_, prefix + "contactForce", verbose);
+        loadData::loadPtreeValue(pt, weightSwingLeg_, prefix + "swingLeg", verbose);
+        loadData::loadPtreeValue(pt, weightBaseAccel_, prefix + "baseAccel", verbose);
+        loadData::loadPtreeValue(pt, weightContactForce_, prefix + "contactForce", verbose);
     }
 
 } // namespace legged

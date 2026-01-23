@@ -21,7 +21,6 @@
 #include "ocs2_legged_robot_ros/visualization/LeggedRobotVisualizer.h"
 
 #include "legged_controllers/SafetyChecker.hpp"
-#include "legged_controllers/legged_mrt.hpp"
 #include "legged_estimator/LinearKalmanFilter.hpp"
 #include "legged_estimator/StateEstimateBase.hpp"
 #include "legged_interface/LeggedInterface.h"
@@ -57,7 +56,7 @@ namespace legged {
         ocs2::legged_robot::vector3_t angularVel_, linearAccel_;
 
         // Whole Body Control
-        std::shared_ptr<WbcBase> wbc_;
+        std::shared_ptr<WeightedWbc> wbc_;
         std::shared_ptr<SafetyChecker> safetyChecker_;
 
         // Visualization

@@ -128,6 +128,8 @@ namespace legged {
         // ROS ReferenceManager
 
         mpcMrtInterface_ = std::make_shared<MPC_MRT_Interface>(*mpc_);
+        mpcMrtInterface_->initRollout(&leggedInterface_->getRollout());
+
         mpcTimer_.reset();
         controllerTimer_.reset();
         controllerRunning_ = true;
@@ -161,9 +163,10 @@ namespace legged {
                                                                 leggedInterface_->getCentroidalModelInfo(),
                                                                 *eeKinematicsPtr_, get_node()->shared_from_this());
         dynamic_cast<legged::KalmanFilterEstimate &>(*stateEstimate_).loadSettings(taskFile_, verbose_);
-        rbdConversions_ = std::make_shared<ocs2::CentroidalModelRbdConversions>(leggedInterface_->getPinocchioInterface(),
-                                                                          leggedInterface_->getCentroidalModelInfo());
-        measuredRbdState_.setZero(2 * leggedInterface_->getCentroidalModelInfo().generalizedCoordinatesNum);
+        currentObservation_.time = 0;
+
+        rbdConversions_ = std::make_shared<ocs2::CentroidalModelRbdConversions>(
+            leggedInterface_->getPinocchioInterface(), leggedInterface_->getCentroidalModelInfo());
         // State Estimation
 
         safetyChecker_ = std::make_shared<legged::SafetyChecker>(leggedInterface_->getCentroidalModelInfo());
@@ -175,19 +178,19 @@ namespace legged {
     controller_interface::CallbackReturn legged_controller::on_activate(const rclcpp_lifecycle::State &previous_state) {
         (void)previous_state;
 
-        currentObservation_.state = leggedInterface_->getInitialState();
+        currentObservation_.state.setZero(leggedInterface_->getCentroidalModelInfo().stateDim);
         updateEstimation(get_node()->now(),
                          rclcpp::Duration(0, static_cast<uint32_t>((1.0 / get_update_rate()) * 1e9)));
         currentObservation_.input = vector_t::Zero(leggedInterface_->getCentroidalModelInfo().inputDim);
         currentObservation_.mode = ocs2::legged_robot::ModeNumber::STANCE;
 
         const double t0 = get_node()->now().seconds();
-        ocs2::TargetTrajectories initTargetTrajectories({t0}, {currentObservation_.state}, {currentObservation_.input});
+        ocs2::TargetTrajectories initTargetTrajectories({currentObservation_.time}, {currentObservation_.state},
+                                                        {currentObservation_.input});
         // Initial state
 
-        mpcMrtInterface_->reset();
-        mpc_->reset();
-        mpcMrtInterface_->initRollout(&leggedInterface_->getRollout());
+        // mpcMrtInterface_->reset();
+        // mpc_->reset();
         mpcMrtInterface_->setCurrentObservation(currentObservation_);
         mpcMrtInterface_->getReferenceManager().setTargetTrajectories(initTargetTrajectories);
         // Set the first observation and command and wait for optimization to finish
@@ -234,10 +237,8 @@ namespace legged {
         // Safety check, if failed, stop the controller
 
         currentObservation_.input = optimizedInput;
-        // vector_t x = wbc_->update(optimizedState, optimizedInput, measuredRbdState_, plannedMode, period.seconds());
+        vector_t x = wbc_->update(optimizedState, optimizedInput, measuredRbdState_, plannedMode, period.seconds());
         // Whole body control
-        vector_t x;
-        x.setZero(12);
 
         vector_t torque = x.tail(12);
         vector_t posDes = centroidal_model::getJointAngles(optimizedState, leggedInterface_->getCentroidalModelInfo());
@@ -319,6 +320,9 @@ namespace legged {
                 continue;
             }
             angularVel_(i) = imu_angular_vel.value();
+        }
+        
+        for (size_t i = 0; i < 3; ++i) {
             auto imu_linear_accel = state_interfaces_[35 + i].get_optional<double>();
             if (imu_linear_accel == std::nullopt) {
                 RCLCPP_ERROR_STREAM(get_node()->get_logger(), "Failed to read IMU linear acceleration interface");
@@ -376,7 +380,7 @@ namespace legged {
     }
 
     controller_interface::CallbackReturn legged_controller::on_cleanup(const rclcpp_lifecycle::State &previous_state) {
-        (void) previous_state;
+        (void)previous_state;
         if (mpcThread_.joinable())
             mpcThread_.join();
         return CallbackReturn::SUCCESS;

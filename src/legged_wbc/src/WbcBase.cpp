@@ -7,7 +7,6 @@
 
 #include <ocs2_centroidal_model/AccessHelperFunctions.h>
 #include <ocs2_centroidal_model/ModelHelperFunctions.h>
-#include <ocs2_core/misc/LoadData.h>
 #include <pinocchio/algorithm/centroidal.hpp>
 #include <pinocchio/algorithm/crba.hpp>
 #include <pinocchio/algorithm/frames.hpp>
@@ -18,16 +17,16 @@ namespace legged {
     WbcBase::WbcBase(const PinocchioInterface &pinocchioInterface, CentroidalModelInfo info,
                      const PinocchioEndEffectorKinematics &eeKinematics)
         : pinocchioInterfaceMeasured_(pinocchioInterface), pinocchioInterfaceDesired_(pinocchioInterface),
-          info_(std::move(info)), eeKinematics_(eeKinematics.clone()), mapping_(info_) {
-        inputLast_ = vector_t::Zero(info_.inputDim);
+          info_(std::move(info)), mapping_(info_), inputLast_(vector_t::Zero(info_.inputDim)),
+          eeKinematics_(eeKinematics.clone()) {
+        numDecisionVars_ = info_.generalizedCoordinatesNum + 3 * info_.numThreeDofContacts + info_.actuatedDofNum;
         qMeasured_ = vector_t(info_.generalizedCoordinatesNum);
         vMeasured_ = vector_t(info_.generalizedCoordinatesNum);
-        numDecisionVars_ = info_.generalizedCoordinatesNum + 3 * info_.numThreeDofContacts + info_.actuatedDofNum;
     }
 
     vector_t WbcBase::update(const vector_t &stateDesired, const vector_t &inputDesired,
                              const vector_t &rbdStateMeasured, size_t mode, scalar_t /*period*/) {
-        contactFlag_ = ocs2::legged_robot::modeNumber2StanceLeg(mode);
+        contactFlag_ = modeNumber2StanceLeg(mode);
         numContacts_ = 0;
         for (bool flag : contactFlag_) {
             if (flag) {
@@ -208,11 +207,11 @@ namespace legged {
 
     Task WbcBase::formulateSwingLegTask() {
         eeKinematics_->setPinocchioInterface(pinocchioInterfaceMeasured_);
-        std::vector<ocs2::legged_robot::vector3_t> posMeasured = eeKinematics_->getPosition(vector_t());
-        std::vector<ocs2::legged_robot::vector3_t> velMeasured = eeKinematics_->getVelocity(vector_t(), vector_t());
+        std::vector<vector3_t> posMeasured = eeKinematics_->getPosition(vector_t());
+        std::vector<vector3_t> velMeasured = eeKinematics_->getVelocity(vector_t(), vector_t());
         eeKinematics_->setPinocchioInterface(pinocchioInterfaceDesired_);
-        std::vector<ocs2::legged_robot::vector3_t> posDesired = eeKinematics_->getPosition(vector_t());
-        std::vector<ocs2::legged_robot::vector3_t> velDesired = eeKinematics_->getVelocity(vector_t(), vector_t());
+        std::vector<vector3_t> posDesired = eeKinematics_->getPosition(vector_t());
+        std::vector<vector3_t> velDesired = eeKinematics_->getVelocity(vector_t(), vector_t());
 
         matrix_t a(3 * (info_.numThreeDofContacts - numContacts_), numDecisionVars_);
         vector_t b(a.rows());
@@ -221,7 +220,7 @@ namespace legged {
         size_t j = 0;
         for (size_t i = 0; i < info_.numThreeDofContacts; ++i) {
             if (!contactFlag_[i]) {
-                ocs2::legged_robot::vector3_t accel =
+                vector3_t accel =
                     swingKp_ * (posDesired[i] - posMeasured[i]) + swingKd_ * (velDesired[i] - velMeasured[i]);
                 a.block(3 * j, 0, 3, info_.generalizedCoordinatesNum) =
                     j_.block(3 * i, 0, 3, info_.generalizedCoordinatesNum);
@@ -249,7 +248,7 @@ namespace legged {
     void WbcBase::loadTasksSetting(const std::string &taskFile, bool verbose) {
         // Load task file
         torqueLimits_ = vector_t(info_.actuatedDofNum / 4);
-        ocs2::loadData::loadEigenMatrix(taskFile, "torqueLimitsTask", torqueLimits_);
+        loadData::loadEigenMatrix(taskFile, "torqueLimitsTask", torqueLimits_);
         if (verbose) {
             std::cerr << "\n #### Torque Limits Task:";
             std::cerr << "\n #### =============================================================================\n";
@@ -263,7 +262,7 @@ namespace legged {
             std::cerr << "\n #### Friction Cone Task:";
             std::cerr << "\n #### =============================================================================\n";
         }
-        ocs2::loadData::loadPtreeValue(pt, frictionCoeff_, prefix + "frictionCoefficient", verbose);
+        loadData::loadPtreeValue(pt, frictionCoeff_, prefix + "frictionCoefficient", verbose);
         if (verbose) {
             std::cerr << " #### =============================================================================\n";
         }
@@ -272,8 +271,8 @@ namespace legged {
             std::cerr << "\n #### Swing Leg Task:";
             std::cerr << "\n #### =============================================================================\n";
         }
-        ocs2::loadData::loadPtreeValue(pt, swingKp_, prefix + "kp", verbose);
-        ocs2::loadData::loadPtreeValue(pt, swingKd_, prefix + "kd", verbose);
+        loadData::loadPtreeValue(pt, swingKp_, prefix + "kp", verbose);
+        loadData::loadPtreeValue(pt, swingKd_, prefix + "kd", verbose);
     }
 
 } // namespace legged

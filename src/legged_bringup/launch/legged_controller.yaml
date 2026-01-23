@@ -1,6 +1,6 @@
 controller_manager:
   ros__parameters:
-    update_rate: 1000
+    update_rate: 500
     use_sim_time: true
 
     legged_controller:
@@ -46,9 +46,9 @@ legged_controller:
       - RH_KFE
     imuName: imu
     visualize: true
-    kp: 3.0
-    kd: 1.5
-    kf: 0.5
+    kp: 1.0
+    kd: 3.0
+    kf: 1.0
 
 motor_tester:
   ros__parameters:

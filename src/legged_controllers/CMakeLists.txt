@@ -35,7 +35,6 @@ find_package(Boost REQUIRED COMPONENTS system filesystem log_setup log)
 
 add_library(${PROJECT_NAME} SHARED
   src/legged_controller.cpp
-  src/legged_mrt.cpp
   src/test_tools/motorTester.cpp
   src/test_tools/contactTester.cpp
 )

@@ -23,14 +23,6 @@ def generate_launch_description():
         name = 'xacro_path',
         default_value=get_package_share_directory("legged_bringup") + "/resource/A1/urdf/gazebo.xacro"
     )
-    declare_bridge_cfg = DeclareLaunchArgument(
-        name = "bridge_config_file",
-        default_value=get_package_share_directory("legged_bringup") + "/launch/gazebo_bridge.yaml"
-    )
-    declare_world = DeclareLaunchArgument(
-        name ="world_file",
-        default_value="world.sdf"
-    )
     declare_referenceFile = DeclareLaunchArgument(
         name = 'referenceFile',
         default_value=get_package_share_directory("legged_bringup") + "/resource/A1/config/reference.info"
@@ -43,8 +35,6 @@ def generate_launch_description():
 
     rviz_cfg = LaunchConfiguration("rviz_config")
     xacro_path = LaunchConfiguration("xacro_path") 
-    bridge_cfg = LaunchConfiguration("bridge_config_file")
-    world_file = LaunchConfiguration("world_file")
     referenceFile = LaunchConfiguration("referenceFile")
     gait_command_cfg = LaunchConfiguration("gait_config")
     robot_description_content = ParameterValue(
@@ -124,9 +114,20 @@ def generate_launch_description():
     )
     # 步态发布器
 
+    target_node = Node(
+        package="ocs2_legged_robot_ros",
+        executable="legged_robot_target",
+        name='legged_robot_target',
+        output='screen',
+        prefix=prefix,
+        parameters=[{'referenceFile': referenceFile},
+                    {'use_sim_time':True}]
+    )
+    # 目标发布器
+
     timeLine0 = TimerAction(
         period=0.0,
-        actions=[gz_sim_launch,statepub_node,rviz_node,gait_node],
+        actions=[gz_sim_launch,statepub_node,rviz_node,gait_node,target_node],
     )
 
     timeLine1 = TimerAction(
@@ -152,8 +153,6 @@ def generate_launch_description():
     ld = LaunchDescription([
             declare_rviz,
             declare_xacro,
-            declare_bridge_cfg,
-            declare_world,
             declare_gait_config,
             declare_referenceFile,
             timeLine0,
