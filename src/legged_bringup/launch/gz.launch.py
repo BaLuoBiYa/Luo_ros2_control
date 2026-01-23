@@ -13,7 +13,6 @@ def generate_launch_description():
     prefix = "gnome-terminal --"
     env = os.environ.copy()
     env["GZ_SIM_SYSTEM_PLUGIN_PATH"] = f"/opt/ros/jazzy/lib/"
-    use_sim_time = LaunchConfiguration('use_sim_time', default=True)
 
     declare_rviz = DeclareLaunchArgument(
         name = 'rviz_config',
@@ -135,10 +134,10 @@ def generate_launch_description():
         actions=[bridge],
     )
 
-    timeLine2 = TimerAction(
-        period=6.0,
-        actions=[gz_spawn_scene],
-    )
+    # timeLine2 = TimerAction(
+    #     period=6.0,
+    #     actions=[gz_spawn_scene],
+    # )
 
     timeLine3 = TimerAction(
         period=9.0,
@@ -157,7 +156,7 @@ def generate_launch_description():
             declare_referenceFile,
             timeLine0,
             timeLine1,
-            timeLine2,
+            # timeLine2,
             timeLine3,
             timeLine4,
         ])

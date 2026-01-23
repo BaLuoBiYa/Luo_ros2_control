@@ -1,4 +1,4 @@
-#include "legged_hardware/contact_sim.hpp"
+#include "legged_hardware/simHardware/contact_sim.hpp"
 
 namespace legged {
     hardware_interface::CallbackReturn
@@ -88,9 +88,12 @@ namespace legged {
     {
         gz::msgs::Boolean req;
         req.set_data(true);
-        for (size_t i=0;i<4;i++){
-            receivedContactsMsg_[i].try_set(false);
-            node_.Request(resetTopics_[i],req);
+       for (size_t i=0;i<4;i++){
+            bool was = receivedContactsMsg_[i].try_get().value_or(false);
+            if (was) {
+                node_.Request(resetTopics_[i], req);
+                receivedContactsMsg_[i].try_set(false);
+            }
         }
     }
 } // namespace legged

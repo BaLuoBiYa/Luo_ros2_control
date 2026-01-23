@@ -1,4 +1,4 @@
-#include "legged_hardware/imu_sim.hpp"
+#include "legged_hardware/simHardware/imu_sim.hpp"
 
 namespace legged {
     hardware_interface::CallbackReturn

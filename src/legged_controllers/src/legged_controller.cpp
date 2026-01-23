@@ -33,17 +33,17 @@ namespace legged {
 
         config.type = controller_interface::interface_configuration_type::INDIVIDUAL;
         config.names.reserve(12);
-        // for (const auto &joint_name : jointNames_) {
-        //     config.names.push_back(joint_name + "/position");
-        // }
-        // // 申请关节位置命令接口
+        for (const auto &joint_name : jointNames_) {
+            config.names.push_back(joint_name + "/position");
+        }
+        // 申请关节位置命令接口
         // for (const auto &joint_name : jointNames_) {
         //     config.names.push_back(joint_name + "/velocity");
         // }
         // // 申请关节速度命令接口
-        for (const auto &joint_name : jointNames_) {
-            config.names.push_back(joint_name + "/effort");
-        }
+        // for (const auto &joint_name : jointNames_) {
+        //     config.names.push_back(joint_name + "/effort");
+        // }
         // 申请关节力命令接口
         return config;
     }
@@ -172,6 +172,18 @@ namespace legged {
         safetyChecker_ = std::make_shared<legged::SafetyChecker>(leggedInterface_->getCentroidalModelInfo());
         // Safety Checker
 
+        for (size_t i = 0; i < 9; ++i) {
+            const double orient_var = 1e-4;
+            const double angvel_var = 1e-6;
+            const double linaccel_var = 1e-4;
+            size_t row = i / 3;
+            size_t col = i % 3;
+            orientationCovariance_(i) = (row == col) ? orient_var : 0.0;
+            angularVelCovariance_(i) = (row == col) ? angvel_var : 0.0;
+            linearAccelCovariance_(i) = (row == col) ? linaccel_var : 0.0;
+        }
+        // 填充IMU置信矩阵
+
         return controller_interface::CallbackReturn::SUCCESS;
     }
 
@@ -184,7 +196,6 @@ namespace legged {
         currentObservation_.input = vector_t::Zero(leggedInterface_->getCentroidalModelInfo().inputDim);
         currentObservation_.mode = ocs2::legged_robot::ModeNumber::STANCE;
 
-        const double t0 = get_node()->now().seconds();
         ocs2::TargetTrajectories initTargetTrajectories({currentObservation_.time}, {currentObservation_.state},
                                                         {currentObservation_.input});
         // Initial state
@@ -237,23 +248,24 @@ namespace legged {
         // Safety check, if failed, stop the controller
 
         currentObservation_.input = optimizedInput;
-        vector_t x = wbc_->update(optimizedState, optimizedInput, measuredRbdState_, plannedMode, period.seconds());
+        // vector_t x = wbc_->update(optimizedState, optimizedInput, measuredRbdState_, plannedMode, period.seconds());
         // Whole body control
 
-        vector_t torque = x.tail(12);
-        vector_t posDes = centroidal_model::getJointAngles(optimizedState, leggedInterface_->getCentroidalModelInfo());
+        // vector_t torque = x.tail(12);
+        vector_t posDes = 
+            centroidal_model::getJointAngles(optimizedState, leggedInterface_->getCentroidalModelInfo());
         vector_t velDes =
             centroidal_model::getJointVelocities(optimizedInput, leggedInterface_->getCentroidalModelInfo());
         // Extract commands
 
-        double effort[12];
-        for (size_t i = 0; i < 12; i++) {
-            effort[i] = torque(i) * kf_ + (posDes(i) - jointPos_[i]) * kp_ + (velDes(i) - jointVel_[i]) * kd_;
-        }
+        // double effort[12];
+        // for (size_t i = 0; i < 12; i++) {
+        //     effort[i] = torque(i) * kf_ + (posDes(i) - jointPos_[i]) * kp_ + (velDes(i) - jointVel_[i]) * kd_;
+        // }
 
         bool writeSuccess = true;
         for (size_t j = 0; j < 12; ++j) {
-            writeSuccess &= command_interfaces_[j].set_value<double>(effort[j]);
+            writeSuccess &= command_interfaces_[j].set_value<double>(posDes(j));
         }
         // Send commands to the robot
         if (!writeSuccess) {
@@ -321,7 +333,7 @@ namespace legged {
             }
             angularVel_(i) = imu_angular_vel.value();
         }
-        
+
         for (size_t i = 0; i < 3; ++i) {
             auto imu_linear_accel = state_interfaces_[35 + i].get_optional<double>();
             if (imu_linear_accel == std::nullopt) {

@@ -28,8 +28,8 @@ include_directories(
 )
 
 add_library(${PROJECT_NAME} SHARED
-  src/imu_sim.cpp
-  src/contact_sim.cpp
+  src/simHardware/imu_sim.cpp
+  src/simHardware/contact_sim.cpp
 )
 
 ament_target_dependencies(${PROJECT_NAME}

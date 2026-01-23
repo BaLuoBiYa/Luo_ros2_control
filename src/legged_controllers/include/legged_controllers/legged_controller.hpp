@@ -8,6 +8,7 @@
 #include <ocs2_core/thread_support/ExecuteAndSleep.h>
 #include <ocs2_core/thread_support/SetThreadPriority.h>
 #include <ocs2_legged_robot_ros/gait/GaitReceiver.h>
+#include <ocs2_legged_robot_ros/visualization/LeggedRobotVisualizer.h>
 #include <ocs2_mpc/MPC_MRT_Interface.h>
 #include <ocs2_msgs/msg/mpc_observation.hpp>
 #include <ocs2_pinocchio_interface/PinocchioEndEffectorKinematics.h>
@@ -17,8 +18,6 @@
 
 #include <ocs2_core/misc/Benchmark.h>
 #include <ocs2_core/misc/LoadData.h>
-
-#include "ocs2_legged_robot_ros/visualization/LeggedRobotVisualizer.h"
 
 #include "legged_controllers/SafetyChecker.hpp"
 #include "legged_estimator/LinearKalmanFilter.hpp"
@@ -54,6 +53,7 @@ namespace legged {
         Eigen::Quaternion<scalar_t> quat_;
         ocs2::legged_robot::contact_flag_t contactFlag_;
         ocs2::legged_robot::vector3_t angularVel_, linearAccel_;
+        matrix3_t orientationCovariance_, angularVelCovariance_, linearAccelCovariance_;
 
         // Whole Body Control
         std::shared_ptr<WeightedWbc> wbc_;
@@ -76,6 +76,8 @@ namespace legged {
 
         bool visualize_;
         bool verbose_;
+
+        uint32_t loop_counter = 0;
 
         void updateEstimation(const rclcpp::Time &time, const rclcpp::Duration &period);
         void mpcTask();

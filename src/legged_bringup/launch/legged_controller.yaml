@@ -15,6 +15,9 @@ controller_manager:
     contact_tester:
       type: test_tools/ContactTester
 
+    joint_state_broadcaster:
+      type: joint_state_broadcaster/JointStateBroadcaster
+
 imu_sensor_broadcaster:
   ros__parameters:
     remappings:
@@ -46,9 +49,9 @@ legged_controller:
       - RH_KFE
     imuName: imu
     visualize: true
-    kp: 1.0
-    kd: 3.0
-    kf: 1.0
+    kp: 0.0
+    kd: 1.0
+    kf: 0.0
 
 motor_tester:
   ros__parameters:
@@ -75,3 +78,26 @@ contact_tester:
       - LH
       - RF
       - RH
+
+joint_state_broadcaster:
+  ros__parameters:
+    frame_id: base_link
+    interfaces:
+      - position
+      - velocity
+    joints: 
+      - LF_HAA
+      - LF_HFE
+      - LF_KFE
+      - LH_HAA
+      - LH_HFE
+      - LH_KFE
+      - RF_HAA
+      - RF_HFE
+      - RF_KFE
+      - RH_HAA
+      - RH_HFE
+      - RH_KFE
+    publish_dynamic_joint_states: true
+    use_local_topics: false
+    use_urdf_to_filter: true

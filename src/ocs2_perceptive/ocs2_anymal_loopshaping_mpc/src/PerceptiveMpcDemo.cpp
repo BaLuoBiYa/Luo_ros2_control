@@ -154,7 +154,7 @@ int main(int argc, char* argv[]) {
 
   // Read min-max from elevation map
   const float heightMargin =
-      0.5;  // Create SDF till this amount above and below the map.
+      10.5;  // Create SDF till this amount above and below the map.
   const auto& elevationData = gridMap.get(elevationLayer);
   const float minValue = elevationData.minCoeffOfFinites() - heightMargin;
   const float maxValue = elevationData.maxCoeffOfFinites() + heightMargin;

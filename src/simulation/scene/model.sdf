@@ -29,28 +29,28 @@
             name="gz::sim::systems::TouchPlugin">
             <target>LF_FOOT_collision</target>
             <namespace>LF</namespace>
-            <time>0.001</time>
+            <time>0.01</time>
             <enabled>true</enabled>
         </plugin>
         <plugin filename="gz-sim-touchplugin-system"
             name="gz::sim::systems::TouchPlugin">
             <target>LH_FOOT_collision</target>
             <namespace>LH</namespace>
-            <time>0.001</time>
+            <time>0.01</time>
             <enabled>true</enabled>
         </plugin>
         <plugin filename="gz-sim-touchplugin-system"
             name="gz::sim::systems::TouchPlugin">
             <target>RF_FOOT_collision</target>
             <namespace>RF</namespace>
-            <time>0.001</time>
+            <time>0.01</time>
             <enabled>true</enabled>
         </plugin>
         <plugin filename="gz-sim-touchplugin-system"
             name="gz::sim::systems::TouchPlugin">
             <target>RH_FOOT_collision</target>
             <namespace>RH</namespace>
-            <time>0.001</time>
+            <time>0.01</time>
             <enabled>true</enabled>
             
         </plugin>

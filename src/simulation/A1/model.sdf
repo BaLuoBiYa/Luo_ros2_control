@@ -1,10 +1,10 @@
 <sdf version='1.11'>
     <model name='robot'>
-        <!-- <joint name='anchor_to_world' type='fixed'>
+        <joint name='anchor_to_world' type='fixed'>
 			<parent>world</parent>
 			<child>base</child>
 			<pose>0 0 0 0 0 0</pose>
-		</joint> -->
+		</joint>
         <!-- 悬挂模型，用于调试 -->
         <link name='base'>
             <inertial>

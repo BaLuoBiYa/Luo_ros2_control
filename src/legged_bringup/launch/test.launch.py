@@ -2,69 +2,98 @@
 import os
 from launch import LaunchDescription
 from launch_ros.actions import Node
-from launch.actions import DeclareLaunchArgument,ExecuteProcess,TimerAction
+from launch.actions import DeclareLaunchArgument,ExecuteProcess,TimerAction,IncludeLaunchDescription
 from launch.substitutions import LaunchConfiguration
 from launch.substitutions import LaunchConfiguration, Command
 from launch_ros.parameter_descriptions import ParameterValue
+from launch.launch_description_sources import PythonLaunchDescriptionSource
 from ament_index_python.packages import get_package_share_directory
 
-# 定义函数名称为：generate_launch_description
 def generate_launch_description():
     prefix = "gnome-terminal --"
-     # venv site-packages
+    env = os.environ.copy()
+    env["GZ_SIM_SYSTEM_PLUGIN_PATH"] = f"/opt/ros/jazzy/lib/"
+    use_sim_time = LaunchConfiguration('use_sim_time', default=True)
+
+    # venv site-packages
     venv_site = "/home/luo/Project/Horse/Luo_ros2_control/.venv/lib/python3.12/site-packages"
     merged_env = os.environ.copy()
     merged_env["PYTHONPATH"] = f"{venv_site}:{merged_env.get('PYTHONPATH','')}"
-    gz_env = os.environ.copy()
-    gz_env["GZ_SIM_SYSTEM_PLUGIN_PATH"] = f"/opt/ros/jazzy/lib/"
 
     declare_xacro = DeclareLaunchArgument(
         name = 'xacro_path',
         default_value=get_package_share_directory("legged_bringup") + "/resource/A1/urdf/gazebo.xacro"
     )
-    declare_bridge_cfg = DeclareLaunchArgument(
-        name = "bridge_config_file",
-        default_value=get_package_share_directory("legged_bringup") + "/launch/gazebo_bridge.yaml"
+    declare_referenceFile = DeclareLaunchArgument(
+        name = 'referenceFile',
+        default_value=get_package_share_directory("legged_bringup") + "/resource/A1/config/reference.info"
     )
-    declare_world = DeclareLaunchArgument(
-        name ="world_file",
-        default_value="legged.sdf"
-    )
-    declare_controller = DeclareLaunchArgument(
-        name = 'controller_config',
-        default_value=get_package_share_directory("legged_bringup") + "/launch/legged_controller.yaml"
+
+    declare_gait_config = DeclareLaunchArgument(
+        name = 'gait_config',
+        default_value=get_package_share_directory("legged_bringup") + "/resource/A1/config/gait.info"
     )
 
     xacro_path = LaunchConfiguration("xacro_path") 
-    bridge_cfg = LaunchConfiguration("bridge_config_file")
-    world_file = LaunchConfiguration("world_file")
-
+    referenceFile = LaunchConfiguration("referenceFile")
+    gait_command_cfg = LaunchConfiguration("gait_config")
     robot_description_content = ParameterValue(
                 Command(["xacro ", xacro_path]),
                 value_type=str
     )
-    robot_description = {"robot_description": robot_description_content}
 
-    bridge_node = Node(
-        package="ros_gz_bridge",
-        executable="parameter_bridge",
-        parameters=[{"config_file": bridge_cfg}],
-        output="screen"
+    bridge = Node(
+        package='ros_gz_bridge',
+        executable='parameter_bridge',
+        arguments=['/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock'],
+        output='screen'
     )
+    # 桥接节点，发布/clock
+
+    gz_sim_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(get_package_share_directory('ros_gz_sim'), 'launch', 'gz_sim.launch.py')
+        ),
+        launch_arguments=[('gz_args','empty.sdf -r')]
+    )
+    # 包括ros2中封装的gz sim启动脚本
+
+    gz_spawn_scene = Node(
+        package='ros_gz_sim',
+        executable='create',
+        output='screen',
+        arguments=['-file', 'model://scene', 
+                   '-name','obstacle',
+                   '-z','0.01',
+                   '-R','3.141592654'],
+    )
+    # 生成地面障碍物
+
+    gz_spawn_robot = Node(
+        package='ros_gz_sim',
+        executable='create',
+        output='screen',
+        arguments=['-file', 'model://A1', 
+                   '-name','A1',
+                   '-z','0.4'],
+    )
+    # 生成机器人
 
     statepub_node = Node(
         package="robot_state_publisher",
         executable="robot_state_publisher",
-        parameters=[robot_description,
-                    {"use_sim_time": True},],
+        parameters=[{"robot_description": robot_description_content}],
+        arguments=[{"domain_id","1"}],
         output="screen"
         )
+    # 发布机器人的urdf描述，提供给rviz和ros2 control
 
     motor_tester_spawner = Node(
         package="controller_manager",
         executable="spawner",
         arguments=["motor_tester"],
     )
+    # 电机直接控制器
 
     imu_sensor_broadcaster_spawner = Node(
         package="controller_manager",
@@ -74,29 +103,19 @@ def generate_launch_description():
                    "--ros-args -r /imu_sensor_broadcaster/imu:=test_tools/imu_tester/imu",
                    ],
     )
-
-    # rviz_node = Node(
-    #     package="rviz2",
-    #     executable="rviz2",
-    #     arguments=["-d", rviz_cfg],
-    #     )
-
-    # joint_state_publisher = Node(
-    #     package="controller_manager",
-    #     executable="spawner",
-    #     arguments=["joint_state_broadcaster"],
-    # )
+    # imu消息广播器
 
     contact_tester_spawner = Node(
         package="controller_manager",
         executable="spawner",
         arguments=["contact_tester"],
     )
-    
-    gz_sim = ExecuteProcess(
-        cmd=["gz", "sim", "-r", world_file],
-        output="screen",
-        env=gz_env
+    # 接触消息广播器
+
+    joint_state_publisher = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["joint_state_broadcaster"],
     )
 
     joint_tester = Node(
@@ -106,27 +125,46 @@ def generate_launch_description():
         # prefix=prefix,
         env=merged_env,
     )
+    # 关节直接控制器UI
 
-    delay = TimerAction(
-        period=10.0,
-        actions=[ros2_control_node,
-                 motor_tester_spawner,
+    timeLine0 = TimerAction(
+        period=0.0,
+        actions=[gz_sim_launch,statepub_node],
+    )
+
+    timeLine1 = TimerAction(
+        period=3.0,
+        actions=[bridge],
+    )
+
+    timeLine2 = TimerAction(
+        period=6.0,
+        actions=[gz_spawn_scene],
+    )
+
+    timeLine3 = TimerAction(
+        period=9.0,
+        actions=[gz_spawn_robot],
+    )
+
+    timeLine4 = TimerAction(
+        period=15.0,
+        actions=[motor_tester_spawner,
                  imu_sensor_broadcaster_spawner,
-                contact_tester_spawner,],
+                 contact_tester_spawner,
+                 joint_state_publisher,
+                 joint_tester],
     )
     
-    # 创建LaunchDescription对象launch_description,用于描述launch文件
-    launch_description = LaunchDescription([declare_xacro, 
-                                            declare_bridge_cfg,
-                                            declare_world,
-                                            declare_controller,
-                                            gz_sim,
-                                            # rviz_node,
-                                            # joint_state_publisher,
-                                            bridge_node,
-                                            statepub_node,
-                                            delay,
-                                            joint_tester,
-                                            ])
-    # 返回让ROS2根据launch描述执行节点
-    return launch_description
+    ld = LaunchDescription([
+            declare_xacro,
+            declare_gait_config,
+            declare_referenceFile,
+            timeLine0,
+            timeLine1,
+            timeLine2,
+            timeLine3,
+            timeLine4,
+        ])
+    
+    return ld
