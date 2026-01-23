@@ -32,18 +32,18 @@ def generate_launch_description():
     referenceFile = LaunchConfiguration("referenceFile")
     urdfFile = LaunchConfiguration("urdfFile")
 
-    mpc_node = Node(
-        package='ocs2_legged_robot_ros',
-        executable='legged_robot_sqp_mpc',
-        name='legged_robot_sqp_mpc',
-        output='screen',
-        # prefix=prefix,
-        parameters=[
-            {'taskFile': taskFile},
-            {'referenceFile': referenceFile},
-            {'urdfFile': urdfFile},
-            {'use_sim_time': useSimTime},]
-        )
+    # mpc_node = Node(
+    #     package='ocs2_legged_robot_ros',
+    #     executable='legged_robot_sqp_mpc',
+    #     name='legged_robot_sqp_mpc',
+    #     output='screen',
+    #     # prefix=prefix,
+    #     parameters=[
+    #         {'taskFile': taskFile},
+    #         {'referenceFile': referenceFile},
+    #         {'urdfFile': urdfFile},
+    #         {'use_sim_time': useSimTime},]
+    #     )
 
     # manager_node = Node(
     #     package="controller_manager",

@@ -21,9 +21,13 @@ find_package(ocs2_legged_robot_ros REQUIRED)
 find_package(ocs2_ros_interfaces REQUIRED)
 find_package(ocs2_pinocchio_interface REQUIRED)
 find_package(ocs2_centroidal_model REQUIRED)
+find_package(ocs2_mpc REQUIRED)
+find_package(ocs2_sqp REQUIRED)
+find_package(ocs2_msgs REQUIRED)
 
 find_package(legged_wbc REQUIRED)
 find_package(legged_estimator REQUIRED)
+find_package(legged_interface)
 
 find_package(pinocchio REQUIRED)
 find_package(Eigen3 3.3 REQUIRED NO_MODULE)
@@ -48,8 +52,12 @@ ament_target_dependencies(${PROJECT_NAME}
   ocs2_ros_interfaces
   ocs2_pinocchio_interface
   ocs2_centroidal_model
+  ocs2_mpc
+  ocs2_sqp
+  ocs2_msgs
   legged_wbc
   legged_estimator
+  legged_interface
 )
 
 include_directories(include)
@@ -79,8 +87,12 @@ ament_export_dependencies(
   ocs2_ros_interfaces
   ocs2_pinocchio_interface
   ocs2_centroidal_model
+  ocs2_mpc
+  ocs2_sqp
+  ocs2_msgs
   legged_wbc
   legged_estimator
+  legged_interface
   pinocchio
   Eigen3
   Boost

@@ -28,7 +28,7 @@ def generate_launch_description():
     )
     declare_world = DeclareLaunchArgument(
         name ="world_file",
-        default_value="world.sdf"
+        default_value="legged.sdf"
     )
     declare_controller = DeclareLaunchArgument(
         name = 'controller_config',
@@ -106,6 +106,14 @@ def generate_launch_description():
         # prefix=prefix,
         env=merged_env,
     )
+
+    delay = TimerAction(
+        period=10.0,
+        actions=[ros2_control_node,
+                 motor_tester_spawner,
+                 imu_sensor_broadcaster_spawner,
+                contact_tester_spawner,],
+    )
     
     # 创建LaunchDescription对象launch_description,用于描述launch文件
     launch_description = LaunchDescription([declare_xacro, 
@@ -117,9 +125,7 @@ def generate_launch_description():
                                             # joint_state_publisher,
                                             bridge_node,
                                             statepub_node,
-                                            motor_tester_spawner,
-                                            imu_sensor_broadcaster_spawner,
-                                            contact_tester_spawner,
+                                            delay,
                                             joint_tester,
                                             ])
     # 返回让ROS2根据launch描述执行节点

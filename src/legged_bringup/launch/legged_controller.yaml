@@ -2,8 +2,6 @@ controller_manager:
   ros__parameters:
     update_rate: 1000
     use_sim_time: true
-    controller-manager-timeout: 30.0
-    inactive-timeout: 500
 
     legged_controller:
       type: legged/LeggedController
@@ -29,8 +27,6 @@ imu_sensor_broadcaster:
 legged_controller:
   ros__parameters:
     use_sim_time: true
-    controller-manager-timeout: 30.0
-    inactive-timeout: 500
     robotName: "legged_robot"
     taskFile: "/home/luo/Project/Horse/Luo_ros2_control/src/legged_bringup/resource/A1/config/task.info"
     urdfFile: "/home/luo/Project/Horse/Luo_ros2_control/src/legged_bringup/resource/A1/urdf/A1.urdf"
@@ -79,22 +75,3 @@ contact_tester:
       - LH
       - RF
       - RH
-
-# joint_state_broadcaster:
-#   ros__parameters:
-#     frame_id: base_link
-#     joints: 
-#       - LF_HAA
-#       - LF_HFE
-#       - LF_KFE
-#       - LH_HAA
-#       - LH_HFE
-#       - LH_KFE
-#       - RF_HAA
-#       - RF_HFE
-#       - RF_KFE
-#       - RH_HAA
-#       - RH_HFE
-#       - RH_KFE
-
-#     use_local_topics: false  # 默认在全局命名空间发布

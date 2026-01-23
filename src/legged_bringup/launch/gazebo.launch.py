@@ -48,7 +48,6 @@ def generate_launch_description():
     referenceFile = LaunchConfiguration("referenceFile")
     gait_command_cfg = LaunchConfiguration("gait_config")
 
-
     robot_description_content = ParameterValue(
                 Command(["xacro ", xacro_path]),
                 value_type=str
@@ -93,7 +92,6 @@ def generate_launch_description():
     gz_sim = ExecuteProcess(
         cmd=["gz", "sim", "-r", world_file],
         output="screen",
-        # prefix=prefix,
         env=env,
     )
 
@@ -107,6 +105,19 @@ def generate_launch_description():
                         {'use_sim_time':useSimTime}],
         )
     
+    controler_spawner = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["legged_controller"],
+        parameters=[{"controller_manager_timeout": 500.0},
+                    {"inactive-timeout":500.0}],
+    )
+
+    spawn_delay = TimerAction(
+        period=10.0,
+        actions=[controler_spawner],
+    )
+    
     # 创建LaunchDescription对象launch_description,用于描述launch文件
     launch_description = LaunchDescription([declare_rviz, 
                                             declare_xacro, 
@@ -114,12 +125,13 @@ def generate_launch_description():
                                             declare_world,
                                             declare_gait_config,
                                             declare_referenceFile,
-                                            gz_sim,
-                                            gait_node,
                                             bridge_node,
+                                            gait_node,
                                             statepub_node,
                                             rviz_node,
                                             target_node,
+                                            gz_sim,
+                                            spawn_delay
                                             ])
     # 返回让ROS2根据launch描述执行节点
     return launch_description

@@ -1349,8 +1349,7 @@
 
         <plugin filename="libgz_ros2_control-system.so"
             name="gz_ros2_control::GazeboSimROS2ControlPlugin">
-            <parameters>
-                /home/luo/Project/Horse/Luo_ros2_control/src/legged_bringup/launch/legged_controller.yaml</parameters>
+            <parameters>/home/luo/Project/Horse/Luo_ros2_control/src/legged_bringup/launch/legged_controller.yaml</parameters>
             <hold_joints>false</hold_joints>
         </plugin>
         <!-- 关节控制插件 -->

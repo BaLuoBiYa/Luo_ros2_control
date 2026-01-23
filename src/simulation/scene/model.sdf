@@ -54,10 +54,5 @@
             <enabled>true</enabled>
             
         </plugin>
-
-        <plugin filename="gz-sim-imu-system"
-            name="gz::sim::systems::Imu">
-        </plugin>
-        <!-- imu插件 -->
     </model>
 </sdf>
