@@ -14,9 +14,10 @@ namespace legged {
                                                const rclcpp_lifecycle::LifecycleNode::SharedPtr &node)
         : StateEstimateBase(std::move(pinocchioInterface), std::move(info), eeKinematics, node),
           numContacts_(info_.numThreeDofContacts + info_.numSixDofContacts), dimContacts_(3 * numContacts_),
-          numState_(6 + dimContacts_), numObserve_(2 * dimContacts_ + numContacts_), topicUpdated_(false) {
-        // tfBuffer_ = std::make_shared<tf2_ros::Buffer>(node->get_clock());
-        // tfListener_ = std::make_shared<tf2_ros::TransformListener>(*tfBuffer_,node,true);
+          numState_(6 + dimContacts_), numObserve_(2 * dimContacts_ + numContacts_), topicUpdated_(false),
+          logger_(node->get_logger()) {
+        tfBuffer_ = std::make_shared<tf2_ros::Buffer>(node->get_clock());
+        tfListener_ = std::make_shared<tf2_ros::TransformListener>(*tfBuffer_, node, true);
 
         xHat_.setZero(numState_);
         ps_.setZero(dimContacts_);
@@ -180,7 +181,7 @@ namespace legged {
                     tfBuffer_->lookupTransform("odom", msg.child_frame_id, msg.header.stamp);
                 tf2::fromMsg(tf_msg.transform, odom2sensor);
             } catch (tf2::TransformException &ex) {
-                // RCLCPP_WARN(node_->get_logger(), "%s", ex.what());
+                RCLCPP_WARN(logger_, "%s", ex.what());
                 return;
             }
             world2odom_ = world2sensor * odom2sensor.inverse();
@@ -191,7 +192,7 @@ namespace legged {
                 tfBuffer_->lookupTransform("base", msg.child_frame_id, msg.header.stamp);
             tf2::fromMsg(tf_msg.transform, base2sensor);
         } catch (tf2::TransformException &ex) {
-            //   RCLCPP_WARN(node_->get_logger(), "%s", ex.what());
+            RCLCPP_WARN(logger_, "%s", ex.what());
             return;
         }
         tf2::Transform odom2base = world2odom_.inverse() * world2sensor * base2sensor.inverse();
@@ -220,7 +221,7 @@ namespace legged {
         auto odom = getOdomMsg();
         odom.header = msg.header;
         odom.child_frame_id = "base";
-        // publishMsgs(odom);
+        publishMsgs(odom);
     }
 
     void KalmanFilterEstimate::callback(const nav_msgs::msg::Odometry::ConstSharedPtr &msg) {

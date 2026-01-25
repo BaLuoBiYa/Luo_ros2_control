@@ -5,6 +5,9 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
 # find dependencies
 find_package(ament_cmake REQUIRED)
 
@@ -67,9 +70,17 @@ target_include_directories(${PROJECT_NAME}
 
 pluginlib_export_plugin_description_file(controller_interface legged_controller_plugin.xml)
 
+add_executable(legged_robot_sqp_mpc
+  src/legged_sqp_mpc.cpp
+)
+target_link_libraries(legged_robot_sqp_mpc ${PROJECT_NAME})
+target_compile_options(legged_robot_sqp_mpc PRIVATE ${OCS2_PINOCCHIO_FLAGS})
+
 install(
   TARGETS ${PROJECT_NAME}
+    legged_robot_sqp_mpc
   DESTINATION lib
+  RUNTIME DESTINATION lib/${PROJECT_NAME}
 )
 
 ament_export_libraries(${PROJECT_NAME})

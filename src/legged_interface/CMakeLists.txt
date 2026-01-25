@@ -31,14 +31,6 @@ add_library(${PROJECT_NAME}
         src/LeggedInterface.cpp
 )
 
-target_compile_options(legged_interface
-  PRIVATE
-    $<$<CXX_COMPILER_ID:GNU,Clang>:-Wno-unused-variable -Wno-unused-parameter
-    -Wno-unused-variable
-    -Wno-unused-parameter>
-    $<$<CXX_COMPILER_ID:MSVC>:/wd4100 /wd4189>
-)
-
 target_include_directories(${PROJECT_NAME}
         PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
@@ -54,25 +46,6 @@ target_link_libraries(${PROJECT_NAME}
         ocs2_self_collision::ocs2_self_collision
 )
 
-target_compile_options(${PROJECT_NAME} PUBLIC ${OCS2_CXX_FLAGS})
-
-#########################
-###   CLANG TOOLING   ###
-#########################
-find_package(cmake_clang_tools QUIET)
-if (cmake_clang_tools_FOUND)
-    message(STATUS "Run clang tooling for target " ${PROJECT_NAME})
-    add_clang_tooling(
-            TARGETS ${PROJECT_NAME}
-            SOURCE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/src ${CMAKE_CURRENT_SOURCE_DIR}/include
-            CT_HEADER_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/include
-            CF_WERROR
-    )
-endif ()
-
-#############
-## Install ##
-#############
 install(TARGETS ${PROJECT_NAME}
         EXPORT export_${PROJECT_NAME}
         ARCHIVE DESTINATION lib
@@ -85,16 +58,13 @@ install(DIRECTORY include/${PROJECT_NAME}/
         FILES_MATCHING PATTERN "*.h"
 )
 
-#############
-## Export  ##
-#############
 ament_export_include_directories(include)
 ament_export_libraries(${PROJECT_NAME})
 ament_export_dependencies(
-pinocchio
-Eigen3
-Boost
-ocs2_legged_robot 
-ocs2_self_collision)
+        pinocchio
+        Eigen3
+        Boost
+        ocs2_legged_robot 
+        ocs2_self_collision)
 
 ament_package()

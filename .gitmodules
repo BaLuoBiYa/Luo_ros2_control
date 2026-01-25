@@ -1,6 +1,6 @@
 [submodule "qpoases_colcon"]
     path = src/qpoases_colcon
-	url = https://github.com/BaLuoBiYa/qpoases_colcon
+	url = https://github.com/BaLuoBiYa/qpoases_colcon.git
 
 [submodule "elevation_mapping_cupy"]
     path = src/elevation_mapping_cupy

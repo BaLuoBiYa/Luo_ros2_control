@@ -53,6 +53,7 @@ namespace legged {
 
         // Topic
         rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr sub_;
+        rclcpp::Logger logger_;
         realtime_tools::RealtimeThreadSafeBox<nav_msgs::msg::Odometry> buffer_;
         std::shared_ptr<tf2_ros::Buffer> tfBuffer_;
         std::shared_ptr<tf2_ros::TransformListener> tfListener_;

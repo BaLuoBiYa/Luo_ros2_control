@@ -48,7 +48,7 @@ namespace legged_robot {
 /** Callback for caching and reference update */
 class LeggedRobotPreComputation : public PreComputation {
  public:
-  LeggedRobotPreComputation(PinocchioInterface pinocchioInterface, CentroidalModelInfo info,
+  LeggedRobotPreComputation(PinocchioInterface& pinocchioInterface, CentroidalModelInfo info,
                             const SwingTrajectoryPlanner& swingTrajectoryPlanner, ModelSettings settings);
   ~LeggedRobotPreComputation() override = default;
 

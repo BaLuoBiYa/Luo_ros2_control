@@ -88,10 +88,17 @@ def generate_launch_description():
         )
     # 发布机器人的urdf描述，提供给rviz和ros2 control
 
+    # motor_tester_spawner = Node(
+    #     package="controller_manager",
+    #     executable="spawner",
+    #     arguments=["motor_tester"],
+    # )
+    # # 电机直接控制器
+
     motor_tester_spawner = Node(
         package="controller_manager",
         executable="spawner",
-        arguments=["motor_tester"],
+        arguments=["position_controller"],
     )
     # 电机直接控制器
 
