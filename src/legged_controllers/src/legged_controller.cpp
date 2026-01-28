@@ -148,18 +148,6 @@ namespace legged {
         safetyChecker_ = std::make_shared<SafetyChecker>(leggedInterface_->getCentroidalModelInfo());
         // Safety Checker
 
-
-        // 调试：打印端效器顺序，确保 contactFlag_ 与之对应
-        // {
-        //     const auto& model = leggedInterface_->getPinocchioInterface().getModel();
-        //     const auto eeFrames = eeKinematicsPtr_->getIds();  // 可能是 Eigen 向量
-        //     for (Eigen::Index i = 0; i < eeFrames.size(); ++i) {
-        //         const auto& name = eeFrames[i];
-        //         RCLCPP_INFO_STREAM(get_node()->get_logger(), name);
-        //     }
-        //     return controller_interface::CallbackReturn::ERROR;
-        // }
-
         return controller_interface::CallbackReturn::SUCCESS;
     }
 
@@ -276,16 +264,10 @@ namespace legged {
         return controller_interface::return_type::OK;
     }
 
-    controller_interface::CallbackReturn legged_controller::on_cleanup(const rclcpp_lifecycle::State &previous_state)
-    {
-        rclcpp::shutdown();
-        return controller_interface::CallbackReturn::SUCCESS;
-    }
-
     void legged_controller::updateEstimation(const rclcpp::Time &time, const rclcpp::Duration &period) {
 
         for (size_t i = 0; i < 12; ++i) {
-            auto pos = state_interfaces_[i].get_optional<double>();
+            std::optional<double> pos = state_interfaces_[i].get_optional<double>();
             if (pos == std::nullopt) {
                 RCLCPP_ERROR_STREAM(get_node()->get_logger(), "Failed to read joint position interface");
                 continue;
@@ -294,7 +276,7 @@ namespace legged {
         }
 
         for (size_t i = 0; i < 12; ++i) {
-            auto vel = state_interfaces_[12 + i].get_optional<double>();
+            std::optional<double> vel = state_interfaces_[12 + i].get_optional<double>();
             if (vel == std::nullopt) {
                 RCLCPP_ERROR_STREAM(get_node()->get_logger(), "Failed to read joint velocity interface");
                 continue;
@@ -303,7 +285,7 @@ namespace legged {
         }
 
         for (size_t i = 0; i < 4; ++i) {
-            auto contact = state_interfaces_[24 + i].get_optional<bool>();
+            std::optional<bool> contact = state_interfaces_[24 + i].get_optional<bool>();
             if (contact == std::nullopt) {
                 RCLCPP_ERROR_STREAM(get_node()->get_logger(), "Failed to read contact interface");
                 continue;
@@ -313,7 +295,7 @@ namespace legged {
         // 读取关节状态和接触状态,如果读取失败，跳过更新
 
         for (size_t i = 0; i < 4; ++i) {
-            auto imu_orient = state_interfaces_[28 + i].get_optional<double>();
+            std::optional<double> imu_orient = state_interfaces_[28 + i].get_optional<double>();
             if (imu_orient == std::nullopt) {
                 RCLCPP_ERROR_STREAM(get_node()->get_logger(), "Failed to read IMU orientation interface");
                 continue;
@@ -322,13 +304,16 @@ namespace legged {
         }
 
         for (size_t i = 0; i < 3; ++i) {
-            auto imu_angular_vel = state_interfaces_[32 + i].get_optional<double>();
+            std::optional<double> imu_angular_vel = state_interfaces_[32 + i].get_optional<double>();
             if (imu_angular_vel == std::nullopt) {
                 RCLCPP_ERROR_STREAM(get_node()->get_logger(), "Failed to read IMU angular velocity interface");
                 continue;
             }
             angularVel_(i) = imu_angular_vel.value();
-            auto imu_linear_accel = state_interfaces_[35 + i].get_optional<double>();
+        }
+        
+        for (size_t i = 0; i < 3; ++i) {
+            std::optional<double> imu_linear_accel = state_interfaces_[35 + i].get_optional<double>();
             if (imu_linear_accel == std::nullopt) {
                 RCLCPP_ERROR_STREAM(get_node()->get_logger(), "Failed to read IMU linear acceleration interface");
                 continue;

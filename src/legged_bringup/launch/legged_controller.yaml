@@ -52,7 +52,7 @@ legged_controller:
       - RH_KFE
     imuName: imu
     visualize: true
-    kp: 0.0
+    kp: 1.0
     kd: 3.0
     kf: 1.0
 

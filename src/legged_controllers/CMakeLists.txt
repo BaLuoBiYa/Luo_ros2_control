@@ -76,9 +76,16 @@ add_executable(legged_robot_sqp_mpc
 target_link_libraries(legged_robot_sqp_mpc ${PROJECT_NAME})
 target_compile_options(legged_robot_sqp_mpc PRIVATE ${OCS2_PINOCCHIO_FLAGS})
 
+add_executable(legged_target
+  src/legged_target.cpp
+)
+target_link_libraries(legged_target ${PROJECT_NAME})
+target_compile_options(legged_target PRIVATE ${OCS2_PINOCCHIO_FLAGS})
+
 install(
   TARGETS ${PROJECT_NAME}
     legged_robot_sqp_mpc
+    legged_target
   DESTINATION lib
   RUNTIME DESTINATION lib/${PROJECT_NAME}
 )

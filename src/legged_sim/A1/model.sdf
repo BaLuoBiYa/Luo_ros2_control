@@ -1,10 +1,10 @@
 <sdf version='1.11'>
     <model name='robot'>
-        <joint name='anchor_to_world' type='fixed'>
+        <!-- <joint name='anchor_to_world' type='fixed'>
 			<parent>world</parent>
 			<child>base</child>
 			<pose>0 0 0 0 0 0</pose>
-		</joint>
+		</joint> -->
         <!-- 悬挂模型，用于调试 -->
         <link name='base'>
             <inertial>
@@ -1349,7 +1349,8 @@
 
         <plugin filename="libgz_ros2_control-system.so"
             name="gz_ros2_control::GazeboSimROS2ControlPlugin">
-            <parameters>/home/luo/Project/Horse/Luo_ros2_control/src/legged_bringup/launch/legged_controller.yaml</parameters>
+            <parameters>
+                /home/luo/Project/Horse/Luo_ros2_control/src/legged_bringup/launch/legged_controller.yaml</parameters>
             <hold_joints>false</hold_joints>
         </plugin>
         <!-- 关节控制插件 -->

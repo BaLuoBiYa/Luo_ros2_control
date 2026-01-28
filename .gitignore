@@ -3,6 +3,7 @@
 /log
 /.vscode
 /.venv
+/.cache
 *.tar.gz
 *.tar
 *.vc.db

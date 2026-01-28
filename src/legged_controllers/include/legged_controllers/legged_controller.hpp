@@ -58,7 +58,7 @@ namespace legged {
         std::string urdfFile_;
         std::string referenceFile_;
 
-        double kp_, kd_,kf_;
+        double kp_, kd_, kf_;
 
         bool visualize_;
         bool verbose_;
@@ -74,7 +74,6 @@ namespace legged {
         controller_interface::CallbackReturn on_activate(const rclcpp_lifecycle::State &previous_state) override;
 
         // controller_interface::CallbackReturn on_error(const rclcpp_lifecycle::State &previous_state) override;
-        controller_interface::CallbackReturn on_cleanup(const rclcpp_lifecycle::State &previous_state) override;
 
         controller_interface::return_type update(const rclcpp::Time &time, const rclcpp::Duration &period) override;
     }; // class legged_mrt
